@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" /> 
+     <!-- <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" /> -->
+      <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />  
+     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        #table{
+            border:1px solid #ddd ;
+            width:100%;
+            margin:15px 3px ;
+        
+        }
+        tr{
+            border-bottom:1px solid #ddd;
+        }
+        [class^="col"] {
+            padding:5px;
+            text-align: center;
+        }
+        .tr_title{
+            background-color: #F8F8F9;
+        }
+        li{
+            text-align:center;
+        }
+    </style>
+</head>
+<body>
+    <div class="IndexRight">
+        <h6 class="page_title">
+            <img src="../../images/module_title.png">
+            <span>角色权限</span>
+        </h6>
+        <table id="table">
+            <thead>
+            <tr class="tr_title">
+                <th class="col-md-4">角色名称</th>
+                <th class="col-md-4">角色权限</th>
+                <th class="col-md-4">操作</th>
+            </tr>
+            </thead>
+           <tbody>
+           </tbody>
+        </table>
+    </div>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+	<script>
+         $.ajax({
+             type: 'post',
+             url: '/api/ruleList',
+             dataType: 'json',
+             success: function (data) {
+                 //从后台获取数据
+                 var datas = data.result;
+                 if (data.code == "001") {
+                     var html = "";
+                     for (var i = 0; i < datas.length; i++) {
+                         //传过来的data是二维数组
+                         html = `<tr>
+           			<td class="col-md-4">${datas[i].name} </td>
+           			<td class="col-md-4">
+           				<div class="dropdown">
+  							<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">角色权限
+   								<span class="caret"></span>
+  							</button>
+  								<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+  								</ul>
+  						</div></td>
+	           			<td class="col-md-4" class="make"><button class="btn btn-primary ">修改</button></td>
+           		</tr>`
+                         $("tbody").append(html);
+                         $("tbody tr:last").children().children(".btn-primary").attr("id", datas[i].id);
+//                         var portrayal = datas[i].portrayal;
+                         var li = "";
+                         for (var j = 0; j < datas[i].portrayal.length; j++) {
+//                             var cent=portrayal[j].cent;
+                             for(var k=0;k<datas[i].portrayal[j].cent.length;k++) {
+                             li+= `<li>${datas[i].portrayal[j].cent[k]}</li>`
+                           }
+                         }
+                        $("tbody tr:last").children().children().children("ul").html(li)
+                     }
+//                     console.log(li)
+//                     console.log(html)
+
+                 }
+             else{
+                     layer.msg(data.message, {icon: 2});
+                 }
+             }
+         });
+        	$("tbody").on("click",".btn-primary",function(){
+        	    var id=this.id;
+        		window.location.href="character_modify.html?id="+id;
+        	})
+    </script>
+</body>
+</html>

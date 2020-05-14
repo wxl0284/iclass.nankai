@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>虚拟仿真实验教学管理与共享平台</title>
+	<link type="text/css" rel="stylesheet" href="css/home1.css">
+</head>
+<body>
+	<div id='head'>
+		<img src='./images/head.png'>
+	</div>
+	<div id='main' class="p_r m_a">
+        <img id='ju1' class='p_a' src='./images/ju1.png'><span id='class_r' class='p_a'>教室预约</span>
+        <img id='dot' class='p_a' src='./images/dot.png'>
+        <div id='two_class' class="p_r">
+            <div id='clasrom1' class='room p_a'>
+                <span class='span_h'>智慧教室></span>
+                <div class='clasrom_img'>
+                    <span class='hov' style="background: url('./images/rm1.png') no-repeat"><a>TEAL智慧教室<br>(八里台校区)<img src='./images/nm.png'></a></span><!-- onclick="labInto(2)" -->
+                    <span class='hov' style="background: url('./images/rm2.png') no-repeat;"><a onclick="labInto(3)" style='width:33%;'>自主录播教室<br>(津南校区公共教学楼B516)<img src='./images/nm.png'></a></span>
+                    <span class='hov' style="background: url('./images/rm3.png') no-repeat"><a>B智慧教室<br>(津南校区)<img src='./images/nm.png'></a></span>
+                </div>
+            </div>
+            <div id='clasrom2' class='room p_a'>
+                <span class='span_h'>智慧实验室></span>
+                <div class='clasrom_img'>
+                    <span class='hov' style="background: url('./images/rm4.png') no-repeat"><a>虚拟仿真校级<br>实验室(津南校区)<img src='./images/nm.png'></a></span><!-- onclick="labInto(1)" -->
+                    <span class='hov' style="background: url('./images/rm5.png') no-repeat"><a>A智慧实验室<br>(八里台校区)<img src='./images/nm.png'></a></span>
+                    <span class='hov' style="background: url('./images/rm6.png') no-repeat"><a>B智慧实验室<br>(津南校区)<img src='./images/nm.png'></a></span>
+                </div>
+            </div>            
+        </div>
+    </div>
+    <div id='foot'>
+		<span>
+			Copyright  2017-2020 南开大学虚拟仿真实验教学中心 ALL Rights Reserved
+		</span>
+	</div>
+</body>
+</html>
+<script type="text/javascript" src="lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="js/owl.carousel.min.js"></script>
+<script type="text/javascript">
+  	function labInto (id) {//点击校级平台
+  	    sessionStorage.setItem('platform',id);
+  	    $.ajax({
+            type:'post',
+            url:'/api/checkLogin',
+            data: {
+                'platform': id,
+            },
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                	 var str = JSON.stringify(data);
+                     sessionStorage.setItem("key", str);
+                    // layer.msg("登录成功",{icon:1,time:500},function(){
+                        window.location.href = "index.html";
+                    // });
+                }else{
+                    // layer.msg(data.message,{icon:3});
+                    window.location.href = "home.html";
+                }
+            },
+            error:function(err){
+                //console.error(err);
+            }
+        });
+      };
+      
+      $(function () {//jquery 初始化
+          let hov_span = $('.hov');
+
+          hov_span.on({
+            mouseenter:function(){
+                $(this).find('a').css('color', '#872a62');
+                $(this).find('img').attr('src', './images/ck.png');
+            },
+            mouseleave:function(){
+                $(this).find('a').css('color', '#a1a1a1');
+                $(this).find('img').attr('src', './images/nm.png');
+            }
+          })
+       
+      })
+
+</script>

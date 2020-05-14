@@ -1,0 +1,174 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8"> 
+	<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+	<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+	<title>南开大学智能教育教学管理与共享服务平台</title>
+</head>
+<body>
+<header class="navbar-wrapper">
+	<div class="navbar navbar-fixed-top" >
+		<div class="container-fluid cl" style="height: 80px">
+			<img src="images/logoimg.png" style="margin-left: 40px;padding-top: 15px;float: left;">
+            <span id="lab_name" style="font-size: 24px;color: white;margin-left: 30px;float: left;margin-top: 20px;">南开大学智能教育教学管理与共享服务平台</span>
+			<a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
+			<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
+				<ul class="cl">
+					<!--<li><a id="indexz"><i class="Hui-iconfont">&#xe67f;</i>首页</a></li>-->
+					<!--<li><a><i class="Hui-iconfont">&#xe633;</i>帮助</a></li>-->
+					<!--<li>欢迎<a>(<span id="user" style="color: red"></span>)</a>登录</li>-->
+					<li><a class="top-list" onclick="logout()"><i class="Hui-iconfont">&#xe726;</i>退出</a></li>
+				</ul>
+			</nav>
+			<nav id="Top-nav" class="nav navbar-navs">
+				<ul class="cl"></ul>
+			</nav>
+
+		</div>
+	</div>
+</header>
+
+<aside class="Hui-aside">
+		<div style="line-height: 40px;text-align: center;border-bottom: 1px solid #c3c3c3">欢迎<span id="user" style="margin-left: 10px;margin-right: 10px"></span>登录</div>
+        <div id="menu-article" class="menu_dropdown bk_2"></div>
+</aside>
+<div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
+
+
+<section class="Hui-article-box">
+	<div class="Hui-article" style="position: relative;top: 0px;bottom: 0;left: 0;right: 0;overflow: auto;z-index: 1;height: 100%;">
+		<article class="cl" style="width: 100%;height: 100%">
+			<iframe style="height: 100%;width: 100%;background: Transparent;position: absolute;left: 0;top: 0;/*background-color: #EDF3F8*/" id="iframe" scrolling="yes" frameborder="0" src="html/personal/personal.html"></iframe>
+		</article>
+		<!--<footer class="footer">-->
+			<!--<p>感谢jQuery、pd-20layer、laypage、Validform、UEditor、My97DatePicker、iconfont、Datatables、WebUploaded、icheck、highcharts、bootstrap-Switch<br> Copyright &copy;2015 H-ui.admin v3.0 All Rights Reserved.<br> 本后台系统由<a href="http://www.h-ui.net/" target="_blank" title="H-ui前端框架">H-ui前端框架</a>提供前端技术支持</p>-->
+		<!--</footer>-->
+	</div>
+</section>
+
+
+<script type="text/javascript" src="lib/jquery/3.1.1/jquery-3.1.1.min.js"></script> 
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.page.js"></script> 
+
+
+<script type="text/javascript">
+    //加载页面导航
+    var value = sessionStorage.getItem("key");
+    var obj = JSON.parse(value);
+    if(obj == null) {
+        window.location.href = "login.html";
+	}
+    var datasa = obj.result;
+    var datanav = datasa.auth;
+
+    //左侧个人信息
+    var datauser = datasa.user_info;
+    var User = JSON.stringify(datauser);
+    sessionStorage.setItem("User", User);
+    $("#user").text("("+datauser.user_name+")");
+
+    //顶部导航加载给第一个导航加选中样式
+    $("#Top-nav ul").html('');
+    $("#menu-article").html('');
+    for(var i=0;i<datanav.length;i++) {
+        var li = '';
+        li += '<li class="dropDown dropDown_hover"><a href="javascript:;" class="dropDown_A" id="' + datanav[i].id + '" index=' + i + '>' + datanav[i].name + '</a></li>';
+        $("#Top-nav ul").append(li);
+    }
+    $("#Top-nav ul li").first().css("background","#fff");
+    $("#Top-nav ul li a").first().css("color","#94467a");
+    //默认加载左侧导航，点击左侧导航切换页面
+    for(var j=0; j<datanav[0].child.length; j++) {
+        var dl = '';
+        dl += '<dl><dt><a data-href="' + datanav[0].child[j].path + '" title="' +datanav[0].child[j].name+ '"><div class="demo1"><img class="del" src="'+datanav[0].child[j].icon+'"></div><span class="leftSpan">' +datanav[0].child[j].name+ '</span></a></dt></dl>';
+        $("#menu-article").append(dl);
+    }
+    $("#menu-article a").click(function () {
+        $("#iframe").attr("src",$(this).attr("data-href"));
+        $(this).parent().parent().addClass("leftNavActive");
+        $(this).parent().parent().siblings().removeClass("leftNavActive");
+        $(this).addClass("leftAActive");
+        $(this).find("img").addClass("leftImg");
+        $(this).parent().parent().siblings().children().children().removeClass("leftAActive");
+        $(this).parent().parent().siblings().children().children().find("img").removeClass("leftImg");
+    });
+    //点击顶部导航切换左侧导航及页面，点击左侧导航切换页面
+	$("#Top-nav ul li a").click(function () {
+		var index = $(this).attr('index');
+        $(this).parent().css({"background":"#fff","border-radius":"5px 5px 0px 0px"});
+        $(this).css("color","#94467a");
+        $(this).parent().siblings().css("background","#BCE2FC");
+        $(this).parent().siblings().find("a").css("color","#333");
+		if(index == '0') {
+            leftNav(index);
+            $("#iframe").attr("src","html/personal/personal.html");
+            $("#menu-article a").click(function () {
+                $("#iframe").attr("src",$(this).attr("data-href"));
+                $(this).parent().parent().addClass("leftNavActive");
+                $(this).addClass("leftAActive");
+                $(this).find("img").addClass("leftImg");
+                $(this).parent().parent().siblings().removeClass("leftNavActive");
+                $(this).parent().parent().siblings().children().children().removeClass("leftAActive");
+                $(this).parent().parent().siblings().children().children().find("img").removeClass("leftImg");
+            });
+		}else {
+            leftNav(index);
+            $("#menu-article a:eq(0)").parent().parent().addClass("leftNavActive");
+            $("#menu-article a:eq(0)").addClass("leftAActive");
+            $("#menu-article a:eq(0)").find("img").addClass("leftImg");
+            $("#iframe").attr("src",$("#menu-article a").first().attr("data-href"));
+            $("#menu-article a").click(function () {
+                $("#iframe").attr("src",$(this).attr("data-href"));
+                $(this).parent().parent().addClass("leftNavActive");
+                $(this).addClass("leftAActive");
+                $(this).find("img").addClass("leftImg");
+                $(this).parent().parent().siblings().removeClass("leftNavActive");
+                $(this).parent().parent().siblings().children().children().removeClass("leftAActive");
+                $(this).parent().parent().siblings().children().children().find("img").removeClass("leftImg");
+            });
+		}
+    });
+	//加载左侧导航函数
+	function leftNav(index) {
+        $("#menu-article").html('');
+        for(var j=0; j<datanav[index].child.length; j++) {
+            var dl = '';
+            dl += '<dl><dt><a data-href="' + datanav[index].child[j].path + '" title="' +datanav[index].child[j].name+ '"><div class="demo1"><img class="del" src="'+datanav[index].child[j].icon+'"></div><span class="leftSpan">' +datanav[index].child[j].name+ '</span></a></dt></dl>';
+            $("#menu-article").append(dl);
+        }
+        $("#menu-article a").click(function () {
+            $("#iframe").attr("src",$(this).attr("data-href"))
+        });
+    }
+
+
+    function logout() {
+        $.ajax({
+            type:'get',
+            url:'/api/loginOut', 
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    layer.msg("退出成功",{icon:1,time:500},function(){
+                        window.location.href = "adminLogin.html";
+                    });
+                }else{
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+    }
+</script>
+
+
+</body>
+</html>

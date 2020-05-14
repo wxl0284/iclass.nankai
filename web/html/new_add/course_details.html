@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+    <title>课程详情</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" /> 
+     <!-- <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" /> -->
+      <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />  
+     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <link rel="stylesheet"  href="../../lib/fileinput/css/fileinput.css">
+    <style>
+        #main{
+            position:relative;
+            left:30%;
+            margin:40px  3px 60px
+        }
+        #main p{
+            margin-top:20px;
+        }
+        textarea{
+            width:300px;
+            height:100px;
+        }
+        .back{
+            position:relative;
+            left:43%;
+            border-color:#54033f;
+        }
+        #uploadForm{
+            position:relative;
+            left:10%;
+            top:30%
+        }
+        #up_file{
+            /*border-color:#54033f;*/
+            border:1px solid #bbb;
+            width:300px;
+            height: 100px;
+            margin-left: 60px;
+        }
+        #uploadForm{
+            margin-bottom: 10px;
+        }
+        #upload{
+            position:relative;
+            left:38%;
+        }
+    </style>
+</head>
+<body>
+    <div class="IndexRight">
+        <h6 class="page_title">
+            <img src="../../images/module_title.png">
+            <span>查看课程>查看详情</span>
+        </h6>
+    <div id="main">
+    <p>课程编号&nbsp&nbsp<input type="text" id="cur_id"></p>
+    <p>课程名称&nbsp&nbsp<input type="text" id="cur_name"></p>
+    <p>资源名称&nbsp&nbsp<input type="text" id="res_name"></p>
+    <p>资源类型&nbsp&nbsp<input type="text" id="res_type"></p>
+    <p>资源下载&nbsp&nbsp<a class="btn btn-default down" download="w3logo" >
+        <span class="glyphicon glyphicon-download-alt"></span>点击下载
+    </a>
+    </p>
+    <p>资源描述&nbsp&nbsp<textarea id="res_des"></textarea></p>
+    <p>上传文件&nbsp&nbsp</p>
+        <div id="up_file">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input id="file" type="file" name="file" />
+            </form>
+        </div>
+    </div>
+        <div id="footer">
+            <button id="upload" class="btn btn-primary">上传报告</button>
+            <button class="back btn btn-default">返回</button>
+        </div>
+    </div>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="../../lib/fileinput/js/fileinput.min.js"></script>
+<script type="text/javascript">
+    var str=location.href; //取得整个地址栏
+    var num=str.indexOf("?");
+    str=str.substr(num+1); //取得所有参数   stringvar.substr(start [, length ]
+    var arr=str.split("="); //各个参数放到数组里
+    var id=arr[1];
+    $.ajax({
+        type: 'get',
+        url: '/api/AssessmentSelect',
+        data: {id: id},
+        dataType: 'json',
+        success: function (data) {
+            if (data.code == "001") {
+                var datas=data.result;
+                $("#cur_name").val(datas.curriculum_name);
+                $("#cur_id").val(datas.curriculum_num);
+                $("#res_des").val(datas.res_describe);
+                $("#res_name").val(datas.res_name);
+                $("#res_type").val(datas.res_type);
+                //点击下载
+               $(".down").attr("href","/"+datas.res_url);
+//
+          }
+
+            else {
+                layer.msg(data.message,{icon:2});
+            }
+        }
+    });
+  
+    $(function () {
+        $("#upload").click(function () {
+            var curr_num = $("#cur_id").val();
+            var formData = new FormData($('#uploadForm')[0]);
+            formData.append('curr_num', curr_num);
+            $.ajax({
+                type: 'post',
+                url: "/api/upExperimentReport",
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+            
+                success: function (data) {
+                    if(data.code == 1){
+                        layer.msg(data.message,{icon:1});
+                    }else{
+                        layer.msg(data.message,{icon:2});
+                    }
+                    
+                        //window.location.reload();
+                }
+            })
+        })
+    });
+    //返回
+    $(".back").click(function () {
+    window.location.href="stu_course.html"
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+    </body>
+    </html>

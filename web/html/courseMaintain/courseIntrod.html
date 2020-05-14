@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        .tableLeft{width: 120px}
+    </style>
+</head>
+<body>
+    <div class="IndexRight">
+        <div class="up">
+            <h6 class="page_title">
+                <img src="../../images/module_title.png">
+                <span id="name"></span>
+            </h6>
+            <table class="table table-bordered tables">
+                <tbody class="table"></tbody>
+            </table>
+            <div id="content" class="contents"></div>
+            <div class="foot">
+                <input id="exit" class="btn btn-default size-MINI" type="button" value="修改">
+            </div>
+        </div>
+
+        <div class="down">
+            <h6 class="page_title">
+                <img src="../../images/module_title.png">
+                <span>编辑课程介绍</span>
+            </h6>
+            <table class="table table-bordered tables">
+                <tbody class="table"></tbody>
+            </table>
+            <div class="contents"><script id="introduce" name="introduce" type="text/plain"></script></div>
+            <div class="foot">
+                <input id="submit" class="btn btn-primary size-MINI radius" type="button" value="提交">
+                <input id="refill" class="btn btn-default size-MINI" type="button" value="取消">
+            </div>
+        </div>
+
+    </div>
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/ueditor.all.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/zh-cn.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script>
+    //课程记录id
+    var str=window.parent.location.href.split("?")[1].substr("3");
+    var id = str.substring(0,str.indexOf("&"));
+    //课程id
+    var ids =window.parent.location.href.split("&")[1].substr("4");
+    //设置富文本样式，初始化
+    $("#introduce").css({"height":"500px","width":"100%"});
+    var ue = UE.getEditor('introduce');
+
+    //加载页面数据
+    load();
+    function load() {
+        $.ajax({
+            type:'post',
+            url:'/api/courseIntro',
+            data: {id:id,curriculum_id:ids},
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    datas = data.result;
+                    $("#name").text("《" +datas.curriculum_name+ "》课程介绍");
+                    $("#content").html(datas.curriculum_rec);
+                    ue.ready(function() {
+                        //设置编辑器的内容
+                        ue.setContent(datas.curriculum_rec);
+                    });
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        })
+    }
+    //加载信息头
+    loads();
+    function loads() {
+        $(".table").html('');
+        $.ajax({
+            type:'post',
+            url:'/api/getInfo',
+            data: {id:id,ids:ids},
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    datas = data.result;
+                    var body='';
+                    body = '<tr><td class="tableLeft">开课申请人</td><td>'+datas.start_man+'</td><td class="tableLeft">开课申请时间</td><td>'+datas.start_time+'</td>'+
+                           '<td class="tableLeft">开课审核人</td><td>'+datas.start_checker+'</td><td class="tableLeft">开课审核时间</td><td>'+datas.start_check_time+'</td></tr>'+
+                           '<tr><td class="tableLeft">上课申请人</td><td>'+datas.teach_man+'</td><td class="tableLeft">上课申请时间</td><td>'+datas.teach_time+'</td>'+
+                           '<td class="tableLeft">上课审核人</td><td>'+datas.teach_checker+'</td><td class="tableLeft">上课审核时间</td><td>'+datas.teach_check_time+'</td></tr>';
+                    $(".table").append(body);
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        })
+    }
+
+    $(".up").show();
+    $(".down").hide();
+    //点击修改
+    $("#exit").on("click",function () {
+        $(".up").hide();
+        $(".down").show();
+    });
+    //点击取消
+    $("#refill").on("click",function () {
+        $(".up").show();
+        $(".down").hide();
+    });
+    //点击提交
+    $("#submit").click(function () {
+        var outline = ue.getContent();
+        $.ajax({
+            type:'post',
+            url:'/api/editCourseIntro',
+            data: {curriculum_id:ids,curriculum_rec:outline},
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    layer.msg("修改成功",{icon:1},function(){
+                        load();
+                        $(".up").show();
+                        $(".down").hide();
+                    });
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        })
+    });
+</script>
+</html>

@@ -1,0 +1,55 @@
+/*头部标签*/
+.IndexRight{margin:20px;}
+.page_title{border-bottom: solid 1px #ddd;padding: 8px 14px;}
+.page_title span{margin-left: 4px}
+
+/*
+    单独放课程的页面
+    日程安排、教学日历、教学日历
+*/
+#calendar {max-width: 900px;margin: 0 auto;}
+
+/*
+    左侧为灰色右侧为白色表格样式
+    创建校历、新增上课申请、新增开课申请、上传教学资源、开课申请详情、修改密码
+*/
+.tables>tbody>tr>td{padding: 4px 8px;line-height: 1.42857143;vertical-align: middle;font-size: 12px}
+.btn{padding: 4px 8px;font-size: 12px}
+.tableLeft{background: #F9F9F9;width: 300px}
+input,select,textarea{outline: none}
+.input-text{width: 60%}
+
+/*
+    说明样式
+    新增开课申请、上传资源、上传教学资源、修改密码
+*/
+.prompt{border: 1px solid #CCC;background: url(../../../images/prompt.jpg) no-repeat 10px center;margin-bottom: 10px}
+.text{padding: 10px;margin-left: 95px;line-height: 20px;font-size: 12px;font-weight: normal;color: red;letter-spacing: 1px;border-left:1px dashed #B8CBDA;}
+
+/*
+    审批列表页面样式
+    开课审批、上课审批、资源审批、预约审批
+*/
+.tab-content{margin: 20px;}  /*资源列表*/
+.form-control{height: 28px;padding: 2px 12px;font-size: 12px}
+.bootstrap-table .table:not(.table-condensed) > tbody > tr > td{line-height: 28px}
+
+/*
+    单个课程详细页面中样式
+    编辑课程介绍、编辑教学日历、编辑教学大纲、预约审批
+*/
+.contents{width: 100%;border: 1px solid #CCCCCC;padding: 6px}
+.foot{width: 100%;text-align: center;margin-top: 14px;margin-bottom: 20px}
+
+/*
+    所有放fullcalendar插件的页面
+    新增上课申请、教学日历、日程安排 、上课审批详情、预约审批详情、教学日历详情
+*/
+.fc-unthemed .fc-content, .fc-unthemed .fc-divider, .fc-unthemed .fc-list-heading td, .fc-unthemed .fc-list-view, .fc-unthemed .fc-popover, .fc-unthemed .fc-row, .fc-unthemed tbody, .fc-unthemed td, .fc-unthemed th, .fc-unthemed thead{border-color: rgba(128,5,96,0.4)}
+
+
+
+
+
+
+

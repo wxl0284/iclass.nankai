@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" />
+    <!--<link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />-->
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        input{
+            position: relative;
+            margin: 10px 0;
+            left:83%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            height:30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="IndexRight">
+        <h6 class="page_title">
+            <img src="../../images/module_title.png">
+            <span>资源列表</span>
+        </h6>
+        <div class="container pal">
+            <ul id="Name" class="nav nav-tabs datatitle">
+                <li class="active"><a href="#stay" data-toggle="tab" index="0">待审批</a></li>
+                <li><a href="#already" data-toggle="tab" index="1">已通过</a></li>
+                <li><a href="#not" data-toggle="tab" index="2">未通过</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="stay">
+                    <input type="text" placeholder="请输入资源名称或资源类型">
+                    <table id="tableStay" data-toggle="table" table-no-bordered="false"  data-toggle="table"  data-method="post" data-toolbar="#toolbar" data-pagination="true"  data-page-list="[5,10,15]" data-unique-id="id" data-page-size="10">
+                        <thead>
+                            <tr>
+                                <th data-field="resourceName" data-align="center">资源名称</th>
+                                <th data-field="type" data-align="center">资源类型</th>
+                                <th data-field="uploadName" data-align="center">上传者</th>
+                                <th data-field="uptime" data-align="center">上传时间</th>
+                                <!--<th data-field="Formatter" data-formatter="operateFormatter" data-align="center">下载资源</th>-->
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="already">
+                    <input type="text" placeholder="请输入资源名称或资源类型">
+                    <table id="tableAlready" data-toggle="table" table-no-bordered="false"  data-toggle="table"  data-method="post" data-toolbar="#toolbar" data-pagination="true"  data-page-list="[5,10,15]" data-unique-id="id" data-page-size="10">
+                        <thead>
+                        <tr>
+                            <th data-field="resourceName" data-align="center">资源名称</th>
+                            <th data-field="type" data-align="center">资源类型</th>
+                            <th data-field="uploadName" data-align="center">上传者</th>
+                            <th data-field="uptime" data-align="center">上传时间</th>
+                            <th data-field="Formatter" data-formatter="operateFormatter" data-align="center">下载资源</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="not">
+                    <input type="text" placeholder="请输入资源名称或资源类型">
+                    <table id="tableNot" data-toggle="table" table-no-bordered="false"  data-toggle="table"  data-method="post" data-toolbar="#toolbar" data-pagination="true"  data-page-list="[5,10,15]" data-unique-id="id" data-page-size="10">
+                        <thead>
+                        <tr>
+                            <th data-field="resourceName" data-align="center">资源名称</th>
+                            <th data-field="type" data-align="center">资源类型</th>
+                            <th data-field="uploadName" data-align="center">上传者</th>
+                            <th data-field="uptime" data-align="center">上传时间</th>
+                            <!--<th data-field="Formatter" data-formatter="operateFormatter" data-align="center">下载资源</th>-->
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script>
+    //获取路径
+    var value = sessionStorage.getItem("key");
+    var obj = JSON.parse(value);
+    var datasa = obj.result;
+    var domain = datasa.domain;
+    $("#stay").show();
+    $("#already").hide();
+    $("#not").hide();
+    //默认加载审核
+    stay();
+    function stay() {
+        $.ajax({
+            type:'get',
+            url:'/api/resourceQuery',
+            data:{
+                status: 0,
+            },
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    var $table = $('#tableStay');
+                    var datas = data.result;
+                    $table.bootstrapTable('load',datas);
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+    }
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<a href="'+domain+'/' +row.url+ '" download="' +row.downloadName+ '"  style="color: red;">下载</a>'
+        ].join('');
+    }
+    //点击待审核
+    $("#Name").on("click","a",function () {
+        var index = $(this).attr("index");
+        window.sessionStorage["temporary_status"] = index;
+        var input_val = '';
+
+        $.ajax({
+            type:'post',
+            url:'/api/resourceQuery',
+            data: {
+                status: index,
+                input_val:input_val
+            },
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    var datas = data.result;
+                    if(index == 0) {
+                        $("#stay").show();
+                        $("#already").hide();
+                        $("#not").hide();
+                        $('#tableStay').bootstrapTable('load',datas);
+                    } else if(index == 1) {
+
+                        $("#stay").hide();
+                        $("#already").show();
+                        $("#not").hide();
+                        $('#tableAlready').bootstrapTable('load',datas);
+                    }else if(index == 2) {
+
+                        $("#stay").hide();
+                        $("#already").hide();
+                        $("#not").show();
+                        $('#tableNot').bootstrapTable('load',datas);
+                    }
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });        
+     });  
+
+    //搜索
+    $("input").blur(function () {
+        var input_val=$(this).val();
+            $('table tbody tr').hide().filter(':contains('+input_val+')').show(); 
+        });
+
+        $.ajax({
+            type:'post',
+            url:'/api/resourceQuery',
+            data: {
+                status: tem_status,
+                input_val:input_val
+            },
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    var datas = data.result;
+                    if(tem_status == 0) {
+                        $("#stay").show();
+                        $("#already").hide();
+                        $("#not").hide();
+                        $('#tableStay').bootstrapTable('load',datas);
+                    } else if(tem_status == 1) {
+
+                        $("#stay").hide();
+                        $("#already").show();
+                        $("#not").hide();
+                        $('#tableAlready').bootstrapTable('load',datas);
+                    }else if(tem_status == 2) {
+
+                        $("#stay").hide();
+                        $("#already").hide();
+                        $("#not").show();
+                        $('#tableNot').bootstrapTable('load',datas);
+                    }
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+
+</script>
+</html>

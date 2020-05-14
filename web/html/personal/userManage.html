@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+</head>
+<body>
+<div class="IndexRight">
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>用户管理</span>
+    </h6>
+    <div id="toolbar" class="btn-group">
+        <!--<button id="btn_add" type="button" onclick="add();" class="btn btn-primary">添加用户</button>-->
+        <button onclick="add();" class="btn btn-primary">批量导入</button>
+    </div>
+    <table id="table" data-toggle="table" table-no-bordered="false"  data-toggle="table"  data-method="post" data-toolbar="#toolbar" data-pagination="true"  data-page-list="[5,10,15]" data-unique-id="id" data-page-size="10">
+        <thead>
+        <tr>
+            <th data-field="cardNumber" data-align="center">一卡通号</th>
+            <th data-field="userName" data-align="center">姓名</th>
+            <th data-field="role" data-align="center">角色</th>
+            <th data-field="Formatter" data-formatter="operateFormatter" data-align="center">操作</th>
+            <!--<th data-field="time" data-align="center">手机号</th>-->
+            <!--<th data-field="publisher" data-align="center">邮箱</th>-->
+            <!--<th data-field="browse_num" data-align="center">性别</th>-->
+            <!--<th data-field="Formatter" data-formatter="operateFormatter" data-align="center">操作</th>-->
+        </tr>
+        </thead>
+    </table>
+</div>
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script>
+    var LeftNav = window.parent.document.getElementById("menu-article");
+    $(LeftNav).find("dl:eq(0)").addClass("leftNavActive");
+    $(LeftNav).find("dl:eq(0) a").addClass("leftAActive");
+    $(LeftNav).find("dl:eq(0) a").find("img").addClass("leftImg");
+    //    $(this).parent().parent().siblings().children().children().find("img").removeClass("leftImg");
+    function add() {
+        var $ifrem = window.parent.document.getElementById("iframe");
+        $($ifrem).attr("src","html/personal/ImportUsers.html")
+    }
+    Load();
+    function Load() {
+        $.ajax({
+            type:'get',
+            url:'/api/loadUserListData',
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    var $table = $('#table');
+                    var datas = data.result;
+                    $table.bootstrapTable('load',datas);
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+    }
+//    操作显示在表格
+    function operateFormatter(value, row, index) {
+        return [
+            '<a style="color: #31B0D5" title="修改角色" onclick="Reading(\''+ row.id + '\')">修改角色</a>',
+            '<a style="margin-left:10px;color: red" title="删除" onclick="del(\''+ row.id + '\')">删除</a>'
+        ].join('');
+    }
+    function Reading(id) {
+        var $ifrem = window.parent.document.getElementById("iframe");
+        $($ifrem).attr("src","html/personal/userManageDetails.html?id="+id);
+    }
+
+    //单个删除数据
+    function del(id){
+        layer.open({
+            title:false,
+            icon: 3,
+            content: '确认删除这条数据?',
+            btn: ['确定', '取消'],
+            yes: function(index){
+                layer.close(index);
+                $.ajax({
+                    type:'post',
+                    url:'/api/deleteUser ',
+                    data: {id:id},
+                    dataType:'json',
+                    success:function (data) {
+                        if(data.code=="001"){
+                            layer.msg("删除成功",{icon:1},function () {
+                                Load();
+                            });
+                        }else{
+                            layer.msg(data.message,{icon:2});
+                        }
+                    },
+                    error:function(err){
+                        console.error(err);
+                    }
+                });
+            },btn2: function(){
+            },cancel: function(){}
+        });
+    }
+</script>
+</html>

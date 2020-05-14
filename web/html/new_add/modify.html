@@ -1,0 +1,268 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap-table/bootstrap-table.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" /> -->
+    <!--<link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" />--> 
+     <!-- <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" /> -->
+      <!--<link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />  
+     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />-->
+    <style>
+       #dLabel :hover> .multi-level{
+        display: block;
+       }
+        .dropdown-submenu {
+            position: relative;
+        }
+ 
+        .dropdown-submenu > .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -6px;
+            margin-left: -1px;
+            -webkit-border-radius: 0 6px 6px 6px;
+            -moz-border-radius: 0 6px 6px;
+            border-radius: 0 6px 6px 6px;
+        }
+ 
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
+ 
+        .dropdown-submenu > a:after {
+            display: block;
+            content: " ";
+            float: right;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+            border-width: 5px 0 5px 5px;
+            border-left-color: #ccc;
+            margin-top: 5px;
+            margin-right: -10px;
+        }
+ 
+        .dropdown-submenu:hover > a:after {
+            border-left-color: #fff;
+        }
+ 
+        .dropdown-submenu.pull-left {
+            float: none;
+        }
+ 
+        .dropdown-submenu.pull-left > .dropdown-menu {
+            left: -100%;
+            margin-left: 10px;
+            -webkit-border-radius: 6px 0 6px 6px;
+            -moz-border-radius: 6px 0 6px 6px;
+            border-radius: 6px 0 6px 6px;
+        }
+        .btns{
+            margin-top: 600px
+        }
+        .btn{
+            margin-left:200px;
+            padding:5px 20px;
+        }
+    </style>
+</head>
+<body>
+    <h6 class="page_title">
+        <img src="logincheck11.png">
+        <span>角色权限</span>
+    </h6>
+    <div class="container">
+        <h5>角色名称:<span></span></h5>
+        <div class="row">
+        <hr>
+        <h5>角色权限:</h5>
+    <div class="dropdown">
+        <a id="dLabel" role="button" data-toggle="dropdown" class="btn btn-default"  href="javascript:;"><input type="checkbox">菜单 <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+
+         <li class="dropdown-submenu"><a tabindex="-1" href="javascript:;">
+           <input type="checkbox" name="ids">系统管理</a>
+            <ul class="dropdown-menu">
+             <li><a tabindex="-1" href="javascript:;">
+              <input type="checkbox" name="idz">a</a></li>
+                 <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz" >b</a></li>
+           </ul>
+        </li>
+        <li class="dropdown-submenu">
+            <a tabindex="-1" href="javascript:;"><input type="checkbox" name="ids">实验室预约管理</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+        </li>
+        <li class="dropdown-submenu">
+            <a tabindex="-1" href="javascript:;"><input type="checkbox" name="ids">理论测试</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a tabindex="-1" href="javascript:;"><input type="checkbox" name="ids">资源管理</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a href="javascript:;"><input type="checkbox" name="ids">实验准备</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a href="javascript:;"><input type="checkbox" name="ids">成绩管理</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a href="javascript:;"><input type="checkbox" name="ids">开课申请管理</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a href="javascript:;"><input type="checkbox" name="ids">教学计划</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a href="javascript:;"><input type="checkbox" name="ids">班级管理</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a tabindex="-1" href="javascript:;"><input type="checkbox" name="ids">在线考核</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a tabindex="-1" href="javascript:;"><input type="checkbox" name="ids">成绩查询</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a tabindex="-1" href="javascript:;"><input type="checkbox" name="ids">实验室管理</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+       <li class="dropdown-submenu">
+            <a tabindex="-1" href="javascript:;"><input type="checkbox" name="ids">统计信息</a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+                <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+            </ul>
+       </li>
+    </ul>
+   </div>
+  </div> 
+    <div class="btns">
+      <button class="btn btn-danger">确定</button>
+      <button class="btn btn-primary">返回</button>
+    </div>
+ </div>
+<script type="text/javascript" src="jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+<!--<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>-->
+<!--<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>-->
+<script>
+
+       //      $.ajax({
+       //          type:'get',
+       //          url:'',
+       //          data: {
+       //          },
+       //          dataType:'json',
+       //          success:function (data) {
+       //              var html='';
+       //              for(var i=0;i<data.length;i++){
+       //                  html+=`<li class="dropdown-submenu">
+       //      <a tabindex="-1" href="javascript:;"><input type="checkbox" name="ids">${data[i]}</a>
+       //      <ul class="dropdown-menu">
+       //          <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">a</a></li>
+       //          <li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz">b</a></li>
+       //      </ul>
+       // </li>`
+       //              }
+       //              $('ul.multi-level').html(html)
+       //       }
+       //      })
+ 
+
+
+
+
+           $("input[name='ids']").click(function(){
+                var checkedValue = this.checked;
+                $(this).parent().parent().find("input[name='idz']").prop("checked",checkedValue);
+            });
+
+         $("input[name='idz']").click(function(){
+             var oChs= $(this).parent().parent().parent().find("input[name='idz']");
+             
+              var count = 0; 
+             for(var i = 0;i<oChs.length;i++){
+                
+                if($(oChs[i]).prop('checked'))
+                    count++;          //有一个选中的则加1
+            
+                if(count == oChs.length){
+                    var oAll=$(this).parent().parent().parent().parent().find("input[name=ids]")
+                    $(oAll).prop('checked',true);
+                }
+                else{
+                    $(oAll).prop('checked',false);
+                }
+           
+        }
+    
+})
+
+
+           // $('.btn-danger').click(function(){
+           //  var checkeds=document.getAttribute('checked');
+           //  var arr=[];
+           //  for(var i=0;i<checkeds.length;i++){
+           //      arr.push(checkeds[i].id)
+           //  }
+           //  return arr;
+           //   $.ajax({
+           //    type:'post',
+           //    url:'',
+           //    data: {//checked选中的
+           //          arr:arr
+           //    },
+           //    dataType:'json',
+           //   success:function (data) {
+           //   }
+    
+           //  })
+           // })
+
+</script>
+</body>
+</html>

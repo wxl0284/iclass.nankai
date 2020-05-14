@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../lib/layui/css/layui.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        .layui-input-block {margin: 10px 0px;}
+    </style>
+</head>
+<body>
+<div class="IndexRight">
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>资源审批详情</span>
+    </h6>
+    <form class="layui-form" action="">
+        <div class="layui-input-block">
+            <input  type="checkbox"  title="审核通过">
+            <input  type="checkbox"  title="驳回">
+        </div>
+    </form>
+
+    <table class="table table-bordered tables">
+        <tbody>
+        <tr>
+            <td class="tableLeft">资源名称</td>
+            <td id="resourceName"></td>
+        </tr>
+        <tr>
+            <td class="tableLeft">资源类型</td>
+            <td id="type"></td>
+        </tr>
+        <tr>
+            <td class="tableLeft">上传者</td>
+            <td id="uploadName"></td>
+        </tr>
+        <tr>
+            <td class="tableLeft">下载资源</td>
+            <td><a id="resource" href="" download=""  style="color: red;cursor: pointer;">下载资源</a></td>
+        </tr>
+        <tr>
+            <td class="tableLeft">上传时间</td>
+            <td id="uptime"></td>
+        </tr>
+        <tr>
+            <td  colspan="2" style="text-align: center">
+                <input id="refill" class="btn btn-default size-MINI" type="button" value="返回">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/ueditor.all.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/zh-cn.js"></script>
+<script type="text/javascript" src="../../lib/layui/layui.js"></script>
+<script type="text/javascript" src="../../lib/layui/layui.all.js"></script>
+<script src="../../lib/layer/2.4/layer.js"></script>
+<script>
+    //记录id
+    var str = window.location.href.split("?")[1].substr("3");
+    var id = str.substring(0,str.indexOf("&"));
+    //审核状态
+    var status = window.location.href.split("&")[1].substr("4");
+    if(status == "1") {
+        $(".layui-input-block input:eq(1)").hide();
+        $(".layui-input-block div:eq(1)").hide();
+        $(".layui-input-block input:eq(0)").attr("disabled","true");
+        $(".layui-input-block div:eq(0)").addClass("layui-disabled layui-form-checked");
+    }else if(status == "2") {
+        $(".layui-input-block input:eq(0)").hide();
+        $(".layui-input-block div:eq(0)").hide();
+        $(".layui-input-block input:eq(1)").attr("disabled","true");
+        $(".layui-input-block div:eq(1)").addClass("layui-disabled layui-form-checked");
+    }
+    //未审核详情，审核提交
+    $(".layui-input-block div").on("click",function () {
+        var text = $(this).find("span").text();
+        if($(this).hasClass("layui-disabled") != true ) {
+            layer.open({
+                title:false,
+                icon: 3,
+                content: '确定选择'+text,
+                btn: ['确定', '取消'],
+                yes: function(index){
+                    layer.close(index);
+                    if( text ===  '审核通过') {
+                        $(".layui-input-block input:eq(1)").attr("disabled","true");
+                        $(".layui-input-block div:eq(1)").addClass("layui-checkbox-disbaled layui-disabled");
+                        $(".layui-input-block div:eq(0)").addClass("layui-disabled");
+                        $.ajax({
+                            type:'post',
+                            url:'/api/examine',
+                            data: {id:id,status:1},
+                            dataType:'json',
+                            success:function (data) {
+                                if(data.code=="001"){
+                                    layer.msg(data.message,{icon:1},function () {
+                                        var $ifrem = window.parent.document.getElementById("iframe");
+                                        $($ifrem).attr("src","html/subject/resourcrSubject.html");
+                                    });
+                                } else {
+                                    layer.msg(data.message,{icon:2});
+                                    $(".layui-input-block div").removeClass("layui-form-checked layui-disabled layui-checkbox-disbaled");
+                                }
+                            },
+                            error:function(err){
+                                console.error(err);
+                            }
+                        });
+                    }else {
+                        $(".layui-input-block input:eq(0)").attr("disabled","true");
+                        $(".layui-input-block div:eq(0)").addClass("layui-checkbox-disbaled layui-disabled");
+                        $(".layui-input-block div:eq(1)").addClass("layui-disabled");
+                        $.ajax({
+                            type:'post',
+                            url:'/api/examine',
+                            data: {id:id,status:2},
+                            dataType:'json',
+                            success:function (data) {
+                                if(data.code=="001"){
+                                    $(".layui-input-block div:eq(1)").addClass("layui-form-checked");
+                                    layer.msg(data.message,{icon:1},function () {
+                                        var $ifrem = window.parent.document.getElementById("iframe");
+                                        $($ifrem).attr("src","html/subject/resourcrSubject.html");
+                                    });
+                                } else {
+                                    layer.msg(data.message,{icon:2});
+                                    $(".layui-input-block div").removeClass("layui-form-checked layui-disabled layui-checkbox-disbaled");
+                                }
+                            },
+                            error:function(err){
+                                console.error(err);
+                            }
+                        });
+                    }
+                },btn2: function(){
+                    $(".layui-input-block input").attr("disabled","false");
+                    $(".layui-input-block div").removeClass("layui-checkbox-disbaled layui-disabled layui-form-checked");
+                    $(this).removeClass('layui-disabled');
+                },cancel: function(){
+                    $(".layui-input-block input").attr("disabled","false");
+                    $(".layui-input-block div").removeClass("layui-checkbox-disbaled layui-disabled layui-form-checked");
+                    $(this).removeClass('layui-disabled');
+                }
+            });
+        }else if(($(this).hasClass("layui-form-checked") != true) && ($(this).hasClass("layui-checkbox-disbaled") != true) ) {
+            $(this).addClass("layui-form-checked");
+        }
+
+
+    });
+
+
+    //审核按钮
+    layui.use('form', function(){
+        var form = layui.form;
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+
+    //获取路径
+    var value = sessionStorage.getItem("key");
+    var obj = JSON.parse(value);
+    var datasa = obj.result;
+    var domain = datasa.domain;
+    //加载页面数据
+    $.ajax({
+        type:'post',
+        url:'/api/particulars',
+        data: {id:id},
+        dataType:'json',
+        success:function (data) {
+            if(data.code=="001"){
+                datas = data.result;
+                $("#resourceName").text(datas[0].resourceName);
+                $("#type").text(datas[0].type);
+                $("#uploadName").text(datas[0].uploadName);
+                $("#resource").attr("href",domain+'/' +datas[0].url);
+                $("#resource").attr("download",datas[0].resourceName);
+                $("#uptime").text(datas[0].uptime);
+            } else {
+                layer.msg(data.message,{icon:2});
+            }
+        },
+        error:function(err){
+            console.error(err);
+        }
+    });
+    //返回按钮
+    $("#refill").on("click",function () {
+        var $ifrem = window.parent.document.getElementById("iframe");
+        $($ifrem).attr("src","html/subject/resourcrSubject.html");
+    })
+</script>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        .btn-group{
+            display: block;
+            margin-bottom:30px;
+        }
+        input {
+
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 150px;
+            height: 30px;
+           position: absolute;
+            right:0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="IndexRight">
+        <h6 class="page_title">
+            <img src="../../images/module_title.png">
+            <span>教学资源</span>
+        </h6>
+        <div  class="btn-group">
+            <button id="btn_add" type="button" onclick="add();" class="btn btn-primary">上传资源</button> <input type="text" placeholder="请输入资源名称或资源类型">
+        </div>
+        <table id="table"  table-no-bordered="false"  data-toggle="table"  data-method="post" data-toolbar="#toolbar" data-pagination="true"  data-page-list="[5,10,15]" data-unique-id="id" data-page-size="10">
+            <thead>
+            <tr>
+                <th data-field="name"  data-align="center">资源名称</th>
+                <th data-field="type" data-align="center">资源类型</th>
+                <th data-field="time" data-align="center">上传时间</th>
+                <th data-formatter="downloadFormatter" data-align="center">下载资源</th>
+                <th data-formatter="deleteFormatter" data-align="center">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script>
+    //课程记录id
+    var str=window.parent.location.href.split("?")[1].substr("3");
+    var id = str.substring(0,str.indexOf("&"));
+    //课程id
+    var ids =window.parent.location.href.split("&")[1].substr("4");
+
+    function add() {
+        var $ifrem = window.parent.document.getElementById("iframe");
+        $($ifrem).attr("src","html/courseMaintain/addResources.html")
+    }
+    //加载表格数据
+    Load();
+    function Load() {
+        $.ajax({
+            type:'post',
+            url:'/api/listTeachSource',
+            data: {id:id,curriculum_id:ids},
+            dataType:'json',
+            success:function (data) {
+                if(data.code == "001"){
+//                    var $table = $('#table');
+                    var datas = data.result;
+                    $('#table').bootstrapTable('load',datas);
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+    }
+    //获取路径
+    var value = sessionStorage.getItem("key");
+    var obj = JSON.parse(value);
+    var datasa = obj.result;
+    var domain = datasa.domain;
+    function downloadFormatter(value, row, index) {
+        return [
+            '<a href="'+domain+'/' +row.url+ '" download="' +row.downloadName+ '"  style="color: red;">下载</a>'
+        ].join('');
+    }
+    //删除
+    function deleteFormatter(value, row, index) {
+        return [
+            '<a style="margin-left:8px;color: red" class="del" onclick="del(\''+ row.id + '\')" title="删除">删除</a>'
+        ].join('');
+    }
+    //删除
+    function del(id) {
+        layer.open({
+            title:false,
+            icon: 3,
+            content: '确认删除这条数据?',
+            btn: ['确定', '取消'],
+            yes: function(index){
+                layer.close(index);
+                $.ajax({
+                    type:'post',
+                    url:'/api/deleteTeachSource ',
+                    data: {id:id},
+                    dataType:'json',
+                    success:function (data) {
+                        if(data.code=="001"){
+                            $("tr[data-uniqueid='"+id+"']").remove();
+                            layer.msg("删除成功",{icon:1},function () {
+                                window.location.reload();
+                            });
+                        }else{
+                            layer.msg(data.message,{icon:2});
+                        }
+                    },
+                    error:function(err){
+                        console.error(err);
+                    }
+                });
+            },btn2: function(){
+            },cancel: function(){}
+        });
+    }
+
+ $("input").blur(function () {
+        var input_val=$(this).val();
+        // if(window.sessionStorage["temporary_status"] == undefined){
+        //     var tem_status = 0;
+        // }else{
+        //     var tem_status = window.sessionStorage["temporary_status"];
+            $('table tbody tr').hide().filter(':contains('+input_val+')').show(); 
+        })
+
+</script>
+</html>

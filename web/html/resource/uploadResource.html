@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+</head>
+<body>
+    <div class="IndexRight">
+        <h6 class="page_title">
+            <img src="../../images/module_title.png">
+            <span>上传资源</span>
+        </h6>
+        <div class="prompt">
+            <div class="text">
+                <p>1.带*的为必填</p>
+                <p>2.上传资源大小不超过500M，上传压缩包文件不支持中文文件名</p>
+            </div>
+        </div>
+        <table class="table table-bordered tables">
+            <tbody>
+            <tr>
+                <td class="tableLeft"><span style="color: red;margin-right: 4px;">*</span>资源名称</td>
+                <td><input id="resourceName" name="resourceName" type="text" placeholder="" class="input-text"></td>
+            </tr>
+            <tr>
+                <td class="tableLeft"><span style="color: red;margin-right: 4px;visibility: hidden">*</span>资源类型</td>
+                <td>
+                    <select id="articletype" name="type">
+                        <option value="文档" id="txt">文档</option>
+                        <option value="图片">图片</option>
+                        <option value="视频">视频</option>
+                        <option value="压缩文件">压缩文件</option>
+                        <option value="可执行文件">可执行文件</option>
+                    </select>
+                    <span class="prompts" style="margin-left: 10px;color: red">文本类型为.doc, .docx, .pdf, .txt格式</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableLeft"><span style="color: red;margin-right: 4px;visibility: hidden">*</span>上传资源</td>
+                <td>
+                    <p>
+                        <input id="file" class="file" type="file" name="file" multiple data-min-file-count="1">
+                    </p>
+                    <div class="progress">
+                        <div id="chart" class="progress-bar" role="progressbar"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tableLeft"><span style="color: red;margin-right: 4px;visibility: hidden">*</span>资源描述</td>
+                <td><textarea id="remark" rows="4" name="remark" style="width:95%;"></textarea></td>
+            </tr>
+            <tr>
+                <td  colspan="2" style="text-align: center">
+                    <input id="submit" class="btn btn-primary size-MINI radius" type="submit" value="确认">
+                    <button class="btn btn-default size-MINI" type="button" value="重填" id="reset">重填</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+
+<script>
+    $("#articletype").change(function(){
+        var uptext =$(this).find("option:selected").val();
+        if(uptext == '文档'){
+            $(".prompts").text("文本类型为.doc, .docx, .pdf, .txt格式");
+        }else if(uptext == '图片'){
+            $(".prompts").text("图片类型为.jpg, .png, .jpeg格式");
+        }else if(uptext == '视频'){
+            $(".prompts").text("视频类型为.mp4格式");
+        }else if(uptext == '压缩文件'){
+            $(".prompts").text("压缩文件类型为.zip, .rar格式");
+        }else if(uptext == '可执行文件'){
+            $(".prompts").text("可执行文件类型为.exe格式");
+        }
+    });
+
+
+    //上传资源
+    $(".progress").css("visibility","hidden");
+    $("#file").on("click",function () {
+        $("#chart").text("");
+        $("#chart").css("width","0%");
+    });
+    $('#submit').click(function() {
+        var uploadFile = document.getElementById('file').files[0];
+        var resourceName = $("#resourceName").val();
+        var articletype = $("#articletype").val();
+        var remark = $("#remark").val();
+        if((resourceName!= "") && (uploadFile != undefined)) {
+            $(".progress").css("visibility","visible");
+            var formData = new FormData();
+            formData.append('file', uploadFile);
+            formData.append('resourceName', resourceName);
+            formData.append('type', articletype);
+            formData.append('remark', remark);
+            $.ajax({
+                type: "POST",
+                url: "/api/upSource",
+                data: formData ,
+                processData: false,
+                contentType: false,
+                xhr: function() {
+                    var xhr = $.ajaxSettings.xhr();
+                    if (xhr.upload) {
+                        xhr.upload.onprogress = function(progress) {
+                            if (progress.lengthComputable) {
+                                var percentComplete = Math.round((progress.loaded) * 100 / progress.total);
+                                $("#chart").text(percentComplete+"%");
+                                $("#chart").css("width",percentComplete+"%");
+                            }
+                        };
+                    }
+                    return xhr;
+                },
+                success: function(data) {
+                    var obj = JSON.parse(data);
+                    if(obj.code == "001") {
+                        layer.msg(obj.message,{icon:1},function () {
+                            window.location.reload();
+                        });
+                    }else {
+                        layer.msg(obj.message,{icon:2});
+                        $(".progress").css("visibility","hidden");
+                        $("#chart").text("0%");
+                        $("#chart").css("width","0%");
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    $(".progress").css("visibility","hidden");
+                    $("#chart").text("0%");
+                    $("#chart").css("width","0%");
+                }
+            });
+        }else {
+            layer.msg("资源名称与资源不能为空",{icon:2})
+        }
+    });
+
+                //重置
+    $("#reset").click(function () {
+        $("#resourceName").val('');
+        $("#txt").attr("selected","selected");
+        $("#file").val('');
+        $("#remark").val('');
+    })
+
+    //表单提交，显示后台返回数据
+//        $("#form").ajaxForm(function(data){
+//            var obj = JSON.parse(data);
+//            if(obj.code == '001') {
+//                layer.msg(obj.message,{icon:6},function () {
+//                    window.location.href="/web/html/resource/resourcelist.html";
+//                });
+//            }else {
+//                layer.msg(obj.message,{icon:2});
+//            }
+//        });
+</script>
+</html>

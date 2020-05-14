@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" href="../../lib/laydate/theme/default/laydate.css">
+    <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <style>
+        *{margin: 0px;padding: 0px;}
+        .IndexRight{margin:20px;}
+        .commentList .item{margin: 0px}
+        .comment-main{ position: relative;margin-left: 0px;border: 1px solid #dedede;border-radius: 2px;}
+        .comment-header {padding: 10px 15px;background: #f8f8f8;border-bottom: 1px solid #eee;}
+        .comment-meta{color: #444;font-weight: 700;}
+        .comment-body {padding: 15px;overflow: hidden;}
+
+        .panel-body li span{position: absolute;right: 30px}
+        .noticeTitle{width: 70%;display: inline-block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+        .courseDiv{margin: 6px 10px;padding-bottom: 4px;border-bottom:1px dashed #B8CBDA;}
+        .courseDivLeft{margin: 6px 10px;padding-bottom: 4px;}
+        .courseDivLeft p{margin-bottom: 0px;width:100px;}
+        .courseDiv p{margin-bottom: 0px;width:100px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;}
+
+        .courListRight{text-align: center;overflow: hidden;padding: 10px;}
+
+        @media(min-width:768px){.modal-dialog{width:80%;}}
+        .fancybox-item{position: absolute;top: -18px;right: -18px;width: 36px;height: 36px;cursor: pointer;z-index: 8040;}
+        .fancybox-close{background-image: url("../../images/fancybox_sprite.png")}
+
+        .modal-bodys{padding: 20px;overflow: auto;height: 700px;margin: 20px}
+        .page_title{border-bottom: solid 1px #ddd;padding: 8px 14px;}
+        .page_title span{margin-left: 4px}
+        .tables>tbody>tr>td{padding: 4px 8px;line-height: 1.42857143;vertical-align: middle;font-size: 12px}
+        .table-bordered td {border-left: 1px solid #ccc;border-bottom: 1px solid #ccc}
+        .btn{padding: 4px 8px;font-size: 12px}
+        .tableLeft{background: #EBEBEB;width: 300px}
+        .subtitle{margin: 8px 0px; background: none repeat scroll 0 0 #EBEBEB;border-bottom: 2px solid #CCC;height: 24px;line-height: 29px}
+        .subtitle span{margin-left: 20px;font-weight: 700;font-size: 16px}
+        .buttonc {padding-top: 10px;padding-bottom: 15px;}
+        .input-text{width: 40%}
+
+    </style>
+</head>
+<body>
+    <div class="IndexRight row cl">
+         <div class="col-lg-3 col-md-3" >
+             <ul class="commentList">
+                 <li class="item cl">
+                     <div class="comment-main">
+                         <header class="comment-header">
+                             <div class="comment-meta">个人信息</div>
+                         </header>
+                         <div class="comment-body">
+                             <p><img data-src="holder.js/120x160" class="img-rounded" id="topimg" src="" style="border:1px solid #ccc;height: 160px; width: 120px;" alt=""></p>
+                             <p>姓名：<span id="userName"></span></p>
+                             <p>登陆时间：<span id="loginTime"></span></p>
+                             <!--<p>在线总时长：<span>30小时24分钟</span></p>-->
+                             <p>登陆次数：<span id="login_num"></span></p>
+                             <p>
+                                 <div class="btn-group">
+                                     <span  onClick="modaldemo()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe6df;</i>修改信息</span>
+                                     <!--<span class="btn btn-secondary radius"><i class="Hui-iconfont">&#xe63f;</i>安全设置</span>-->
+                                 </div>
+                             </p>
+                         </div>
+                     </div>
+                 </li>
+             </ul>
+         </div>
+         <div id="row-content" class="col-lg-6 col-md-6" style="display: none">
+             <div id="notices" class="panel panel-default" style="display: none">
+                 <div class="panel-header">
+                     <span><img src="../../images/personal/icon1.png" style="margin-right: 4px">通知公告</span>
+                     <!--<span><i class="Hui-iconfont">&#xe62f;</i>通知公告</span>-->
+                     <span class="row-content-right" style="position: absolute;right: 30px"><a href="notice.html">更多>></a></span>
+                 </div>
+                 <div id="notice" class="panel-body">
+                     <ul></ul>
+                 </div>
+             </div  >
+             <div id="curriculum" class="panel panel-default" style="margin-top: 20px;display: none" >
+                 <div class="panel-header">
+                     <span><img src="../../images/personal/icon2.png" style="margin-right: 4px">使用列表<!--课程列表--></span>
+                     <!--<span style="position: absolute;right: 30px"><a href="../myCourse/course.html">更多>></a></span>-->
+                 </div>
+                 <div class="panel-body courList" >
+                     <div class="row cl">
+                         <div class="col-md-1 col-sm-1 courseDivLeft">
+                             <p>课程名称:</p>
+                             <p>课程编号:</p>
+                             <p>任课教师:</p>
+                             <p>使用次数:</p>
+                         </div>
+                         <div class="col-md-10 col-sm-10">
+                             <div class="row cl" id="courseList"  >
+                                 <!--<div class="col-md-3 col-sm-3 courseDiv">-->
+                                     <!--<p><a href="#">人工智能虚拟仿真技术人工智能虚拟仿真技术人工智能虚拟仿真技术人工智能虚拟仿真技术</a></p>-->
+                                     <!--<p>10300132... </p>-->
+                                     <!--<p>李磊</p>-->
+                                 <!--</div>-->
+                             </div>
+                         </div>
+                     </div>
+
+                 </div>
+             </div>
+         </div>
+         <div id="row-right" class="col-lg-3 col-md-3" style="display: none">
+             <div class="panel panel-default">
+                 <div class="panel-header">
+                     <span><img src="../../images/personal/icon2.png" style="margin-right: 4px">教学日历</span>
+                 </div>
+                 <div class="panel-body courListRight" >
+                     <div class="layui-inline" id="test-n1" lay-key="38"></div>
+
+                 </div>
+             </div>
+         </div>
+    </div>
+
+    <div id="modal-demo" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content radius">
+                <a aria-hidden="true" data-dismiss="modal" title="Close" class="fancybox-item fancybox-close" href="javascript:;"></a>
+                <div id="showContent" class="modal-bodys">
+                    <h6 class="page_title">
+                        <img src="../../images/module_title.png">
+                        <span>修改信息</span>
+                    </h6>
+                    <table class="table table-border table-bordered">
+                        <tbody>
+                            <tr>
+                                <td class="tableLeft">用户名：</td>
+                                <td class="name"></td>
+                            </tr>
+                            <tr>
+                                <td class="tableLeft">真实姓名：</td>
+                                <td class="reallyname"></td>
+                            </tr>
+                            <tr>
+                                <td class="tableLeft">性别：</td>
+                                <td id="sex">
+                                    <!--<input type="radio" name="sex" value="男" disabled>男&nbsp;&nbsp;-->
+                                    <!--<input type="radio" name="sex" value="女" disabled>女-->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tableLeft">教师编号：</td>
+                                <td id="teacherName"></td>
+                            </tr>
+                            <tr>
+                                <td class="tableLeft">Email地址：</td>
+                                <td id="email"></td>
+                            </tr>
+                            <tr>
+                                <td class="tableLeft">个人网址：</td>
+                                <td id="yourselfweb"></td>
+                            </tr>
+                            <tr>
+                                <td class="tableLeft">所属院系：</td>
+                                <td id="Faculty"></td>
+                            </tr>
+                            <tr>
+                                <td class="tableLeft">所属专业：</td>
+                                <td id="Specialties"></td>
+                            </tr>
+                            <tr>
+                                <td class="tableLeft">职称：</td>
+                                <td id="Title"></td>
+                            </tr>
+                            <tr>
+                                <td class="tableLeft">个人头像：</td>
+                                <td><img data-src="holder.js/120x160" class="img-rounded" id="img" src="" style="border:1px solid #ccc;height: 160px; width: 120px;" alt=""></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="subtitle" style="margin-bottom: 0;padding-bottom: 0"><span>个人简介</span></div>
+                    <div id="profile" class="buttonc" style="border: 1px solid #ccc;margin-top: 10px"></div>
+                    <div class="buttonc">
+                        <input id="exitInfo" class="btn btn-primary size-MINI radius" type="button" value="修改">
+                        <input class="btn btn-default size-MINI" type="button" value="关闭" data-dismiss="modal" aria-hidden="true">
+                    </div>
+                </div>
+                <div id="exitContent" class="modal-bodys">
+                    <h6 class="page_title">
+                        <img src="../../images/module_title.png">
+                        <span>修改信息</span>
+                    </h6>
+                    <table class="table table-border table-bordered" style="position: relative">
+                        <tbody>
+                        <tr>
+                            <td class="tableLeft">用户名：</td>
+                            <td  class="name"></td>
+                        </tr>
+                        <tr>
+                            <td class="tableLeft">真实姓名：</td>
+                            <td class="reallyname"></td>
+                        </tr>
+                        <tr>
+                            <td class="tableLeft">性别：</td>
+                            <td>
+                                <input type="radio" name="exitsex" value="男" >男&nbsp;&nbsp;
+                                <input type="radio" name="exitsex" value="女" >女
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tableLeft">Email地址：</td>
+                            <td><input id="exitemail" type="text" placeholder="" class="input-text"></td>
+                        </tr>
+                        <tr>
+                            <td class="tableLeft">个人网址：</td>
+                            <td><input id="exityourselfweb" type="text" placeholder="" class="input-text"></td>
+                        </tr>
+                        <tr>
+                            <td class="tableLeft">所属院系：</td>
+                            <td><input id="exitFaculty" type="text" placeholder="" class="input-text"></td>
+                        </tr>
+                        <tr>
+                            <td class="tableLeft">所属专业：</td>
+                            <td><input id="exitSpecialties" type="text" placeholder="" class="input-text"></td>
+                        </tr>
+                        <tr>
+                            <td class="tableLeft">职称：</td>
+                            <td><input id="exitTitle" type="text" placeholder="" class="input-text"></td>
+                        </tr>
+                        <tr>
+                            <td class="tableLeft">个人头像：</td>
+                            <td style="height: 156px">
+                                <div style="position: absolute;height: 160px;top: 356px;">
+                                    <img data-src="holder.js/120x160" class="img-rounded" id="imgs" src="" style="border:1px solid #ccc;height: 160px; width: 120px;" alt="">
+                                    <input type="file" accept="image/*" class="file" id="file" name="addimage" style="width: 150px;height: 150px;position: relative;top: 0px;left: -154px;opacity: 0">
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="subtitle" style="margin-bottom: 0;padding-bottom: 0"><span>个人简介</span></div>
+                    <div class="buttonc" style="border: 1px solid #ccc;margin-top: 10px">
+                        <script id="container" name="content" type="text/plain"></script>
+                    </div>
+                    <div class="buttonc">
+                        <input id="addInfo" class="btn btn-primary size-MINI radius" type="button" value="确定">
+                        <input id="cancel" class="btn btn-default size-MINI" type="button" value="取消">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/ueditor.all.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/zh-cn.js"></script>
+<script type="text/javascript" src="../../lib/holder.js"></script>
+<script src="../../lib/laydate/laydate.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script>
+    //根据用户性质判断显示与否
+    var value = sessionStorage.getItem("key");
+    var obj = JSON.parse(value);
+    var datasa = obj.result;
+    var datanav = datasa.auth;
+    var rule = datasa.rule;
+    var arr = rule.split(",");
+
+
+    //获取路径
+    var domain = datasa.domain;
+    //判断显示与否
+    if((datasa.show.notice != 0) || (datasa.show.curriculum != 0)  ) {
+        $("#row-content").show();
+        if(datasa.show.notice == 1) {
+            //通知公告列表加载
+            $("#notice ul").html('');
+            if(arr == 1) {
+                $(".row-content-right").hide();
+            }
+            $.ajax({
+                type:'get',
+                url:'/api/indexNotice',
+                dataType:'json',
+                success:function (data) {
+                    if(data.code=="001"){
+                        datas = data.result.data;
+                        for(var i=0;i<datas.length;i++) {
+                            var li = '';
+                            if(datas[i].status == 0) {
+                                li += '<li><a href="noticeDetails.html?id='+datas[i].id+'" class="noticeTitle" style="color: red" title="' +datas[i].title+ '">' +datas[i].title+ '</a><span style="color: red">' +datas[i].time+ '</span></li>';
+                            }else if(datas[i].status == 1) {
+                                li += '<li><a href="noticeDetails.html?id=' +datas[i].id+'" class="noticeTitle" title="' +datas[i].title+ '">' +datas[i].title+ '</a><span>' +datas[i].time+ '</span></li>';
+                            }
+                            $("#notice ul").append(li);
+                        }
+                    }
+                },
+                error:function(err){
+                    console.error(err);
+                }
+            });
+
+            $("#notices").show();
+        }
+        if(datasa.show.curriculum == 1) {
+            //课程列表显示
+            $("#courseList").html('');
+            $.ajax({
+                type: 'get',
+                url: '/api/teachApplyCheckedList',
+                dataType: 'json',
+                success: function (data) {
+                    if(data.code == "001") {
+                        dataz = data.result;
+                        for(var i=0;i<dataz.length;i++) {
+                            var div='';
+                            var num = (i + 1)*24;  //临时添加
+                            div += '<div class="col-md-3 col-sm-3 courseDiv"><p><a num="' +dataz[i].curriculum_id+ '" index="' +dataz[i].id+ '" href="#" title="' +dataz[i].curriculum_name+ '">' +dataz[i].curriculum_name+ '</a></p><p>' +dataz[i].curriculum_num+ '</p><p>' +dataz[i].user_name+ '</p><p>' +num+ '</p></div>'
+                            $("#courseList").append(div);
+                        }
+                        //课程列表点击跳转
+                        $("#courseList a").click(function (){
+                            var index = $(this).attr("index");
+                            var num = $(this).attr("num");
+                            window.open("../../childIndex.html?id=" + index + "&ids=" + num);
+                        });
+                    }
+                },
+                error:function(err){
+                    console.error(err);
+                }
+            });
+            $("#curriculum").show();
+        }
+    }
+
+
+
+    $("#container").css("height","440px");
+    var ue = UE.getEditor('container');
+
+    //左侧个人信息
+    var User = sessionStorage.getItem("User");
+    var Userobj = JSON.parse(User);
+    $("#userName").text(Userobj.user_name);
+    $("#loginTime").text(Userobj.login_time);
+    $(".reallyname").text(Userobj.user_name);
+
+    //加载弹窗里的数据
+    load();
+    function load() {
+        $.ajax({
+            url:'/api/selectSelfInfo',
+            dataType:'json',
+            json: "callback",
+            type:'post',
+            contentType: "application/x-www-form-urlencoded; charset=utf-8",
+            success:function (data) {
+                if(data.code=="001"){
+                    datas = data.result;
+                    if(datas.portrait == null || datas.portrait =='' ) {
+                        $("#topimg").attr("src",domain+"/uploads/portrait/moren.png");
+                        $("#img").attr("src",domain+"/uploads/portrait/moren.png");
+                        $("#imgs").attr("src",domain+"/uploads/portrait/moren.png");
+                    }else {
+                        $("#topimg").attr("src",domain+'/'+datas.portrait);
+                        $("#img").attr("src",domain+'/'+datas.portrait);
+                        $("#imgs").attr("src",domain+'/'+datas.portrait);
+                    }
+                    $("#login_num").text(datas.login_num);
+                    $(".name").text(datas.user_uid);
+                    $("#teacherName").text(datas.teacher_num);
+                    $("#email").text(datas.email);
+                    $("#yourselfweb").text(datas.website);
+                    $("#Faculty").text(datas.college);
+                    $("#Specialties").text(datas.major);
+                    $("#Title").text(datas.professional);
+                    $("#profile").html(datas.resume);
+                    $("#exitemail").val(datas.email);
+                    $("#exityourselfweb").val(datas.website);
+                    $("#exitFaculty").val(datas.college);
+                    $("#exitSpecialties").val(datas.major);
+                    $("#exitTitle").val(datas.professional);
+                    $("#sex").text(datas.sex);
+                    $(":radio[name='sex'][value='"+datas.sex+"']").prop("checked","checked");
+                    $(":radio[name='exitsex'][value='"+datas.sex+"']").prop("checked","checked");
+
+                    ue.ready(function() {
+                        //设置编辑器的内容
+                        ue.setContent(datas.resume);
+                    });
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+    }
+
+
+    //获取index页ifrem的id
+    var $ifrem = window.parent.document.getElementById("iframe");
+    var TopNav = window.parent.document.getElementById("Top-nav");
+    var LeftNav = window.parent.document.getElementById("menu-article");
+    var user = window.parent.document.getElementById("user");
+//    $("#Top-nav ul li a").first().css("color","#1F8AE0");
+
+    //弹窗的显示与否
+    function modaldemo(){
+        $("#modal-demo").modal("show");
+        $("#showContent").show();
+        $("#exitContent").hide();
+    }
+    $(user).click(function () {
+        $("#modal-demo").modal("show");
+        $("#showContent").show();
+        $("#exitContent").hide();
+    });
+    $("#container").css({"height":"200px","width":"100%"});
+    $("#exitInfo").click(function () {
+        $("#showContent").hide();
+        $("#exitContent").show();
+    });
+    $("#cancel").click(function () {
+        load();
+        $("#showContent").show();
+        $("#exitContent").hide();
+    });
+    //上传头像
+    var src="";
+    $("#file").change(function(e){
+        //获取上传文件的后缀名,以及文件的大小
+        type =e.target.files.item(0).type.split("/")[0];
+        size = e.target.files.item(0).size;
+        if(type != "image"){
+            layer.alert('只允许上传图片', {icon: 0});
+            return false;
+        }else if(size >2*1024*1024){
+            layer.alert('图片大小不能超过2M', {icon: 0});
+            return false;
+        }else{
+            for (var i = 0; i < e.target.files.length; i++){
+                var file = e.target.files.item(i);
+                var freader = new FileReader();
+                freader.readAsDataURL(file);
+                freader.onload = function(e) {
+                    src = e.target.result;
+                    $("#imgs").attr("src",src);
+                }
+            }
+        }
+    });
+    //提交
+    $("#addInfo").click(function () {
+        var sex = $("input[name='exitsex']:checked").val();
+        var exitEmail =  $("#exitemail").val();
+        var exitYourselfWeb = $("#exityourselfweb").val();
+        var exitFaculty = $("#exitFaculty").val();
+        var exitSpecialties = $("#exitSpecialties").val();
+        var exitTitle = $("#exitTitle").val();
+        var image = $("#imgs")[0].src;
+        var content = ue.getContent();
+        var pregReg = /^data:image\/(jpeg|png|gif);base64,/;
+        if(pregReg.test(image)) {
+            $.ajax({
+                url:'/api/modifySelfInfo',
+                dataType:'json',
+                json: "callback",
+                type:'post',
+                data:{
+                    'email': exitEmail,
+                    'website': exitYourselfWeb,
+                    'college': exitFaculty,
+                    'major': exitSpecialties,
+                    'professional': exitTitle,
+                    'resume': content,
+                    'image': image,
+                    'sex': sex
+                },
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                success:function (data) {
+                    if(data.code=="001"){
+                        layer.msg("修改成功",{icon:1},function(){
+                            load();
+                            $("#showContent").show();
+                            $("#exitContent").hide();
+                        });
+                    } else {
+                        layer.msg(data.message,{icon:2});
+                    }
+                },
+                error:function(err){
+                    console.error(err);
+                }
+            });
+        }else {
+            var tmp_image = image.split('/').slice(3).join('/');
+            $.ajax({
+                url:'/api/modifySelfInfo',
+                dataType:'json',
+                json: "callback",
+                type:'post',
+                data:{
+                    'email': exitEmail,
+                    'website': exitYourselfWeb,
+                    'college': exitFaculty,
+                    'major': exitSpecialties,
+                    'professional': exitTitle,
+                    'resume': content,
+                    'image': tmp_image,
+                    'sex': sex
+                },
+                contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                success:function (data) {
+                    if(data.code=="001"){
+                        layer.msg("修改成功",{icon:1},function(){
+                            load();
+                            $("#showContent").show();
+                            $("#exitContent").hide();
+                        });
+                    } else {
+                        layer.msg(data.message,{icon:2});
+                    }
+                },
+                error:function(err){
+                    console.error(err);
+                }
+            });
+        }
+    });
+    //判断当前用户角色
+    if(arr.indexOf('2') != -1){
+        if(arr.indexOf('3') != -1){
+            var role_id = 3;
+        }else{
+            var role_id = 2;
+        }
+    }else if(arr.indexOf('3') != -1){
+        var role_id = 3;
+    }
+    if(datasa.show.calendar == 1) {
+        $("#row-right").show();
+        //教学日历
+        laydate.render({
+            elem: '#test-n1',
+            position: 'static',
+            showBottom: false,
+            mark: {
+//            '0-10-14': '生日具体日期',
+//            '0-12-31': '跨年', //每年12月31日
+//            '0-0-10': '工资', //每个月10号
+//            '2017-12-15': '具体日期', //具体日期
+//            '2017-12-20': '预发', //如果为空字符，则默认显示数字+徽章
+//            '2017-8-21': '发布'
+            },  
+            done: function(value, date, endDate){
+                if(arr.length == 1){
+                    for(var i=0; i<arr.length; i++){
+                        // console.log(arr);
+                        if(arr[i] == "2"){
+                            $($ifrem).attr("src",'html/calendar/calendar.html');
+                            $(TopNav).find("ul").find("li:eq(2)").css("background","#fff");
+                            $(TopNav).find("ul").find("li").find("a:eq(2)").css("color","#94467a");
+                            $(TopNav).find("ul").find("li:eq(0)").css("background","#85C5F8");
+                            $(TopNav).find("ul").find("li").find("a:eq(0)").css("color","#333");
+                            $(LeftNav).html('');
+                            for(var j=0; j<datanav[2].child.length; j++) {
+                                var dl = '';
+                                dl += '<dl><dt><a data-href="' + datanav[2].child[j].path + '" title="' +datanav[2].child[j].name+ '"><div class="demo1"><img class="del" src="'+datanav[2].child[j].icon+'"></div><span class="leftSpan">' +datanav[2].child[j].name+ '</span></a></dt></dl>';
+                                $(LeftNav).append(dl);
+                                $(LeftNav).find("dl:eq(0)").addClass("leftNavActive");
+                                $(LeftNav).find("dl:eq(0) a").addClass("leftAActive");
+                                $(LeftNav).find("dl:eq(0) img").addClass("leftImg");
+                            }
+                        }else if(arr[i] == "3"){
+                            $($ifrem).attr("src",'html/myCourse/teachCalendar.html');
+                            $(TopNav).find("ul").find("li:eq(1)").css("background","#fff");
+                            $(TopNav).find("ul").find("li").find("a:eq(1)").css("color","#94467a");
+                            $(TopNav).find("ul").find("li:eq(0)").css("background","#85C5F8");
+                            $(TopNav).find("ul").find("li").find("a:eq(0)").css("color","#333");
+                            $(LeftNav).html('');
+                            //默认加载左侧导航，点击左侧导航切换页面
+                            for(var j=0; j<datanav[1].child.length; j++) {
+                                var dl = '';
+                                dl += '<dl><dt><a data-href="' + datanav[1].child[j].path + '" title="' +datanav[1].child[j].name+ '"><div class="demo1"><img class="del" src="'+datanav[1].child[j].icon+'"></div><span class="leftSpan">' +datanav[1].child[j].name+ '</span></a></dt></dl>';console.log(dl);
+                                $(LeftNav).append(dl);
+                                $(LeftNav).find("dl:eq(2)").addClass("leftNavActive");
+                                $(LeftNav).find("dl:eq(2) a").addClass("leftAActive");
+                                $(LeftNav).find("dl:eq(2) img").addClass("leftImg");
+                            }
+                            $(LeftNav).find("a").click(function () {
+                                $($ifrem).attr("src",$(this).attr("data-href"));
+                                $(this).parent().parent().addClass("leftNavActive");
+                                $(this).parent().parent().siblings().removeClass("leftNavActive");
+                                $(this).addClass("leftAActive");
+                                $(this).find("img").addClass("leftImg");
+                                $(this).parent().parent().siblings().children().children().removeClass("leftAActive");
+                                $(this).parent().parent().siblings().children().children().find("img").removeClass("leftImg");
+                            });
+                        }
+                    };
+                }else if(arr.length > 1){
+                    if(role_id == 2){
+                        $($ifrem).attr("src",'html/calendar/calendar.html');
+                        $(TopNav).find("ul").find("li:eq(2)").css("background","#fff");
+                        $(TopNav).find("ul").find("li").find("a:eq(2)").css("color","#94467a");
+                        $(TopNav).find("ul").find("li:eq(0)").css("background","#85C5F8");
+                        $(TopNav).find("ul").find("li").find("a:eq(0)").css("color","#333");
+                        $(LeftNav).html('');
+                        for(var j=0; j<datanav[2].child.length; j++) {
+                            var dl = '';
+                            dl += '<dl><dt><a data-href="' + datanav[2].child[j].path + '" title="' +datanav[2].child[j].name+ '"><div class="demo1"><img class="del" src="'+datanav[2].child[j].icon+'"></div><span class="leftSpan">' +datanav[2].child[j].name+ '</span></a></dt></dl>';
+                            $(LeftNav).append(dl);
+                            $(LeftNav).find("dl:eq(0)").addClass("leftNavActive");
+                            $(LeftNav).find("dl:eq(0) a").addClass("leftAActive");
+                            $(LeftNav).find("dl:eq(0) img").addClass("leftImg");
+                        }
+                    }else if(role_id == 3){
+                        $($ifrem).attr("src",'html/myCourse/teachCalendar.html');
+                        $(TopNav).find("ul").find("li:eq(1)").css("background","#fff");
+                        $(TopNav).find("ul").find("li").find("a:eq(1)").css("color","#94467a");
+                        $(TopNav).find("ul").find("li:eq(0)").css("background","#85C5F8");
+                        $(TopNav).find("ul").find("li").find("a:eq(0)").css("color","#333");
+                        $(LeftNav).html('');
+                        //默认加载左侧导航，点击左侧导航切换页面
+                        for(var j=0; j<datanav[1].child.length; j++) {
+                            var dl = '';
+                            dl += '<dl><dt><a data-href="' + datanav[1].child[j].path + '" title="' +datanav[1].child[j].name+ '"><div class="demo1"><img class="del" src="'+datanav[1].child[j].icon+'"></div><span class="leftSpan">' +datanav[1].child[j].name+ '</span></a></dt></dl>';console.log(dl);
+                            $(LeftNav).append(dl);
+                            $(LeftNav).find("dl:eq(2)").addClass("leftNavActive");
+                            $(LeftNav).find("dl:eq(2) a").addClass("leftAActive");
+                            $(LeftNav).find("dl:eq(2) img").addClass("leftImg");
+                        }
+                        $(LeftNav).find("a").click(function () {
+                            $($ifrem).attr("src",$(this).attr("data-href"));
+                            $(this).parent().parent().addClass("leftNavActive");
+                            $(this).parent().parent().siblings().removeClass("leftNavActive");
+                            $(this).addClass("leftAActive");
+                            $(this).find("img").addClass("leftImg");
+                            $(this).parent().parent().siblings().children().children().removeClass("leftAActive");
+                            $(this).parent().parent().siblings().children().children().find("img").removeClass("leftImg");
+                        });
+                    }
+                }
+//            console.log(value); //得到日期生成的值，如：2017-08-18
+//            console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+//            console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+            }
+        });
+    }
+
+
+
+
+
+</script>
+</html>

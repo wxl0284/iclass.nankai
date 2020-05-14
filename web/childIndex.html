@@ -1,0 +1,104 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+	<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+	<title>虚拟仿真实验教学管理与共享平台</title>
+</head>
+<body>
+<header class="navbar-wrapper">
+	<div class="navbar navbar-fixed-top" >
+		<div class="container-fluid cl" style="height: 80px">
+			<img src="images/logo.png" style="padding-top: 15px;margin-left: 40px;">
+			<a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
+			<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
+				<ul class="cl">
+					<!--<li><a><i class="Hui-iconfont">&#xe633;</i>帮助</a></li>-->
+					<li><a id="Close"><i class="Hui-iconfont">&#xe726;</i>关闭</a></li>
+				</ul>
+			</nav>
+			<nav id="Top-nav" class="nav navbar-navs">
+				<ul class="cl">
+					<li class="dropDown dropDown_hover">
+						<a href="javascript:;" class="dropDown_A" index=4>课程管理</a>
+					</li>
+				</ul>
+			</nav>
+
+		</div>
+	</div>
+</header>
+
+<aside class="Hui-aside">
+	<div id="menu-article3" class="menu_dropdown bk_2">
+		<!--<dl>-->
+			<!--<dt><img src="images/left.png" style="margin-right: 2px"/><a data-href="html/courseMaintain/courseMaintain.html" title="课程维护">课程维护</a></dt>-->
+		<!--</dl>-->
+		<dl>
+			<dt><a data-href="html/courseMaintain/courseIntrod.html" title="课程介绍"><div class="demo1"><img class="del" src="images/icon/kcjs.png"></div><span class="leftSpan">课程介绍</span></a></dt>
+		</dl>
+		<dl>
+			<dt><a data-href="html/courseMaintain/teachingProgram.html" title="教学大纲"><div class="demo1"><img class="del" src="images/icon/jxdg.png"></div><span class="leftSpan">教学大纲</span></a></dt>
+		</dl>
+		<dl>
+			<dt><a data-href="html/courseMaintain/teacherStudent.html" title="学生管理"><div class="demo1"><img class="del" src="images/icon/yhgl.png"></div><span class="leftSpan">学生管理</span></a></dt>
+		</dl>
+		<dl>
+			<dt><a data-href="html/courseMaintain/teachingCalendars.html" title="教学日历"><div class="demo1"><img class="del" src="images/icon/jxrl.png"></div><span class="leftSpan">教学日历</span></a></dt>
+		</dl>
+		<dl>
+			<dt><a data-href="html/courseMaintain/teachingResources.html" title="教学资源"><div class="demo1"><img class="del" src="images/icon/jxzy.png"></div><span class="leftSpan">教学资源</span></a></dt>
+		</dl>
+		<dl>
+			<dt><a data-href="html/new_add/grade_manage.html" title="成绩管理"><div class="demo1"><img class="del" src="images/icon/cjcx.png"></div><span class="leftSpan">成绩管理</span></a></dt>
+		</dl>
+		<dl>
+			<dt><a data-href="html/new_add/stu_echart.html" title="统计分析"><div class="demo1"><img class="del" src="images/icon/tjfx.png"></div><span class="leftSpan">统计分析</span></a></dt>
+		</dl>
+	</div>
+</aside>
+<div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
+<section class="Hui-article-box">
+	<div class="Hui-article" style="position: relative;top: 0px;bottom: 0;left: 0;right: 0;overflow: auto;z-index: 1;height: 100%;">
+		<article class="cl" style="width: 100%;height: 100%">
+			<iframe style="height: 100%;width: 100%;background: Transparent;position: absolute;left: 0;top: 0;/*background-color: #EDF3F8*/" id="iframe" scrolling="yes" frameborder="0" src="html/courseMaintain/courseIntrod.html"></iframe>
+		</article>
+	</div>
+</section>
+
+
+<script type="text/javascript" src="lib/jquery/3.1.1/jquery-3.1.1.min.js"></script> 
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.page.js"></script> 
+
+
+<script type="text/javascript">
+	//关闭页面
+	$("#Close").click(function () {
+        window.close();
+    });
+    $("#Top-nav ul li").first().css("background","#fff");
+    $("#Top-nav ul li a").first().css("color","#94467a");
+    $("#menu-article3").show();
+    $("#menu-article3 a:eq(0)").parent().parent().addClass("leftNavActive");
+    $("#menu-article3 a:eq(0)").addClass("leftAActive");
+    $("#menu-article3 a:eq(0)").find("img").addClass("leftImg");
+    $("#menu-article3 a").click(function () {
+        $("#iframe").attr("src",$(this).attr("data-href"));
+        $(this).parent().parent().addClass("leftNavActive");
+        $(this).parent().parent().siblings().removeClass("leftNavActive");
+        $(this).addClass("leftAActive");
+        $(this).find("img").addClass("leftImg");
+        $(this).parent().parent().siblings().children().children().removeClass("leftAActive");
+        $(this).parent().parent().siblings().children().children().find("img").removeClass("leftImg");
+    });
+</script>
+
+
+</body>
+</html>

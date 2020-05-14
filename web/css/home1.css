@@ -1,0 +1,109 @@
+* {
+	padding:0; margin:0;
+	font-family: Microsoft YaHei;
+}
+
+.p_r {
+	position: relative;
+}
+
+.p_a {
+	position: absolute;
+}
+
+.m_a {
+	margin: 0 auto;
+}
+
+#head {
+	background-color:#802159;
+	height:130px;
+	text-align:center;
+}
+
+#main {
+	width:62.6%;
+	min-height: 760px;
+}
+
+#ju1 {
+	top: 34px;
+	left: 9px;
+}
+
+#class_r {
+	font-size: 20px;
+	color:#6b6b6b;
+	left: 26px;
+	top: 31px;
+}
+
+#dot {
+	top:65px;
+}
+
+.room {
+	width:532px;
+	height:580px;
+	display: inline-block;
+	background: url('../images/bg1.png') no-repeat;
+	top:83px;
+	cursor:pointer;
+}
+
+#clasrom1 {
+	left:26px;
+}
+
+#clasrom2 {
+	margin-left: 643px;
+}
+
+#two_class span.span_h {
+	line-height: 35px;
+	font-size: 18px;
+	color: #802159;
+	margin-left: 23px;
+}
+
+.clasrom_img {
+	position: absolute;
+	width: 300px;
+	left: 61px;
+	top: 50px;
+}
+
+.clasrom_img span {
+	display: inline-block;
+	text-align: center;
+	position: relative;
+	width: 410px;
+	height: 165px;
+	margin-bottom:5px;
+}
+
+.clasrom_img span a {
+	position: absolute;
+	bottom: 45px;
+	width: 26%;
+	left: 260px;
+	font-size: 15px;
+	color: #a1a1a1;
+	font-weight: bold;
+}
+
+#foot {
+	text-align: center;
+    font-size: 14px;
+    color: #646869;
+    position: fixed;
+    bottom: 0px;
+    height: 55px;
+    background-color: #cecece;
+    vertical-align: center;
+    width: 100%;
+}
+
+#foot span {
+	line-height:55px;
+}

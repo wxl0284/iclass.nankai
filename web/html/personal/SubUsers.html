@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/fileinput/css/fileinput.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <style type="text/css">
+        .IndexRight{margin:20px;}
+        .page_title{border-bottom: solid 1px #ddd;padding: 8px 14px;}
+        .page_title span{margin-left: 4px}
+        .btn-arrow-right{font-size: 12px;padding: 6px 15px}
+        .arr01 {margin-left: 10px;}
+        .row{padding: 10px 40px;}
+        .btn-default{border: 1px solid #840463;}
+        .btn-secondary{background-color: #980D74}
+        .progress{overflow:hidden;width:100%}
+    </style>
+</head>
+<body>
+<div class="IndexRight">
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>批量导入学生用户</span>
+    </h6>
+    <div style="padding: 20px 60px">
+        <div class="row">
+            <button type="button" class="btn btn-secondary  btn-arrow-right disabled">步骤一 <i class="Hui-iconfont">&#xe6d7;&#xe6d7;</i></button>
+            <span class="arr01">可在此下载空白模板文件。</span>
+        </div>
+        <div class="row" style="border-bottom: 1px solid #DDDDDD;">
+            <label>下载模板：</label> <a href="/uploads/exceltable/subuser.xlsx" download="学生信息表.xlsx" class="btn btn-default btn-small" >下载</a>
+        </div>
+        <div class="row">
+            <button type="button" class="btn btn-secondary  btn-arrow-right disabled">步骤二 <i class="Hui-iconfont">&#xe6d7;&#xe6d7;</i></button>
+            <span class="arr01">上传文件</span>
+        </div>
+        <div class="row" style="border-bottom: 1px solid #DDDDDD;">
+            <label>上传文件：</label>
+            <div class="kv-main" style="width: 60%">
+                <div class="form-group" style="margin-left: 12px;margin-bottom: 0px;">
+                    <input id="filez" class="file" type="file" name="file" multiple data-min-file-count="1"  data-show-caption="true">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 10px;">
+            <button id="upSubmit" class="btn btn-primary radius">提交</button>
+            <button id="refill" class="btn btn-default radius">返回</button>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/fileinput/js/fileinput.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    var name = '';
+    var url = '';
+    //上传文件接口
+    $("#filez").fileinput({
+        uploadUrl: "/api/uploadStudentUser",
+        enctype: 'multipart/form-data',
+        showUpload : false,
+        showRemove : true,
+        uploadAsync:true,
+        autoReplace: true,
+        allowedFileExtensions:  ['xlsx'],
+        resizeImage: false,
+        layoutTemplates :{
+//             actionDelete:'', //去除上传预览的缩略图中的删除图标
+            actionUpload:'',//去除上传预览缩略图中的上传图片；
+//            actionZoom:''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+        }
+    }).on("filebatchselected", function(event, files) {
+        $(this).fileinput("upload");
+    }).on("fileuploaded", function(event, data) {
+            if(data.response.code == "001"){
+                name = data.response.result.name;
+                url = data.response.result.url;
+            } else {
+                layer.msg(data.response.message,{icon:2});
+            }
+    });
+    //提交按钮
+    $("#upSubmit").on('click',function(){
+        $.ajax({
+            type:"post",
+            url:"/api/inserExcelstudentUser",
+            data: {
+                "name":name,
+                "url": url
+            },
+            dataType:"json",
+            success:function(data){
+                if(data.code == '001'){
+                    layer.msg(data.message,{icon:1},function () { 
+                        var $ifrem = window.parent.document.getElementById("iframe");
+                        $($ifrem).attr("src","html/courseMaintain/teacherStudent.html");
+                    });
+                }else{
+                    layer.msg(data.message,{icon:2});
+                }
+            }
+        });
+
+    });
+
+    //返回按钮
+    $("#refill").on("click",function () {
+        var $ifrem = window.parent.document.getElementById("iframe");
+        $($ifrem).attr("src","html/courseMaintain/teacherStudent.html");
+    })
+</script>
+</html>

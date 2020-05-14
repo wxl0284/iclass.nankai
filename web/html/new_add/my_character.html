@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" /> 
+     <!-- <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" /> -->
+      <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />  
+     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        #table{
+            border:1px solid #ddd ;
+            width:100%;
+            margin:15px 3px ;
+        
+        }
+        tr{
+            border-bottom:1px solid #ddd;
+        }
+        [class^="col"] {
+            padding:5px;
+        }
+        .tr_title{
+            background-color: #F8F8F9;
+        }
+    </style>
+</head>
+<body>
+    <div class="IndexRight">
+        <h6 class="page_title">
+            <img src="../../images/module_title.png">
+            <span>角色管理</span>
+        </h6>
+            <button id="btn_add" type="button"class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增角色</button>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    新增角色信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                角色 &nbsp<input type="text" placeholder="请输入角色名称" id="input">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="reset">重置
+                </button>
+                <button type="button" class="btn btn-primary" id="btn" data-dismiss="modal">
+                    提交
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+        <table id="table">
+            <thead>
+            <tr class="tr_title">
+                <th class="col-md-2"></th>
+                <th class="col-md-8">系统角色</th>
+                <th class="col-md-2">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td class="col-md-2"></td>
+            <td class="col-md-8">
+           系统管理员
+            </td>
+            <td class="col-md-2"></td>
+            </tr>
+            <tr>
+            <td class="col-md-2"></td>
+            <td class="col-md-8">
+            教务人员
+            </td>
+            <td class="col-md-2"></td>
+           </tr>
+            <tr>
+            <td class="col-md-2"></td>
+            <td class="col-md-8">
+            教师
+            </td>
+            <td class="col-md-2"></td>
+           </tr>
+            <tr>
+           <td class="col-md-2"></td>
+            <td class="col-md-8">
+           学生
+           </td>
+           <td class="col-md-2"></td>
+           </tr>
+            </tbody>
+        </table>
+    </div>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+  <script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<!-- <script type="text/javascript" src="../../static/h-ui/js/H-ui.js"></script> -->
+<script>
+    function stay() {
+        $.ajax({
+            type:'get',
+            url:'/api/listRole',
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001") {
+//                    var $table = $('tbody');
+                    var datas = data.result;
+                    var html = '';
+                    for (var i = 4; i < datas.length; i++) {
+//                        $table.bootstrapTable('load', datas[i].name);
+                        html = `<tr><td class="col-md-2"></td>
+                                <td class="col-md-8">${datas[i].name}</td>
+                               <td class="col-md-2"><button class="del btn-danger" >删除</button></td></tr>`
+                        $("tbody").append(html);
+                        $("tbody tr:last").find(".del").attr("id", datas[i].id);
+                        var btn=document.getElementById("btn");
+                    }
+                }
+                 else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+    }
+    stay();
+var btn=document.getElementById("btn");
+var html='';
+        btn.onclick=function(){
+         html=`<tr><td class="col-md-2"></td>
+            <td class="col-md-8">
+          ${input.value}
+            </td>
+            <td class="col-md-2"><button class="del btn-danger">删除</button></td></tr>`
+             add();
+            input.value='';
+        };
+          function add(){
+             //提交给服务器 input.value
+              $.ajax({
+                  type:'post',
+                  url:'/api/addRole',
+                  data: {
+                      "role_name":input.value
+                  },
+                  dataType:'json',
+                  success:function (data) {
+                      if(data.code=="001"){
+                          layer.msg("提交成功",{icon:1});
+                          $("tbody").append(html);
+                          $("tbody tr:last").find(".del").attr("id", data.result);
+                      }
+                      else{
+                          layer.msg(data.message,{icon:2});
+                      }
+                  }
+              });
+          }
+         //删除
+        $("tbody").on("click",".del",function () {
+//            console.log(this.id);
+            $.ajax({
+                type: 'post',
+                url: '/api/removeRole',
+                data: {
+                    id: this.id
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.code == "001") {
+                        layer.msg("删除成功", {icon: 1})
+                    }
+                    else {
+                        layer.msg(data.message, {icon: 2});
+                    }
+                }
+            });
+            $(this).parent().parent().remove();
+        });
+          //重置
+    $("#reset").click(function () {
+        $("#input").val('')
+    })
+</script>
+</body>
+</html>

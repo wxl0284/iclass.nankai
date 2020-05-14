@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.min.css">
+    <link href='../../lib/FullCalendar/full/fullcalendar.min.css' rel='stylesheet' />
+    <link href="../../lib/laydate/theme/default/laydate.css">
+    <!--<link href="../../lib/layer/2.4/skin/layer.css">-->
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        .cycles{position: relative;border: 1px solid #E0E0E0;padding: 20px;box-sizing: border-box;margin-bottom: 14px}
+        .cycles .title{position: absolute;top: -1em;left: 30px;line-height: 2em;padding: 0 1em;background-color: #fff;}
+        .cycles .select{position: absolute;top: -10px;left: 140px;line-height: 2em;padding: 0 1em;background-color: #fff;width: 80px;}
+        .fc-toolbar h2 {margin: 0;font-size: 24px;}
+        .row ul{margin: 0px;padding: 0px}
+        .row ul li {list-style: none}
+        .block{display:block;height: 15px;width: 25px;border-radius: 3px;float: left}
+        .block-text{margin-left: 6px}
+    </style>
+</head>
+<body>
+<div class="IndexRight">
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>日程安排</span>
+        <span style="margin-left: 40%;font-size: 16px;color: #792659">南开大学 2019-2020 学年度校历</span>
+    </h6>
+    <div class="row">
+        <div class="col-md-2">
+            <ul>
+                <li>
+                    <i class="block" style="background: #C1C1C1;"></i>
+                    <span class="block-text">实验室禁用</span>
+                </li>
+                <li>
+                    <i class="block" style="background: #3A87AD;"></i>
+                    <span class="block-text">审核通过</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10">
+            <div id="main" style="width: 80%;">
+                <div id='calendar' ></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">安排新日程</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <!--<div class="form-group">-->
+                            <!--<label for="theme" class="col-sm-3 control-label">主题</label>-->
+                            <!--<div class="col-sm-9" style="width: 65%">-->
+                                <!--<input type="text" class="form-control" id="theme" placeholder="">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="form-group">
+                            <label for="state" class="col-sm-3 control-label">实验室状态</label>
+                            <div class="col-sm-9" style="width: 65%">
+                                <select id="state" class="form-control" >
+                                    <option value="2" disabled selected>--请选择实验室状态--</option>
+                                    <option value="1">开放</option>
+                                    <option value="0">不开放</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group remark" hidden>
+                            <label for="remarks" class="col-sm-3 control-label">备注</label>
+                            <div class="col-sm-9" style="width: 65%">
+                                <textarea type="text" class="form-control" id="remarks" ></textarea>
+                            </div>
+                        </div>
+                        <div class="Uncertain" hidden>
+                            <div class="form-group">
+                                <label for="teacher" class="col-sm-3 control-label">任课教师</label>
+                                <div class="col-sm-9" style="width: 65%">
+                                    <select id="teacher" class="form-control">
+                                        <option value="0" disabled selected>--请选择任课教师--</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-3 control-label">课程名称</label>
+                                <div class="col-sm-9" style="width: 65%">
+                                    <select id="name" class="form-control">
+                                        <option value="0" disabled selected>--请选择课程名称--</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-3 control-label">开课院系</label>
+                                <div class="col-sm-9" style="width: 65%">
+                                    <select id="department" class="form-control">
+                                        <option value="0" disabled selected>--请选择开课院系--</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="Single">
+                            <div class="form-group">
+                                <label for="starTime" class="col-sm-3 control-label">开始时间</label>
+                                <div class="col-sm-9" style="width: 65%">
+                                    <input type="text" class="form-control layui-input" id="starTime" readonly="readonly">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="endTime" class="col-sm-3 control-label">结束时间</label>
+                                <div class="col-sm-9" style="width: 65%">
+                                    <input type="text" class="form-control layui-input" id="endTime" readonly="readonly">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inlineRadio" class="col-sm-3 control-label">是否设置周期</label>
+                            <div class="col-sm-9" style="width: 65%" id="inlineRadio">
+                                <label class="radio-inline">
+                                    <input type="radio" name="inlineRadio"  value="is_cycle">是
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="inlineRadio"  value="not_cycle" checked>否
+                                </label>
+                            </div>
+                        </div>
+                        <div class="cycle" hidden>
+                            <div class="cycles">
+                                <span class="title">具体时间</span>
+                                <div class="form-group">
+                                    <label for="starTimeT" class="col-sm-2 control-label">开始时间</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control layui-input" id="starTimeT" readonly="readonly">
+                                    </div>
+                                    <label for="endTimeT" class="col-sm-2 control-label">结束时间</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control layui-input" id="endTimeT" readonly="readonly">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cycles">
+                                <span class="title">定时模式</span>
+                                <select class="select" id="Pattern">
+                                    <option value="0">无</option>
+                                    <option value="1">按周</option>
+                                </select>
+                                <div id="inlineCheckbox" style="text-align: center" hidden>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="1">周一
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="2">周二
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="3">周三
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="4">周四
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="5">周五
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="6">周六
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" value="0">周日
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="cycles">
+                                <span class="title">重复范围</span>
+                                <div class="form-group">
+                                    <label for="starTimeB" class="col-sm-2 control-label">开始日期</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control layui-input" id="starTimeB" readonly="readonly">
+                                    </div>
+                                    <label for="endTimeB" class="col-sm-2 control-label">结束日期</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control layui-input" id="endTimeB" readonly="readonly">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="submit" type="button" class="btn btn-primary">提交</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" >关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js" ></script>
+<script src='../../lib/FullCalendar/full/moment.min.js'></script>
+<script src='../../lib/FullCalendar/full/fullcalendar.min.js'></script>
+<script src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="../../lib/laydate/laydate.js"></script>
+<script src="../../lib/layer/2.4/layer.js"></script>
+<script src="../../static/h-ui.admin/js/date.js"></script>
+<!--<script type="text/javascript" src="../../lib/FullCalendar/jquery.fancybox-1.3.1.pack.js" ></script>-->
+
+<script>
+    var full_Calendar = null;//全局变量 fullcalendar
+    var endTime_e = $('#endTime');
+    var endTimeT_e = $('#endTimeT');
+    var state_e = $('#state');//实验室状态
+    var remarks_e = $('#remarks');//备注
+    var starTime_e = $('#starTime');//开始时间
+    var name_e = $("#name");  //课程名
+    var teacher_e = $("#teacher");//教师
+    var department_e = $("#department"); //院系
+    var starTimeT_e = $("#starTimeT"); //开始时间(具体时间)
+    var Pattern_e = $("#Pattern"); //定时模式
+    var starTimeB_e = $("#starTimeB"); //开始日期(重复范围)
+    var endTimeB_e = $("#endTimeB");  //结束日期(重复范围)*
+
+    laydate.render({
+        elem: '#starTime',
+        type: 'datetime',
+        min: date(),
+        done: function (v, date_obj, end) {
+            //选择好开始时间后 自动将结束时间加2小时
+            let p = v.indexOf(' ');//v是'2020-04-28 09:06:07'
+            let h = parseInt( v.substring(p, p+3) );
+
+            if ( h >= 22 )
+            {
+                layer.alert('开始时间太晚了');return;
+            }else{
+                h += 2;
+                if ( h < 10 )
+                {
+                    h = '0' + h;
+                }
+               let v1 = v.replace(/ \d{2}/, ' ' + h );
+               endTime_e.val(v1);
+            }
+        }
+    });
+    laydate.render({
+        elem: '#endTime',
+        type: 'datetime',
+        min: date(),
+    });
+    laydate.render({
+        elem: '#starTimeT',
+        type: 'time',
+        done: function (v, date_obj, end) {
+            //选择好开始时间后 自动将结束时间加2小时
+            let h = parseInt( v.substring(0, 2) );
+
+            if ( h >= 22 )
+            {
+                layer.alert('开始时间太晚了');return;
+            }else{
+                h += 2;
+                if ( h < 10 )
+                {
+                    h = '0' + h;
+                }
+               let v1 = v.replace(/\d{2}/, h );
+               endTimeT_e.val(v1);
+            }
+        }
+    });
+    laydate.render({
+        elem: '#endTimeT',
+        type: 'time',
+    });
+    laydate.render({
+        elem: '#starTimeB',
+        min: date(),
+    });
+    laydate.render({
+        elem: '#endTimeB',
+        min: date(),
+    });
+
+    $("#state").change(function () {
+        if($(this).val() == '1'){
+            $(".Uncertain").show();
+            $(".remark").hide();
+        }else {
+            $(".Uncertain").hide();
+            $(".remark").show();
+        }
+    });
+
+    
+    
+    //加载教师select
+    var teacherName = document.getElementById('teacher');
+    var teacherNameOption = "";
+    teacherName.innerHTML = null;
+    $.ajax({
+        type: 'get',
+        url: "/api/getTeachers",
+        dataType: 'json',
+        success:function(data){
+            data = data.result;
+            teacherNameOption = "<option value='0' disabled='disabled' selected='selected'>--请选择教师--</option>";
+            for(var i = 0;i < data.length;i++){
+                teacherNameOption +="<option value='"+data[i].id+"'>"+data[i].name + "</option>";
+            }
+            teacherName.innerHTML += teacherNameOption;
+        }
+    });
+    //教师select的change事件，加载课程
+    $("#teacher").change(function () {
+        var teacher_id = $(this).val();
+        $.ajax({
+            type: 'post',
+            //url: "/api/getCalendarCourse",
+            url: "/api/listCheckedCourse",
+            data: {teacher_id:teacher_id},
+            dataType: 'json',
+            success:function(data){
+                data = data.result;
+                //加载课程select
+                var courseName = document.getElementById('name');
+                var courseNameOption = "";
+                courseName.innerHTML = null;
+                courseNameOption = "<option value='0' disabled='disabled' selected='selected'>--请选择课程名称--</option>";
+                for(var i = 0;i < data.length;i++){
+                    courseNameOption +="<option value='"+data[i].id+"'>"+data[i].curriculum_name + "</option>";
+                }
+                courseName.innerHTML += courseNameOption;
+            }
+        });
+    });
+    //加载开课院系select
+    var select = document.getElementById('department');
+    var option = "";
+    select.innerHTML = null;
+    $.ajax({
+        type: 'get',
+        url: "/api/listCollege",
+        dataType: 'json',
+        success:function(data){
+            data = data.result;
+            option = "<option value='0' disabled='disabled' selected='selected'>--请选择开课院系--</option>";
+            for(var i = 0;i < data.length;i++){
+                option +="<option value='"+data[i].id+"'>"+data[i].college_name + "</option>";
+            }
+            select.innerHTML += option;
+        }
+    });
+    //是否设置周期单选事件
+    var inputOption = "not_cycle";
+    $("#inlineRadio label").click(function(){
+        $(this).children("input").prop("checked",true);
+        inputOption = $(this).children("input").val();
+        if(inputOption == "is_cycle") {
+            $(".cycle").show();
+            $(".Single").hide();
+        }else {
+            $(".cycle").hide();
+            $(".Single").show();
+        }
+    });
+    //模态框关闭后的操作
+    $('#myModal').on('hide.bs.modal', function () {
+        $("#state").val(2);
+        $("#name").val(0);
+        $("#teacher").val(0);
+        $("#Pattern").val(0);
+        $(".Uncertain").hide();
+        $(".Single").show();
+        $(".cycle").hide();
+        $(".remark").hide();
+        $("#inlineCheckbox").hide();
+        inputOption = "not_cycle";
+        $("#inlineRadio label").children("input:eq(0)").removeAttr("checked");
+        $("#inlineRadio label").children("input:eq(1)").prop("checked",true);
+
+    });
+    //
+    $("#Pattern").click(function(){
+        if($("#Pattern").val() == "0") {
+            $("#inlineCheckbox").hide();
+        }else {
+            $("#inlineCheckbox").show();
+        }
+    });
+
+
+    $(document).ready(function() {
+        var date = new Date();
+        var D = date.getDate();
+        var M = date.getMonth();
+        var Y = date.getFullYear();
+
+        full_Calendar = $('#calendar');
+
+        full_Calendar.fullCalendar({
+            header:{
+                left: 'prev,next,today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            views: {
+                month: {
+                    titleFormat: 'YYYY年MM月'
+                },
+                week: {
+                    titleFormat: "YYYY年MM月D日"
+                },
+                day: {
+                    titleFormat: 'YYYY年MM月D日'
+                }
+            },
+            eventLimit: true,
+            navLinks: true,
+            businessHours: true,
+            editable: false,
+            selectOverlap: function(event) {
+            //确定是否允许用户选择事件占用的时间段。值可以是布尔型和函数，默认false。          
+                //return event.rendering === 'background';
+                //wxl 改之前 return event.constraint === 'disable';
+                return true; //wxl 改之后
+            },
+            events: function(start,end,timezone, callback) {
+                $.ajax({
+                    type: "get",
+                    url: "/api/getData",
+                    dataType: 'json',
+                    success: function(data) { // 获取当前月的数据
+                        var arr = [];
+                        if(data.code == "001") {
+                            //禁用全天
+                            if(data.result.unuse.whole){
+                                for (var i = 0; i < data.result.unuse.whole.length; i++) {
+                                    var title = data.result.unuse.whole[i].title;
+                                    var start = data.result.unuse.whole[i].start_time.substr(0,10);
+                                    var end = data.result.unuse.whole[i].end_time.substr(0,10);
+                                    var rendering = 'background';
+                                    var color =  '#C1C1C1';
+                                    arr.push({
+                                        title : title,
+                                        start : start,
+                                        end : end,
+                                        rendering : rendering,
+                                        color : color,
+                                        defaultDate: true
+                                    })
+                                }
+                            }
+                            
+                            //禁用一段时间的某天某一段时间
+                            if(data.result.unuse.half){
+                                for (var j = 0; j < data.result.unuse.half.length; j++) {
+    //                                var title = data.result.unuse.half[j].curriculum_name;
+    //                                var  constraint =  data.result.data[j].teacher_name;
+                                    var start = data.result.unuse.half[j].start_time;
+                                    var end = data.result.unuse.half[j].end_time;
+                                    var  constraint =  "disable";
+                                    arr.push({
+                                        title : "实验室禁用",
+                                        start : start,
+                                        color: "#C1C1C1",
+                                        textColor:'#333',
+                                        constraint : constraint
+                                    })
+                                }
+                            }
+                            
+                            //预约
+                            if(data.result.data){
+                                for (var j = 0; j < data.result.data.length; j++) {
+                                    var title = data.result.data[j].curriculum_name;
+    //                                var  constraint =  data.result.data[j].teacher_name;
+                                    var start = data.result.data[j].start_time;
+                                    var end = data.result.data[j].end_time;
+                                    var  constraint =  "disable";
+                                    arr.push({
+                                        title : title,
+                                        start : start,
+                                        end : end,
+                                        constraint : constraint
+                                    })
+                                }
+                            }
+                            
+                        }
+                        callback(arr);
+                    }
+                });
+            },//events 结束
+            selectable: true, //允许用户拖动
+            select: function( startDate, endDate, allDay, jsEvent, view ){
+                var start =$.fullCalendar.formatDate(startDate,'YYYY-MM-DD 00:00:00');
+                var end =$.fullCalendar.formatDate(endDate,'YYYY-MM-DD 00:00:00');
+                var starTimeT =$.fullCalendar.formatDate(startDate,'00:00:00');
+                var endTimeT =$.fullCalendar.formatDate(endDate,'00:00:00');
+                var starTimeB =$.fullCalendar.formatDate(startDate,'YYYY-MM-DD');
+                var endTimeB =$.fullCalendar.formatDate(endDate,'YYYY-MM-DD');
+                $('#myModal').modal({
+                    keyboard: true
+                });
+                $("#starTime").val(start);
+                $("#endTime").val(end);
+                $("#starTimeT").val(starTimeT);
+                $("#endTimeT").val(endTimeT);
+                $("#starTimeB").val(starTimeB);
+                $("#endTimeB").val(endTimeB);
+            }
+        });
+    });
+
+    $("#submit").on("click",function () {
+        //var theme = $("#theme").val(); //主题
+        let states = state_e.val(); //实验室状态
+        let remarks = remarks_e.val(); //备注
+        let starTime = (Date.parse(new Date(starTime_e.val())))/1000; //开始时间
+        let endTime = (Date.parse(new Date(endTime_e.val())))/1000;  //结束时间
+        let name = name_e.val();  //课程名
+        let teacher = teacher_e.val();  //教师
+        let department = department_e.val();  //院系
+        let starTimeT = starTimeT_e.val();  //开始时间(具体时间)
+        let endTimeT = endTimeT_e.val();  //结束时间(具体时间)
+        let Pattern = Pattern_e.val(); //定时模式
+        let chk_value = []; //选中的周数组
+
+        $('#inlineCheckbox input[type="checkbox"]:checked').each(function(value, e){
+            chk_value.push($(this).val());
+        });
+
+        let starTimeB = starTimeB_e.val(); //开始日期(重复范围)
+        let endTimeB = endTimeB_e.val();  //结束日期(重复范围)
+
+        if(states != null) {
+
+            /*
+            DateDiff() 计算2个日期间相差的天数
+            */
+            function  DateDiff (sDate1, sDate2)
+            {
+                let s1 = new Date(sDate1.replace(/-/g, "/"));
+                    
+                let s2 = new Date(sDate2.replace(/-/g, "/"));
+
+                let days = s2.getTime() - s1.getTime();
+
+                let time = parseInt(days / (1000 * 60 * 60 * 24));
+                return  time; 
+            }
+
+            //提交前 渲染日程在日历  full_Calendar
+            let obj = {}; //存储日程信息
+            obj.id = 'lab_open';
+            obj.allDay = false;
+
+            full_Calendar.fullCalendar('removeEvents', [obj.id]);//先删除渲染日程
+
+            if ( states === '0' && inputOption == "not_cycle" )//实验室不开放 不设周期
+            {
+                if ( starTime >= endTime )
+                {
+                    layer.msg('结束时间选择有误', {icon:2, time:1000});return;
+                }
+
+                let num = DateDiff( starTime_e.val(),  endTime_e.val() );
+
+                if ( num > 0 )
+                {
+                    layer.msg('结束、开始应为同一天', {icon:2, time:1000});return;
+                }
+
+                obj.title = '不开放';
+                obj.start = starTime_e.val();
+                obj.end = endTime_e.val();
+                obj.backgroundColor = '#c1c1c1';
+
+                full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
+            }else if ( states === '0' && inputOption == "is_cycle" )//实验室不开放 设周期
+            {
+                //判断结束日期是否大于开始日期
+                let s = starTimeB.split('-');
+                s = s[0] + s[1] + s[2];
+                s = parseInt(s);
+
+                let e = endTimeB.split('-');
+                e = e[0] + e[1] + e[2];
+                e = parseInt(e);
+
+                if ( s > e )
+                {
+                    layer.msg('结束日期选择有误', {icon:2, time:1000});return;
+                }
+                //判断结束日期是否大于开始日期 结束
+
+                let num =  DateDiff (starTimeB, endTimeB);//结束日期与开始日期间的天数
+                
+                if ( num < 1 )
+                {
+                    layer.msg('结束日期与开始日期为同一天', {icon:2, time:1000});return;
+                }
+                
+                //循环添加日程
+                for (let i = 0; i <= num; i++)
+                {
+                    let today = starTimeB + ' ' + '00:00:00';
+                    today = new Date( Date.parse( today.replace(/-/g, "/") ) );//转为时间对象
+                    let tomorrow = today.getTime() + i*24*60*60*1000;
+                    tomorrow = new Date( tomorrow );
+
+                    let w = tomorrow.getDay() + '';
+
+                    let y = tomorrow.getFullYear();
+                    let m = tomorrow.getMonth() + 1;
+                    if ( m < 10 ) m = '0' + m;
+                    let d = tomorrow.getDate();
+                    if ( d < 10 ) d = '0' + d;
+
+                    obj.start = y + '-' + m + '-'+ d + ' ' + starTimeT;
+                    obj.end = y + '-' + m + '-'+ d + ' ' + endTimeT;
+                    obj.title = '不开放';
+                    obj.backgroundColor = '#c1c1c1';
+
+                    if ( Pattern === '0' )//不按周
+                    {
+                        full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
+                    }else{//按周
+                        
+                        if ( chk_value.length == 0 )
+                        {
+                            layer.msg('未选择每周具体日期', {icon:2, time:1000});return;
+                        }
+                        
+                        if ( chk_value.length >= 1 && $.inArray(w, chk_value) > -1 )//如果这一天在周的数组里
+                        {
+                            full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
+                        }
+                    }                        
+
+                }//for 循环添加日程结束
+
+            }else if ( states === '1' && inputOption == "not_cycle" )//实验室开放 不设周期
+            {
+                if ( starTime >= endTime )
+                {
+                    layer.msg('结束时间选择有误', {icon:2, time:1000});return;
+                }
+               
+                if ( !name )
+                {
+                    layer.msg('未选择课程', {icon: 2, time:1000});return; 
+                }
+
+                if ( !teacher )
+                {
+                    layer.msg('未选择任课老师', {icon: 2, time:1000});return;
+                }
+
+                if ( !department )
+                {
+                    layer.msg('未选择院系', {icon: 2, time:1000});return;
+                }
+
+                let num = DateDiff( starTime_e.val(),  endTime_e.val() );
+
+                if ( num > 0 )
+                {
+                    layer.msg('结束、开始应为同一天', {icon:2, time:1000});return;
+                }
+
+                obj.start = starTime_e.val();
+                obj.end = endTime_e.val();
+                obj.title = name_e.find('option:selected').text();
+                obj.backgroundColor = '#3a87ad';
+
+                full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
+            }else if ( states === '1' && inputOption == "is_cycle" )//实验室开放 设周期
+            {
+                //判断结束日期是否大于开始日期
+
+                let s = starTimeB.split('-');
+                s = s[0] + s[1] + s[2];
+                s = parseInt(s);
+
+                let e = endTimeB.split('-');
+                e = e[0] + e[1] + e[2];
+                e = parseInt(e);
+                
+                if ( s > e )
+                {
+                    layer.msg('结束日期选择有误', {icon:2, time:1000});return;
+                }
+                //判断结束日期是否大于开始日期 结束
+
+                let num =  DateDiff (starTimeB, endTimeB);//结束日期与开始日期间的天数
+                
+                if ( num < 1 )
+                {
+                    layer.msg('结束日期与开始日期为同一天', {icon:2, time:1000});return;
+                }
+                
+                if ( !name )
+                {
+                    layer.msg('未选择课程', {icon: 2, time:1000});return; 
+                }
+
+                if ( !teacher )
+                {
+                    layer.msg('未选择任课老师', {icon: 2, time:1000});return;
+                }
+
+                if ( !department )
+                {
+                    layer.msg('未选择院系', {icon: 2, time:1000});return;
+                }
+
+                //循环添加日程
+                for (let i = 0; i <= num; i++)
+                {
+                    let today = starTimeB + ' ' + '00:00:00';
+                    today = new Date( Date.parse( today.replace(/-/g, "/") ) );//转为时间对象
+                    let tomorrow = today.getTime() + i*24*60*60*1000;
+                    tomorrow = new Date( tomorrow );
+
+                    let w = tomorrow.getDay() + '';
+
+                    let y = tomorrow.getFullYear();
+                    let m = tomorrow.getMonth() + 1;
+                    if ( m < 10 ) m = '0' + m;
+                    let d = tomorrow.getDate();
+                    if ( d < 10 ) d = '0' + d;
+
+                    obj.start = y + '-' + m + '-'+ d + ' ' + starTimeT;
+                    obj.end = y + '-' + m + '-'+ d + ' ' + endTimeT;
+                    obj.title = name_e.find('option:selected').text();
+                    obj.backgroundColor = '#3a87ad';
+
+                    if ( Pattern === '0' )//不按周
+                    {
+                        full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
+                    }else{//按周
+
+                        if ( chk_value.length == 0 )
+                        {
+                            layer.msg('未选择每周具体日期', {icon:2, time:1000});return;
+                        }
+
+                        if ( chk_value.length >= 1 && $.inArray(w, chk_value) > -1 )//如果这一天在周的数组里
+                        {
+                            full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
+                        }
+                    }                        
+
+                }//for 循环添加日程结束
+            }
+            //提交前 渲染日程在日历 结束
+            
+            //layer.alert 询问是否需要更改 将接下来的几个ajax都包在这里面
+            let index = layer.alert('请您确定提交信息，无误后提交', {
+                closeBtn: 0,
+                shade: 0,
+                btn: ['确定提交','我要修改'],
+                yes: function(){
+                    if((states == "0") && (inputOption== "not_cycle")) {
+                        $(this).attr("data-dismiss","modal");
+                        $('#myModal').on('hide.bs.modal');
+                        //实验室不开放，不设置周期
+                        $.ajax({
+                            type:'post',
+                            url:'/api/manageSchedule',
+                            data:{
+                                //'theme': theme,    //主题
+                                'status': states,  //实验室状态
+                                'remark': remarks, //备注
+                                'start_time': starTime, //开始时间
+                                'end_time': endTime,  //结束时间
+                                'inputOption': inputOption,  //是否设置周期
+                                'lab_id': sessionStorage.getItem('platform'),//当前实验室的id
+                            },
+                            dataType:'json',
+                            success:function (data) {
+                                if(data.code=="001"){
+                                    layer.msg(data.message,{icon:1},function () {
+                                        $('#calendar').fullCalendar();
+                                    });
+                                } else {
+                                    layer.msg(data.message,{icon:2});
+                                }
+                            },
+                            error:function(err){
+                                console.error(err);
+                            }
+                        });
+                    }else if((states == "0") && (inputOption== "is_cycle")) {
+                        $(this).attr("data-dismiss","modal");
+                        $('#myModal').on('hide.bs.modal');
+                        //实验室不开放，设置周期
+                        $.ajax({
+                            type:'post',
+                            url:'/api/manageSchedule',
+                            contentType: 'application/json;charset=utf-8',
+                            data:JSON.stringify({
+                                //'theme': theme,    //主题
+                                'status': states,  //实验室状态
+                                'remark': remarks, //备注
+                                'inputOption': inputOption,  //是否设置周期
+                                'starTimeT': starTimeT,    //开始时间(具体时间)
+                                'endTimeT': endTimeT,  //结束时间(具体时间)
+                                'pattern': Pattern,  //定时模式
+                                'chk_value': chk_value,    //选中的周数组
+                                'start_date': starTimeB,  //开始日期(重复范围)
+                                'end_date': endTimeB,  //结束日期(重复范围)
+                                'lab_id': sessionStorage.getItem('platform'),//当前实验室的id
+                            }),
+                            dataType:'json',
+                            success:function (data) {
+                                if(data.code=="001"){
+                                    layer.msg(data.message,{icon:1},function () {
+                                        $('#calendar').fullCalendar();
+                                    });
+                                } else {
+                                    layer.msg(data.message,{icon:2});
+                                }
+                            },
+                            error:function(err){
+                                console.error(err);
+                            }
+                        });
+                    }else if((states == "1") && (inputOption== "not_cycle")) {
+                        $(this).attr("data-dismiss","modal");
+                        $('#myModal').on('hide.bs.modal');
+                        //实验室开放，不设置周期
+                        $.ajax({
+                            type:'post',
+                            url:'/api/manageSchedule',
+                            data:{
+                                //'theme': theme,    //主题
+                                'status': states,  //实验室状态
+                                'curriculum_id': name, //课程名
+                                'teacher_id': teacher, //教师
+                                'department': department, //院系
+                                'start_time': starTime, //开始时间
+                                'end_time': endTime,  //结束时间
+                                'inputOption': inputOption,  //是否设置周期
+                                'lab_id': sessionStorage.getItem('platform'),//当前实验室的id
+                            },
+                            dataType:'json',
+                            success:function (data) {
+                                if(data.code=="001"){
+                                    layer.msg(data.message,{icon:1},function () {
+                                        $('#calendar').fullCalendar();
+                                    });
+                                } else {
+                                    layer.msg(data.message,{icon:2});
+                                }
+                            },
+                            error:function(err){
+                                console.error(err);
+                            }
+                        });
+                    }else if((states == "1") && (inputOption== "is_cycle")) {
+                        $(this).attr("data-dismiss","modal");
+                        $('#myModal').on('hide.bs.modal');
+                        //实验室开放，设置周期
+                        $.ajax({
+                            type:'post',
+                            url:'/api/manageSchedule',
+                            contentType: 'application/json;charset=utf-8',
+                            data:JSON.stringify({
+                                //'theme': theme,    //主题
+                                'status': states,  //实验室状态
+                                'curriculum_id': name, //课程名
+                                'teacher_id': teacher, //教师
+                                'department': department, //院系
+                                'inputOption': inputOption,  //是否设置周期
+                                'starTimeT': starTimeT,    //开始时间(具体时间)
+                                'endTimeT': endTimeT,  //结束时间(具体时间)
+                                'pattern': Pattern,  //定时模式
+                                'chk_value': chk_value,    //选中的周数组
+                                'start_date': starTimeB,  //开始日期(重复范围)
+                                'end_date': endTimeB, //结束日期(重复范围)
+                                'lab_id': sessionStorage.getItem('platform'),//当前实验室的id
+                            }),
+                            dataType:'json',
+                            success:function (data) {
+                                if(data.code=="001"){
+                                    layer.msg(data.message,{icon:1},function () {
+                                        $('#calendar').fullCalendar();
+                                    });
+                                } else {
+                                    layer.msg(data.message,{icon:2});
+                                }
+                            },
+                            error:function(err){
+                                console.error(err);
+                            }
+                        });
+                    }
+                },
+                btn2: function(){
+                    layer.close(index);
+                }
+            })//layer alert 结束
+            //layer.alert 询问是否需要更改 结束
+        }else {
+            layer.msg("请选择实验室状态",{icon:2});
+        }
+    })//submit click 结束
+</script>
+</html>

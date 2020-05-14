@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <!-- <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" /> -->
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        #table{
+            border:1px solid #ddd ;
+            width:100%;
+            margin:15px 3px ;
+
+        }
+        tr{
+            border-bottom:1px solid #ddd;
+        }
+        th,td{
+            padding:5px;
+            text-align: center;
+        }
+        .tr_title{
+            background-color: #F8F8F9;
+        }
+    </style>
+</head>
+<body>
+<div class="IndexRight">
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>成绩管理</span>
+    </h6>
+    <table id="table"  >
+        <thead>
+        <tr class="tr_title">
+            <th >一卡通号</th>
+            <th >姓名</th>
+            <th>课程编号</th>
+            <th >课程名称</th>
+            <th>实验成绩</th>
+            <th>报告成绩</th>
+            <th>总成绩</th>
+            <th>操作批改</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    //课程id
+    var ids =window.parent.location.href.split("&")[1].substr("4");
+    $.ajax({
+        type: 'get',
+        url: '/api/ScoreQueryTeacher',
+        data: {id:ids},
+        dataType: 'json',
+        success: function (data) {
+            var html="";
+            if (data.code == "001") {
+                var datas=data.result;
+                for(var i=0;i<datas.length;i++) {
+                    var uname=datas[i].name;
+                    var name = encodeURIComponent(uname);
+                    var uid=datas[i].score_id;
+                    //批改操作
+                    html = `<tr><td>${datas[i].user_uid}</td>
+                           <td id=${uid} class="uname">${datas[i].name}</td>
+                           <td>${datas[i].curriculum_num}</td>
+                           <td>${datas[i].curriculum_name}</td>
+                           <td>${datas[i].ex_results}</td>
+                           <td>${datas[i].re_results}</td>
+                           <td>${datas[i].sum_results}</td>
+                           <td><button class="btn btn-primary"}>批改</button></td>
+                </tr>`
+                     $("tbody").append(html);
+
+                }
+
+            }
+            else{
+                layer.msg(data.message,{icon:2});
+            }
+        }
+    });
+     $("tbody").on("click",'.btn-primary',function () {
+         var name=$(this).parent().parent().find(".uname").text();
+         var uid=$(this).parent().parent().find(".uname").attr("id")
+        window.location.href=`grade_correct.html?name=${name}&id=${uid}`;
+    });
+</script>
+</body>
+</html>

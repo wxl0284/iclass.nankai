@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" /> 
+     <!-- <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" /> -->
+      <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />  
+     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+          /*#dLabel :hover> */
+          div.container{
+              position: relative;
+          }
+          #dLabel{
+              position: absolute;
+              left:50px;
+              top:30px
+          }
+          .multi-level{
+              position: absolute;
+              left:200px;
+              top:60px;
+              display: block;
+          }
+        .dropdown-submenu {
+            position: relative;
+        }
+ 
+        .dropdown-submenu > .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: -6px;
+            margin-left: -1px;
+            -webkit-border-radius: 0 6px 6px 6px;
+            -moz-border-radius: 0 6px 6px;
+            border-radius: 0 6px 6px 6px;
+        }
+ 
+        .dropdown-submenu:hover > .dropdown-menu {
+            display: block;
+        }
+ 
+        .dropdown-submenu > a:after {
+            display: block;
+            content: " ";
+            float: right;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+            border-width: 5px 0 5px 5px;
+            border-left-color: #ccc;
+            margin-top: 5px;
+            margin-right: -10px;
+        }
+ 
+        .dropdown-submenu:hover > a:after {
+            border-left-color: #fff;
+        }
+ 
+        .dropdown-submenu.pull-left {
+            float: none;
+        }
+ 
+        .dropdown-submenu.pull-left > .dropdown-menu {
+            left: -100%;
+            margin-left: 10px;
+            -webkit-border-radius: 6px 0 6px 6px;
+            -moz-border-radius: 6px 0 6px 6px;
+            border-radius: 6px 0 6px 6px;
+        }
+        .btns{
+            margin-top:400px ;
+        }
+        .btn{
+            margin-left:150px;
+            padding:5px 20px;
+        }
+        .container{
+            width:600px;
+            margin:0 auto;
+            height:500px;
+        }
+    </style>
+</head>
+<body>
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>角色权限</span>
+    </h6>
+    <div class="container">
+        <h5 class="role_name">角色名称:&nbsp&nbsp</h5>
+        <hr>
+        <h5>角色权限:</h5>
+    <div class="dropdown">
+     <p id="dLabel" role="button" data-toggle="dropdown" class="btn btn-default"  href="javascript:;">菜单</p>
+        <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+    </ul>
+   </div>
+    <div class="btns">
+      <button class="btn btn-danger">确定</button>
+      <button class="btn btn-primary">返回</button>
+    </div>
+ </div>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script>
+            var str=location.href; //取得整个地址栏
+            var num=str.indexOf("?");
+            str=str.substr(num+1); //取得所有参数   stringvar.substr(start [, length ]
+            var arr=str.split("="); //各个参数放到数组里
+             var id=arr[1];
+             $.ajax({
+                 type: 'post',
+                 url: '/api/editRuleList',
+                 data: {id:id},
+                 dataType: 'json',
+                 success: function (data) {
+                     if (data.code == "001") {
+                         var span=`<b  class="cname" style="color:#54033f">${data.result.role_name}</b>`
+                         $(".role_name").append(span);
+                         var datas = data.result.menu.children;//第一个children（menu下的children）
+                         var html = '';
+                         for (var i = 0; i < datas.length; i++) {//第一个children（menu下的children）
+                             html = `<li class="dropdown-submenu">
+             <a tabindex="-1" href="javascript:;">
+                <input type="checkbox" name="ids" class="ids" id=${datas[i].id}><span>${datas[i].title}</span></a>
+             <ul class="dropdown-menu son_menu">
+             </ul>
+        </li> `;
+                             $('ul.multi-level').append(html);
+                             var li = '';
+                             var chk = [];
+                             for (var j = 0; j < datas[i].children.length; j++) {//第二个children（children下的children）
+                                 li += `<li><a tabindex="-1" href="javascript:;"><input type="checkbox" name="idz" class="idz" id=${datas[i].children[j].id}><span>${datas[i].children[j].title}</span></a></li>`
+                                 chk.push(datas[i].children[j].checked);
+                             }
+                             $('ul.multi-level li:last').children(".son_menu").append(li);
+                             var inputs = $('ul.multi-level li:last').parent().children().find('[name="idz"]');
+                             for (var k = 0; k < chk.length; k++) {
+                                 $(inputs[k]).prop("checked", chk[k]);
+                             }
+                         }
+                     }
+
+                 },
+                 error: function (err) {
+                     console.error(err);
+                 }
+             });
+       
+       //复选框全选  全不选
+  $(".multi-level").on("click",".ids",function(){
+                var checkedValue = this.checked;
+                $(this).parent().parent().find("input[name='idz']").prop("checked",checkedValue);
+            });
+
+         $(".multi-level").on("click",".idz",function(){
+             var oChs= $(this).parent().parent().parent().find("input[name='idz']");
+              var count = 0; 
+             for(var i = 0;i<oChs.length;i++){
+                if($(oChs[i]).prop('checked'))
+                    count++;          //有一个选中的则加1
+            var oAll=$(this).parent().parent().parent().parent().find("input[name=ids]")
+                if(count == oChs.length){
+                    $(oAll).prop('checked',true);
+                }
+                else{
+                    $(oAll).prop('checked',false);
+                }
+           
+        }
+    
+});
+            //确定按钮：
+            $('.btn-danger').click(function(){
+                var tid=[];
+                var idss=[];
+                var data=[];
+                var idzs=$('ul.multi-level li').parent().children().find('[name="idz"]');
+                for(var a=0;a<idzs.length;a++){
+                   if(idzs[a].checked){
+                      data.push(idzs[a].id);
+                      idss.push($(idzs[a]).parent().parent().parent().parent().find('[name="ids"]'));
+                   }
+               }
+
+               for(var b=0;b<idss.length;b++){
+                    tid.push(idss[b][0].id);
+               }
+
+                for(var z=0;z<tid.length;z++){
+                    if(tid[z]!=tid[z+1]){
+                        data.push(tid[z]);
+                    }
+                }
+                $.ajax({
+                    type:'post',
+                    url:'/api/alterPermission',
+                    data: {//checked选中的
+                        id:id,
+                       data:data
+                    },
+                    dataType:'json',
+                    success:function (data) {
+                        if(data.code=="001"){
+                            layer.msg("修改成功", {icon: 1});
+                        }
+                        else {
+                            layer.msg(data.message, {icon: 2});
+                        }
+                    }
+
+                })
+            });
+              //返回
+              $(".btn-primary").click(function(){
+                      window.location.href="character_limit.html"
+
+              })
+</script>
+</body>
+</html>

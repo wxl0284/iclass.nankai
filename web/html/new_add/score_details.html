@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+    <title>成绩查询</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" /> 
+     <!-- <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" /> -->
+      <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />  
+     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        #table{
+            border-top:1px solid #ddd ;
+            width:100%;
+            margin:15px 3px ;
+        
+        }
+        tr{
+            border-bottom:1px solid #ddd;
+        }
+       th,td{
+            padding:5px;
+            text-align: center;
+        }
+        .tr_title{
+            background-color: #F8F8F9;
+        }
+        input{
+            position: relative;
+            margin: 10px 0;
+            left:85%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            height:30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="IndexRight">
+        <h6 class="page_title">
+            <img src="../../images/module_title.png">
+            <span>成绩查询</span>
+        </h6>
+    <input type="search" placeholder="请输入资源名称或资源类型">
+    <table id="table" data-toggle="table" table-no-bordered="false"  data-toggle="table"  data-method="post" data-toolbar="#toolbar" data-pagination="true"  data-page-list="[5,10,15]" data-unique-id="id" data-page-size="10">
+        <thead>
+        <tr class="tr_title">
+            <th data-field="curriculum_num" data-align="center">课程编号</th>
+            <th data-field="curriculum_name" data-align="center">课程名称</th>
+            <th data-field="ex_results" data-align="center">实验成绩</th>
+            <th data-field="re_results" data-align="center">报告成绩</th>
+            <th data-field="sum_results" data-align="center">总成绩</th>
+        </tr>
+        </thead>
+    </table>
+    </div>
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script>   
+//    var LeftNav = window.parent.document.getElementById("menu-article");
+//    $(LeftNav).find("dl:eq(0)").addClass("leftNavActive");
+//    $(LeftNav).find("dl:eq(0) a").addClass("leftAActive");
+//    $(LeftNav).find("dl:eq(0) a").find("img").addClass("leftImg");
+    //    $(this).parent().parent().siblings().children().children().find("img").removeClass("leftImg");
+ 
+    Load();
+    function Load() {
+        $.ajax({
+            type:'get',
+            url:'/api/ScoreQueryStudent',
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    var $table = $('#table');
+                    var datas = data.result;
+                    $table.bootstrapTable('load',datas);
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+    }
+    //搜索
+    $("input").blur(function () {
+        var input_val=$(this).val();
+        $('table tbody tr').hide().filter(':contains('+input_val+')').show();
+    });
+
+</script>
+</html>

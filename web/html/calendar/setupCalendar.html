@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.min.css">
+    <link href='../../lib/FullCalendar/full/fullcalendar.min.css' rel='stylesheet' />
+    <!--<link href="../../lib/laydate/theme/default/laydate.css">-->
+    <link href="../../lib/layer/2.4/skin/layer.css">
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        .title{font-size: 16px;color: #792659}
+        /*.cycles{position: relative;border: 1px solid #E0E0E0;padding: 20px;box-sizing: border-box;margin-bottom: 14px}*/
+        /*.cycles .title{position: absolute;top: -1em;left: 30px;line-height: 2em;padding: 0 1em;background-color: #fff;}*/
+        /*.cycles .select{position: absolute;top: -10px;left: 140px;line-height: 2em;padding: 0 1em;background-color: #fff;width: 80px;}*/
+        .fc-toolbar h2 {margin: 0;font-size: 24px;}
+        .row ul{margin: 0px;padding: 0px}
+        .row ul li {list-style: none}
+        .block{display:block;height: 15px;width: 25px;border-radius: 3px;float: left}
+        .block-text{margin-left: 6px}
+    </style>
+</head>
+<body>
+<div class="IndexRight">
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>设置校历</span>
+        <span class="title" style="margin-left: 30%;"></span>
+    </h6>
+    <div class="row">
+        <div class="col-md-2">
+            <div id="toolbar" class="btn-group">
+                <button id="btn_add" class="btn btn-primary">设置校历</button>
+                <button id="btn_exit"  class="btn btn-info">修改校历</button>
+            </div>
+            <ul id="ulList" style="margin-top: 10px">
+                <!--<li>-->
+                    <!--<i class="block" style="background: #C1C1C1;"></i>-->
+                    <!--<span class="block-text">实验室禁用</span>-->
+                <!--</li>-->
+                <!--<li>-->
+                    <!--<i class="block" style="background: #3A87AD;"></i>-->
+                    <!--<span class="block-text">预约审核通过</span>-->
+                <!--</li>-->
+            </ul>
+        </div>
+        <div class="col-md-8">
+            <div id="main" style="width: 80%;">
+                <div id='calendar' ></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js" ></script>
+<script src='../../lib/FullCalendar/full/moment.min.js'></script>
+<script src='../../lib/FullCalendar/full/fullcalendar.min.js'></script>
+<!--<script src="../../lib/bootstrap/js/bootstrap.min.js"></script>-->
+<!--<script src="../../lib/laydate/laydate.js"></script>-->
+<script src="../../lib/layer/2.4/layer.js"></script>
+<script>
+    
+    //加载页面其他内容
+    $.ajax({
+        type: "get",
+        url: "/api/getCurrentCalendarInfo",
+        dataType: 'json',
+        success: function(data) {
+            if(data.code == "001") {console.log(data);
+                $(".title").text(data.result.data.name);
+                $(".title").attr("data-num",data.result.data.id);
+                for (var i = 0; i < data.result.info.length; i++) {
+                    for(var j=0;j<data.result.info[i].event.length;j++) {
+                        var title = data.result.info[i].event[j].Event_name;
+                        var color = data.result.info[i].event[j].Event_color;
+                        //图例列表
+                        var li = '<li><i class="block" style="background: '+color+';"></i><span class="block-text">'+title+'</span></li>';
+                        $("#ulList").append(li);
+                    }
+
+                }
+            }
+        },
+        error:function(err){
+            console.error(err);
+        }
+    });
+    //加载页面校历内容
+    $(document).ready(function() {
+        var date = new Date();
+        var D = date.getDate();
+        var M = date.getMonth();
+        var Y = date.getFullYear();
+        $('#calendar').fullCalendar({
+            header:{
+                left: 'prev,next,today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            views: {
+                month: {
+                    titleFormat: 'YYYY年MM月'
+                },
+                week: {
+                    titleFormat: "YYYY年MM月D日"
+                },
+                day: {
+                    titleFormat: 'YYYY年MM月D日'
+                }
+            },
+            eventLimit: true,
+            navLinks: true,
+            businessHours: true,
+            editable: false,
+            selectOverlap: function(event) {
+//                return event.rendering === 'background';
+                return event.constraint === 'disable';
+            },
+            events: function(start,end,timezone, callback) {
+                $.ajax({
+                    type: "get",
+                    url: "/api/getCurrentCalendarInfo",
+                    dataType: 'json',
+                    success: function(data) {
+                        var arr = [];
+                        if(data.code == "001") {
+                            //学年上半学期事件显示
+                            for (var i = 0; i < data.result.info.length; i++) {
+                                for(var j=0;j<data.result.info[i].event.length;j++){
+                                    var title = data.result.info[i].event[j].Event_name;
+                                    var start = new Date(parseInt(data.result.info[i].event[j].Event_startTime) * 1000).toJSON().slice(0,10);
+                                    var end = new Date(parseInt(data.result.info[i].event[j].Event_endTime) * 1000).toJSON().slice(0,10);
+                                    var rendering = 'background';
+                                    var color = data.result.info[i].event[j].Event_color;
+                                    arr.push({
+                                        title: title,
+                                        start: start,
+                                        end: end,
+                                        rendering: rendering,
+                                        color: color,
+                                        defaultDate: true
+                                    });
+                                }
+
+                            }
+
+                            callback(arr);
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+    //设置校历
+    $("#btn_add").click(function () {
+        var data_num=$(".title").attr("data-num");
+        if(data_num == undefined){
+            layer.msg("请先创建校历",{icon:2})
+        }else {
+            var $ifrem = window.parent.document.getElementById("iframe");
+           $($ifrem).attr("src","html/calendar/setupCalendarAdd.html");
+        }
+    });
+    //修改校历
+    $("#btn_exit").click(function () {
+        var data_nums=$(".title").attr("data-num");
+        if(data_nums == undefined){
+            layer.msg("请先创建校历",{icon:2})
+        }else {
+            var $ifrem = window.parent.document.getElementById("iframe");
+            $($ifrem).attr("src","html/calendar/setupCalendarExit.html?id="+$(".title").attr("data-num"));
+        }
+    });
+
+</script>
+</html>

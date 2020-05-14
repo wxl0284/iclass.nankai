@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <!--<link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.min.css">-->
+    <link href='../../lib/FullCalendar/full/fullcalendar.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <!--<link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" />-->
+    <link rel="stylesheet" href="../../lib/layui/css/layui.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <link href="../../css/SYSFrame.css" rel="stylesheet" type="text/css" />
+    <link href="font/iconfont.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../../js/sys-verification.min.js"></script>
+    <script type="text/javascript" src="../../js/sha1.js"></script>
+    <style>
+        #calendars {max-width: 600px;}
+        .fc-toolbar h2 {margin: 0;font-size: 24px;}
+        .layui-input-block {margin: 10px 0px;}
+        #info{color: red}
+       .block{display:block;height: 15px;width: 25px;border-radius: 3px;float: left}
+        .block-text{margin-left: 6px}
+    </style>
+</head>
+<body>
+<div class="IndexRight">
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>查看详情</span>
+    </h6>
+
+    <div class="height100b">
+            <!-- <div class="title-name text-left">示例</div> -->
+            <div id="pluginContent">
+                <ul class="info_list clearfix padding15" id="VerifyTips">
+                    <li class=" clearfix content_look mb15">
+                        <label class="label_name"><em style="color:Red;">*</em>实验室名称：</label>
+                        <span class="info_data"><input id="name" data-name="实验室名称" data-value="name" type="text" name="Required" class="text_input col-sm-4" data-verify="verify" /></span>
+                    </li>
+                    <li class=" clearfix content_look mb15">
+                        <label class="label_name"><em style="color:Red;">*</em>实验室图片：</label>
+                        <span class="info_data"><img id="img" src="../../images/kongbaitu.png" width="200px;" height="100px;" /></span>
+                    </li>
+                    <li class=" clearfix content_look mb15">
+                       <!--  <label class="label_name"><em style="color:Red;">*</em>上传图片：</label> -->
+                        <span class="info_data"><input style="line-height: normal;" data-name="上传图片" data-value="imgurl" class="text_input col-sm-4" data-verify="verify"  type="file" name="file" onchange="handleSelected()" /></span>
+                    </li>
+                    <li class=" clearfix content_look mb15">
+                        <label class="label_name">实验室地址：</label>
+                        <span class="info_data"><input id="address" data-name="实验室地址" data-value="address" type="text" name="Required" class="text_input col-sm-4" data-verify="verify" /></span>
+                    </li>
+                    <li class=" clearfix content_look mb15">
+                        <label class="label_name">可容纳人数：</label>
+                        <span class="info_data"><input id="number" data-name="可容纳人数" data-value="number" type="text" name="Required" class="text_input col-sm-4" data-verify="verify" /></span>     
+                        </span>
+                    </li>
+                    <li class=" clearfix content_look mb15">
+                        <label class="label_name">实验室负责人：</label>
+                        <span class="info_data"><input id="teacher" data-name="实验室负责人" data-value="teacher" type="text" name="Required" class="text_input col-sm-4" data-verify="verify" /></span>       
+                        </span>
+                    </li>
+                    <li class=" clearfix content_look mb15">
+                        <label class="label_name"><em style="color:Red;">*</em>实验室简介：</label>
+                        <span class="info_data"><div id="editor" style="width: 98%;height: 180px;"></div></span>
+                    </li>
+
+                    <li class="buttonstyle" style="text-align: center;">
+                        <button type="button" class="btn padding10 bg-deep-blue" id="sublime">提交</button>
+                        <button style="margin-left: 10px;" type="button" class="btn padding10 bg-deep-blue" id="refill">返回</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+</div>
+</body>
+<script src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js" ></script>
+<script src="../../lib/ueditor/ueditor.config.js"></script>
+<script src="../../lib/ueditor/ueditor.all.min.js"></script>
+<script src='../../lib/FullCalendar/full/moment.min.js'></script>
+<script src='../../lib/FullCalendar/full/fullcalendar.min.js'></script>
+<script type="text/javascript" src="../../lib/layui/layui.js"></script>
+<script type="text/javascript" src="../../lib/layui/layui.all.js"></script>
+<script src="../../lib/layer/2.4/layer.js"></script>
+<script>
+
+    //加载富文本编辑器
+    var ue = UE.getEditor('editor');
+    function isFocus(e){
+        alert(UE.getEditor('editor').isFocus());
+        UE.dom.domUtils.preventDefault(e)
+    }
+    function setblur(e){
+        UE.getEditor('editor').blur();
+        UE.dom.domUtils.preventDefault(e)
+    }
+    function insertHtml() {
+        var value = prompt('????html????', '');
+        UE.getEditor('editor').execCommand('insertHtml', value)
+    }
+    function createEditor() {
+        enableBtn();
+        UE.getEditor('editor');
+    }
+    function getAllHtml() {
+        alert(UE.getEditor('editor').getAllHtml())
+    }
+    function getContent() {
+        var arr = [];
+        arr.push("");
+        arr.push("");
+        arr.push(UE.getEditor('editor').getContent());
+        alert(arr.join("\n"));
+    }
+    function getPlainTxt() {
+        var arr = [];
+        arr.push("");
+        arr.push("");
+        arr.push(UE.getEditor('editor').getPlainTxt());
+        alert(arr.join('\n'))
+    }
+    function setContent(isAppendTo) {
+        var arr = [];
+        arr.push("");
+        UE.getEditor('editor').setContent('??????ueditor', isAppendTo);
+        alert(arr.join("\n"));
+    }
+    function setDisabled() {
+        UE.getEditor('editor').setDisabled('fullscreen');
+        disableBtn("enable");
+    }
+
+    function setEnabled() {
+        UE.getEditor('editor').setEnabled();
+        enableBtn();
+    }
+
+    function getText() {
+
+        var range = UE.getEditor('editor').selection.getRange();
+        range.select();
+        var txt = UE.getEditor('editor').selection.getText();
+        alert(txt)
+    }
+
+    function getContentTxt() {
+        var arr = [];
+        arr.push("");
+        arr.push("");
+        arr.push(UE.getEditor('editor').getContentTxt());
+        alert(arr.join("\n"));
+    }
+    function hasContent() {
+        var arr = [];
+        arr.push("");
+        arr.push("");
+        arr.push(UE.getEditor('editor').hasContents());
+        alert(arr.join("\n"));
+    }
+    function setFocus() {
+        UE.getEditor('editor').focus();
+    }
+    function deleteEditor() {
+        disableBtn();
+        UE.getEditor('editor').destroy();
+    }
+    function disableBtn(str) {
+        var div = document.getElementById('btns');
+        var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
+        for (var i = 0, btn; btn = btns[i++];) {
+            if (btn.id == str) {
+                UE.dom.domUtils.removeAttributes(btn, ["disabled"]);
+            } else {
+                btn.setAttribute("disabled", "true");
+            }
+        }
+    }
+    function enableBtn() {
+        var div = document.getElementById('btns');
+        var btns = UE.dom.domUtils.getElementsByTagName(div, "button");
+        for (var i = 0, btn; btn = btns[i++];) {
+            UE.dom.domUtils.removeAttributes(btn, ["disabled"]);
+        }
+    }
+
+    function getLocalData () {
+        alert(UE.getEditor('editor').execCommand( "getlocaldata" ));
+    }
+
+    function clearLocalData () {
+        UE.getEditor('editor').execCommand( "clearlocaldata" );
+        alert("")
+    }
+
+
+    //记录id
+    var id =window.location.href.split("?")[1].substr("3");
+
+
+    obj();
+    //查询显示
+    function obj(){
+         $.ajax({
+            url: '/api/labEdit' ,
+            type: 'post',
+            data:{
+                id:id
+             },
+            dataType:'json',
+            success: function (data) {
+                if(data.code == "001"){
+                    datas = data.result;
+                    name = datas.name;
+                    imgurl = datas.imgurl;
+                    content = datas.content;
+                    address = datas.address;
+                    number = datas.number;
+                    teacher = datas.teacher;
+
+                    $("#name").val(name);
+                    $("#address").val(address);
+                    $("#number").val(number);
+                    $("#teacher").val(teacher);
+
+                   $("#img").attr("src",imgurl);
+                    ue.ready(function() {
+                        ue.setContent(content, true);
+                    });
+                }else{
+                    layer.msg(data.message,{icon: 5},function(){
+                        window.location.href = 'lab.html';
+                    });
+                }
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        });
+    
+    }
+
+    //图片上传
+    var src="";
+    function handleSelected(){
+       /**得到FileList的第一个元素，也就是上传的图片**/
+        var e = window.event || arguments[0];
+        let file = e.target.files[0];
+        /**创建一个FileReader实例，用来读取文件**/
+        let reader = new FileReader();
+        /**成功读取之后将图片显示出来**/
+        reader.onload = function(e){
+            let image = document.getElementById('img');
+            image.src = e.target.result;
+            image.onload = function (){
+                // console.log(e.target.result)
+                // console.log('图片加载出来了...')
+            }
+        }
+        reader.readAsDataURL(file);
+
+    }
+
+
+    //修改实验室
+    $("#sublime").click(function(){
+        var name = $("#name").val();
+        var address = $("#address").val();
+        var number = $("#number").val();
+        var teacher = $("#teacher").val();
+        var imgurl = $("#img")[0].src;   //上传图片                 
+        // var content = UE.getEditor('editor').getContent();   //获取代样式的内容
+        var contentTxt = UE.getEditor('editor').getContentTxt();  //获取纯文本内容
+
+        $.ajax({
+            url: '/api/labUpdate' ,
+            type: 'post',
+            data:{
+                id:id,
+                name:name,
+                address:address,
+                number:number,
+                teacher:teacher,
+                imgurl:imgurl,
+                content:contentTxt,
+             },
+            dataType:'json',
+            success: function (data) {
+                if(data.code == "001"){
+                    layer.msg("成功提交",{icon:6},function(){
+                        window.location.reload();
+                    });
+                }else{
+                    layer.msg(data.message,{icon: 5},function(){
+                        window.location.reload();
+                    });
+                }
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        });    
+
+    })
+
+
+   
+    //返回按钮
+    $("#refill").on("click",function () {
+        var $ifrem = window.parent.document.getElementById("iframe");
+        $($ifrem).attr("src","html/lab/lab.html");
+    })
+</script>
+</html>

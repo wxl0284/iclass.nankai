@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.min.css">
+    <link href="../../lib/laydate/theme/default/laydate.css">
+    <link href="../../lib/layer/2.4/skin/layer.css">
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        .abroadDiv{border: 1px solid #e3c6db;width: 80%}
+        .del_Term{cursor: pointer}
+        .abroadDiv_topDel{text-align: right;margin:6px 20px 0px 0px;color: #850462}
+        .fromTo{line-height:28px;text-align: center;float: right;}
+    </style>
+</head>
+<body>
+<div class="IndexRight">
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>设置校历</span>
+    </h6>
+
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="schoolYear" class="col-sm-2 control-label">学年</label>
+                <div class="col-sm-4">
+                    <select id="schoolYear" class="form-control" >
+                        <option value="0" disabled selected>--请选择学年--</option>
+                        <option value="1">第一学年</option>
+                        <option value="2">第二学年</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    <button id="add_Term" class="btn btn-primary">
+                        <span style="margin-right: 4px" class="glyphicon glyphicon-plus"></span>新增学期
+                    </button>
+                </label>
+            </div>
+            <div class="form-group Term" >
+                <div class="col-sm-9" style="margin-left: 8.33333333%">
+                    <div class="abroadDiv">
+                        <div class="form-group abroadDiv_topDel" style="margin-right: 14px">
+                            <span onclick="delTerm(1)" id="del_Term1" class="del_Term"><i class="glyphicon glyphicon-trash" style="margin-right: 2px"></i>删除</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">学期名称</label>
+                            <div class="col-sm-6">
+                                <input id="Term_name1" type="text"  class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">学期时间</label>
+                            <div class="col-sm-6">
+                                <input id="Term_startTime1" type="text" class="form-control layui-input"  placeholder="" style="width: 45%;float: left">
+                                <input id="Term_endTime1" type="text" class="form-control layui-input"  placeholder="" style="width: 45%;float: right">
+                                <span class="fromTo" style="width: 10%;">至</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">学期备注</label>
+                            <div class="col-sm-6" >
+                                <textarea id="Term_remark1" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div id="Event1" class="form-group Event">
+                            <label class="col-sm-2 control-label">学期事件</label>
+                            <div class="col-sm-8">
+                                <input id="Event_name1_1"  type="text" class="form-control"  placeholder="" style="width: 30%;float: left">
+
+                                <div class="btn-group" style="float: right;margin-left: 10px">
+                                    <span onclick="add_Event(1,1)"  class="btn btn-success">
+                                        <i class="glyphicon glyphicon-plus" ></i>
+                                    </span>
+                                    <span onclick="del_Event(1,1)"   class="btn btn-default">
+                                        <i class="glyphicon glyphicon-minus"></i>
+                                    </span>
+                                </div>
+                                <div >
+                                    <input id="Event_endTime1_1" type="text" class="form-control layui-input"  placeholder="事件结束时间" style="width: 18%;float: right">
+                                    <span class="fromTo" style="width: 6%;">至</span>
+                                    <input id="Event_startTime1_1" type="text" class="form-control layui-input"  placeholder="事件开始时间" style="width: 18%;float: right">
+                                    <input id="color1_1" class="form-control" type="text" placeholder="背景颜色" style="width: 14%;float: right"  />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" id="from_footer">
+                <div class="col-sm-8" style="text-align: center">
+                    <button id="submit" type="button" class="btn btn-primary">提交</button>
+                    <button id="Return" type="button" class="btn btn-default">返回</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+</div>
+</body>
+<script src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js" ></script>
+<script type="text/javascript" src="../../lib/jquery.colorpicker.js"></script>
+<script src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="../../lib/laydate/laydate.js"></script>
+<script src="../../lib/layer/2.4/layer.js"></script>
+<script>
+    laydate.render({
+        elem: '#Term_startTime1'
+    });
+    laydate.render({
+        elem: '#Term_endTime1'
+    });
+    laydate.render({
+        elem: '#Event_startTime1_1'
+    });
+    laydate.render({
+        elem: '#Event_endTime1_1'
+    });
+
+    $("#color1_1").colorpicker({
+        fillcolor:true
+    });
+
+    //返回
+    $("#Return").click(function () {
+        var $ifrem = window.parent.document.getElementById("iframe");
+        $($ifrem).attr("src","html/calendar/setupCalendar.html")
+    });
+
+    //加载学年select
+    var schoolYearName = document.getElementById('schoolYear');
+    var schoolYearOption = "";
+    schoolYearName.innerHTML = null;
+    $.ajax({
+        type: 'get',
+        url: "/api/getCalendarList",
+        dataType: 'json',
+        success:function(data){
+            data = data.result;
+            schoolYearOption = "<option value='0' disabled='disabled' selected='selected'>--请选择学年--</option>";
+            for(var i = 0;i < data.length;i++){
+                schoolYearOption +="<option value='"+data[i].id+"'>"+data[i].name + "</option>";
+            }
+            schoolYearName.innerHTML += schoolYearOption;
+        }
+    });
+
+    //学年select的change事件，加载时间段
+    var min,max;
+    $("#schoolYear").change(function () {
+        var schoolYear_id = $(this).val();
+        $.ajax({
+            type: 'post',
+            url: "/api/getCalendarRangeTime",
+            data: {schoolYear_id:schoolYear_id},
+            dataType: 'json',
+            success:function(data){
+                if(data.code == "001"){
+                    min = data.result.start;
+                    max = data.result.end;
+                    laydate.render({
+                        elem: '#Term_startTime1',
+                        min: min,
+                        max: max
+                    });
+                    laydate.render({
+                        elem: '#Term_endTime1',
+                        min: min,
+                        max: max
+                    });
+                    laydate.render({
+                        elem: '#Event_startTime1_1',
+                        min: min,
+                        max: max
+                    });
+                    laydate.render({
+                        elem: '#Event_endTime1_1',
+                        min: min,
+                        max: max
+                    });
+                }else {
+                    layer.msg(data.message,{icon:2})
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+    });
+
+
+    var arr = [[1,[1]]];
+    //点击增加学期
+    var i = $(".Term").length;
+    var num = [];
+    $("#add_Term").click(function (e) {
+        e.preventDefault(); //阻止时间的默认行为
+        i++;
+        arr.push([i,[1]]);
+        var div = '<div class="form-group Term">\n' +
+            '                <div class="col-sm-9" style="margin-left: 8.33333333%">\n' +
+            '                    <div class="abroadDiv">\n' +
+            '                        <div class="form-group abroadDiv_topDel" style="margin-right: 14px">\n' +
+            '                            <span onclick="delTerm('+i+')" id="del_Term'+i+'" class="del_Term"><i class="glyphicon glyphicon-trash" style="margin-right: 2px"></i>删除</span>\n' +
+            '                        </div>\n' +
+            '                        <div class="form-group">\n' +
+            '                            <label class="col-sm-2 control-label">学期名称</label>\n' +
+            '                            <div class="col-sm-6">\n' +
+            '                                <input id="Term_name'+i+'" type="text"  class="form-control" />\n' +
+            '                            </div>\n' +
+            '                        </div>\n' +
+            '                        <div class="form-group">\n' +
+            '                            <label class="col-sm-2 control-label">学期时间</label>\n' +
+            '                            <div class="col-sm-6">\n' +
+            '                                <input id="Term_startTime'+i+'" type="text" class="form-control layui-input"  placeholder="" style="width: 45%;float: left">\n' +
+            '                                <input id="Term_endTime'+i+'" type="text" class="form-control layui-input"  placeholder="" style="width: 45%;float: right">\n' +
+            '                                <span class="fromTo" style="width: 10%;">至</span>\n' +
+            '                            </div>\n' +
+            '                        </div>\n' +
+            '                        <div class="form-group">\n' +
+            '                            <label class="col-sm-2 control-label">学期备注</label>\n' +
+            '                            <div class="col-sm-6" >\n' +
+            '                                <textarea id="Term_remark'+i+'" class="form-control" rows="3"></textarea>\n' +
+            '                            </div>\n' +
+            '                        </div>\n' +
+            '                        <div id="Event1" class="form-group Event">\n' +
+            '                            <label class="col-sm-2 control-label">学期事件</label>\n' +
+            '                            <div class="col-sm-8">\n' +
+            '                                <input id="Event_name'+i+'_1" type="text" class="form-control"  placeholder="" style="width: 30%;float: left">\n' +
+            '\n' +
+            '                                <div class="btn-group" style="float: right;margin-left: 10px">\n' +
+            '                                    <span onclick="add_Event('+i+',1)"  class="btn btn-success">\n' +
+            '                                        <i class="glyphicon glyphicon-plus" ></i>\n' +
+            '                                    </span>\n' +
+            '                                    <span onclick="del_Event('+i+',1)"   class="btn btn-default">\n' +
+            '                                        <i class="glyphicon glyphicon-minus"></i>\n' +
+            '                                    </span>\n' +
+            '                                </div>\n' +
+            '                                <div >\n' +
+            '                                    <input id="Event_endTime'+i+'_1" type="text" class="form-control layui-input"  placeholder="事件结束时间" style="width: 18%;float: right">\n' +
+            '                                    <span class="fromTo" style="width: 6%;">至</span>\n' +
+            '                                    <input id="Event_startTime'+i+'_1" type="text" class="form-control layui-input"  placeholder="事件开始时间" style="width: 18%;float: right">\n' +
+            '                                    <input id="color'+i+'_1" class="form-control" type="text" placeholder="背景颜色" style="width: 14%;float: right"  />' +
+            '                                </div>\n' +
+            '                            </div>\n' +
+            '                        </div>\n' +
+            '                    </div>\n' +
+            '                </div>\n' +
+            '            </div>';
+        $("#from_footer").before(div);
+        if(min == undefined) {
+            laydate.render({
+                elem: '#Term_startTime'+i+''
+            });
+            laydate.render({
+                elem: '#Term_endTime'+i+''
+            });
+            laydate.render({
+                elem: '#Event_startTime'+i+'_1'
+            });
+            laydate.render({
+                elem: '#Event_endTime'+i+'_1'
+            });
+        }else {
+            laydate.render({
+                elem: '#Term_startTime'+i+'',
+                min: min,
+                max: max
+            });
+            laydate.render({
+                elem: '#Term_endTime'+i+'',
+                min: min,
+                max: max
+            });
+            laydate.render({
+                elem: '#Event_startTime'+i+'_1',
+                min: min,
+                max: max
+            });
+            laydate.render({
+                elem: '#Event_endTime'+i+'_1',
+                min: min,
+                max: max
+            });
+        }
+
+        $("#color"+i+"_1").colorpicker({
+            fillcolor:true
+        });
+
+
+    });
+
+    //点击删除相应的学期
+    function delTerm(a) {
+        $("#del_Term"+a).parent().parent().parent().parent().remove();
+        $.each(arr,function(index,item){
+            // index是索引值（即下标）   item是每次遍历得到的值；
+            if(item !== undefined) {
+                if(a === item[0]){
+                    arr.splice(index,1);
+                }
+            }
+        });
+    }
+
+    //点击学期事件添加事件
+    function add_Event(i,b) {
+        if(num[i]){
+            num[i] ++;
+        }else{
+            j =$("#del_Term"+i).parent().parent().find(".Event").length;
+            num[i] = ++j;
+        }
+
+        for(var k=0;k<arr.length;k++){
+            if(arr[k][0] == i) {
+                arr[k][1].push(num[i])
+            }
+        }
+
+        var row = '<div id="Event'+num[i]+'" class="form-group Event">\n' +
+            '          <label class="col-sm-2 control-label">学期事件</label>\n' +
+            '          <div class="col-sm-8">\n' +
+            '              <input id="Event_name'+i+'_'+num[i]+'"  type="text" class="form-control"  placeholder="" style="width: 30%;float: left">\n' +
+            '               <div class="btn-group" style="float: right;margin-left: 10px">\n' +
+            '                   <span onclick="add_Event('+i+','+num[i]+')"  class="btn btn-success">\n' +
+            '                       <i class="glyphicon glyphicon-plus" ></i>\n' +
+            '                    </span>\n' +
+            '                     <span onclick="del_Event('+i+','+num[i]+')"   class="btn btn-default">\n' +
+            '                         <i class="glyphicon glyphicon-minus"></i>\n' +
+            '                     </span>\n' +
+            '                </div>\n' +
+            '            <div >\n' +
+            '                  <input id="Event_endTime'+i+'_'+num[i]+'" type="text" class="form-control layui-input"  placeholder="事件结束时间" style="width: 18%;float: right">\n' +
+            '                  <span class="fromTo" style="width: 6%;">至</span>\n' +
+            '                  <input id="Event_startTime'+i+'_'+num[i]+'" type="text" class="form-control layui-input"  placeholder="事件开始时间" style="width: 18%;float: right">\n' +
+            '                  <input id="color'+i+'_'+num[i]+'" class="form-control" type="text" placeholder="背景颜色" style="width: 14%;float: right"  />' +
+            '            </div>\n' +
+            '      </div>\n' +
+            '</div>';
+        $("#del_Term"+i).parent().parent().find(".form-group").last().after(row);
+
+        if(min == undefined) {
+            laydate.render({
+                elem: '#Event_endTime'+i+'_'+num[i]+''
+            });
+            laydate.render({
+                elem: '#Event_startTime'+i+'_'+num[i]+''
+            });
+        }else {
+            laydate.render({
+                elem: '#Event_endTime'+i+'_'+num[i]+'',
+                min: min,
+                max: max
+            });
+            laydate.render({
+                elem: '#Event_startTime'+i+'_'+num[i]+'',
+                min: min,
+                max: max
+            });
+        }
+        $("#color"+i+"_"+num[i]).colorpicker({
+            fillcolor:true
+        });
+    }
+
+    //点击学期事件删除事件
+    function del_Event(i,j) {
+        $("#del_Term"+i).parent().parent().find("#Event"+j).remove();
+        for(var n=0;n<arr.length;n++) {
+            if(arr[n][0] == i) {
+                arr[n][1].splice($.inArray(j,arr[n][1]),1);
+            }
+        }
+    }
+
+    //点击提交
+    $("#submit").click(function () {
+        var largeArr = [];
+        schoolYear = $("#schoolYear").val();
+        var inObj = {};
+        for(var int=0;int<arr.length;int++) {
+            inObj.Term_name = $("#Term_name"+arr[int][0]).val();
+            if($("#Term_startTime"+arr[int][0]).val() == ''){
+                inObj.Term_startTime = ''
+            }else {
+                inObj.Term_startTime = (Date.parse(new Date($("#Term_startTime"+arr[int][0]).val())))/1000;
+            }
+            if($("#Term_endTime"+arr[int][0]).val() == '') {
+                inObj.Term_endTime = '';
+            }else {
+                inObj.Term_endTime = (Date.parse(new Date($("#Term_endTime"+arr[int][0]).val())))/1000;
+            }
+            inObj.Term_remark = $("#Term_remark"+arr[int][0]).val();
+
+            var smallArr = [];
+            var smallObj = {};
+            for(var k=0;k<arr[int][1].length; k++) {
+                smallObj.Event_name = $("#Event_name"+arr[int][0]+"_"+arr[int][1][k]).val();
+                if($("#Event_startTime"+arr[int][0]+"_"+arr[int][1][k]).val() == ''){
+                    smallObj.Event_startTime = ''
+                }else {
+                    smallObj.Event_startTime = (Date.parse(new Date($("#Event_startTime"+arr[int][0]+"_"+arr[int][1][k]).val())))/1000;
+                }
+                if($("#Event_endTime"+arr[int][0]+"_"+arr[int][1][k]).val() == '') {
+                    smallObj.Event_endTime = '';
+                }else {
+                    smallObj.Event_endTime = (Date.parse(new Date($("#Event_endTime"+arr[int][0]+"_"+arr[int][1][k]).val())))/1000;
+                }
+                smallObj.Event_color = $("#color"+arr[int][0]+"_"+arr[int][1][k]).val();
+                smallArr.push(smallObj);
+                smallObj = {};
+            }
+            inObj.Event = smallArr;
+            smallArr = [];
+            largeArr.push(inObj);
+            inObj = {};
+        }
+        if(schoolYear == null) {
+            layer.msg("请先选择学年",{icon:2});
+        } else {
+            $.ajax({
+                type: "post",
+                url: "/api/setCalendarInfo",
+                data: {
+                    "schoolYear": schoolYear,
+                    "data": largeArr
+                },
+                dataType: "json",
+                success: function (data) {
+                    if(data.code == "001") {
+                        layer.msg(data.message,{icon:1},function () {
+                            window.history.back();
+                        });
+                    }else {
+                        layer.msg(data.message,{icon:2})
+                    }
+                },
+                error:function(err){
+                    console.error(err);
+                }
+            });
+        }
+
+    });
+
+
+
+</script>
+</html>

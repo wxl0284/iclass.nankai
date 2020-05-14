@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../../lib/FullCalendar/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <style type="text/css">
+        h4{margin: 0;font-weight: 600;}
+        .row{padding-top:10px ;}
+        .rows{padding-top: 20px;}
+        .btn{border:none;border-radius: 5px;}
+        .wicon{background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAwNi8xNS8xNGnF/oAAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAAAoElEQVQ4jWPceOnNfwYqAz9dYRQ+E7UtwAaGjyUsDAyYYUgJ2HT5LXZLcEmSCnA6duOlN///////H0bDALl8dPH/////Z8FuNW6Qtvw2nL3lyjsGBgYGhlmRqnj1kGwJuqHIlhJlCXq8EOITEsdqCXLEbbr8FisfFkTo+vBZRFZwERNEFFkCiw90nxJtCalxQmzegltCzVyP1RJq5HZ8AABuNZr0628DMwAAAABJRU5ErkJggg=="); background-repeat:no-repeat; background-position:right center;}
+    </style>
+</head>
+<body>
+<h4>新建事件</h4>
+<article class="page-container">
+    <form id="add_form" method="post">
+        <input type="hidden" name="action" value="add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>实验室名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select id="Oselect" class="select" size="1" name="labor">
+                    <option value="0" disabled='disabled' selected>---请选择实验室---</option>
+                </select>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>活动类型：</label>
+            <div id="acttype" class="formControls col-xs-8 col-sm-9 skin-minimal">
+                <div class="radio-box">
+                    <input type="radio" name="type" value="其他" checked>
+                    <label for="sex-3">其他</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" name="type" value="教学">
+                    <label for="sex-1">教学</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" name="type" value="会议">
+                    <label for="sex-2">会议</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" name="type" value="讲座">
+                    <label for="sex-3">讲座</label>
+                </div>
+
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>课程名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <select id="Tselect" class="select" size="1" name="labor">
+                    <option value="0" disabled='disabled' selected>---请选择课程---</option>
+                </select>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>使用者：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value=""  id="typename" name="typename">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>联系电话：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="mobile" name="mobile">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>邮箱：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" placeholder="@" name="email" id="email">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>开始时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input class="input-text wicon" id="startz" type="text" placeholder="开始日期" value=""  readonly>
+                <!--<input class="input-text" id="startz">-->
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>结束时间：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input class="input-text wicon" id="endz" type="text" placeholder="结束日期"   readonly>
+            </div>
+        </div>
+        <div class="rows cl sub_btn">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span></label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="submit" class="btn btn_ok btn-primary" id="addsubmit" value="提交申请" style="padding: 6px 10px;">
+                <input type="button" id="close" class="btn btn_cancel btn-danger" value="取消" style="padding: 6px 10px;">
+            </div>
+        </div>
+    </form>
+    <!--</div>-->
+    <article/>
+    <!--<script type="text/javascript" src="__BASE__/js/FullCalendar/jquery.form.min.js"></script>-->
+    <!--<script type="text/javascript" src="__BASE__/js/H-ui/layer/2.4/layer.js" ></script>-->
+    <!--<script type="text/javascript" src="__BASE__/js/jedate/jquery.jedate.js"></script>-->
+    <script type="text/javascript">
+        $('#close').click(function(){
+            $("#fancybox-overlay").css("display","none");
+//            $("#fancybox-wrap").css("display","none");
+            $(".fancybox-ie").css("display","none");
+        });
+//        var userID = sessionStorage.getItem("useid");
+//        var $table = $('#Labtable');
+        //加载实验室下拉列表
+//        $.ajax({
+//            type:"post",
+//            url: "/",
+//            dataType:"json",
+//            success:function(data){
+//                data = data.result;
+//                var options = '';
+//                for(var i = 0;i < data.length;i++){
+//                    options +="<option value='"+data[i].id+"'>"+data[i].lab_name + "</option>";
+//                }
+//                $("#Oselect").append(options);
+//            }
+//        });
+        //加载课程下拉列表
+//        $.ajax({
+//            type:"post",
+//            url: "/",
+//            dataType:"json",
+//            success:function(data){
+//                data = data.result;
+//                var options = '';
+////            options = "<option value='0' disabled='disabled' selected='selected'>--请选择课程--</option>";
+//                for(var i = 0;i < data.length;i++){
+//                    options +="<option value='"+data[i].id+"'>"+data[i].name + "</option>";
+//                }
+//                $("#Tselect").append(options);
+//            }
+//        });
+        //加载日期插件
+        var start = {
+            format: 'YYYY-MM-DD hh:mm:ss',
+//            minDate: $.nowDate({DD:0}), //设定最小日期为当前日期
+            minDate: '2009-06-16 23:59:59', //设定最小日期为当前日期
+            maxDate: '2099-06-16 23:59:59', //最大日期
+            choosefun: function(elem,datas){
+                end.minDate = datas; //开始日选好后，重置结束日的最小日期
+                endDates();
+            }
+//        ,okfun:function (elem,datas) {
+//            alert(datas)
+//        }
+        };
+        var end = {
+            format: 'YYYY-MM-DD hh:mm:ss',
+//            minDate: $.nowDate({DD:0}), //设定最小日期为当前日期
+            minDate: '2009-06-16 23:59:59', //设定最小日期为当前日期
+            maxDate: '2009-06-16 23:59:59',  //最大日期
+            choosefun: function(elem,datas){
+                start.maxDate = datas; //将结束日的初始值设定为开始日的最大日期
+            }
+        };
+//        function endDates() {
+//            end.trigger = false;
+//            $("#startz").jeDate(end);
+//        }
+//        $("#startz").jeDate(start);
+//        $("#endz").jeDate(end);
+
+
+//        $(function(){
+//            //提交表单
+//            $('#add_form').ajaxForm({
+//                beforeSubmit: showRequest, //表单验证
+//                success: showResponse //成功返回
+//            });
+//        });
+
+
+
+        function showRequest(){
+//            var oneselect = $("#Oselect").find("option:selected").val();
+//            if(oneselect == ''){
+//                alert("请选择实验室！");
+//                $("#Oselect").focus();
+//                return false;
+//            }
+//            var acttype = $("#acttype input[name='type']:checked").val();
+//            var tneselect = $("#Tselect").find("option:selected").val();
+//            if(tneselect == ''){
+//                alert("请选择课程！");
+//                $("#Tselect").focus();
+//                return false;
+//            }
+//            var typename = $("#typename").val();
+//            if(typename == ''){
+//                alert("请填写联系人！");
+//                $("#typename").focus();
+//                return false;
+//            }
+//            var mobile = $("#mobile").val();
+//            var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+//            if(!myreg.test(mobile)){
+//                alert('请输入有效的手机号码！');
+//                $("#mobile").focus();
+//                return false;
+//            }
+//            var email = $("#email").val();
+//            var emailyz = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+//            if(!email.match(emailyz)){
+//                alert("邮箱格式不正确！请重新输入");
+//                $("#email1").focus();
+//                return false;
+//            }
+//            var startz = $("#startz").val();
+//            if(startz == ''){
+//                alert("请选择开始时间！");
+//                $("#startz").focus();
+//                return false;
+//            }
+//            var endz = $("#endz").val();
+//            if(endz == ''){
+//                alert("请选择结束时间！");
+//                $("#endz").focus();
+//                return false;
+//            }
+//            $.ajax({
+//                type:"post",
+//                url:"/",
+//                data:{
+//                    user_id:userID,
+//                    lab_name:oneselect,
+//                    active_type:acttype,
+//                    active_name:tneselect,
+//                    charge:typename,
+//                    phone:mobile,
+//                    email:email,
+//                    s_time:startz,
+//                    e_time:endz
+//                },
+//                dataType:"json",
+//                success:function(data){
+//                    if(data.code == "001"){
+//                        alert(data.message);
+//                        $.fancybox.close();
+////    			layer.msg(data.message,{icon:6},function(){
+////    				$.fancybox.close();
+//////  				$('#calendar').fullCalendar('refetchEvents'); //重新获取所有事件数据
+////    			});
+//                    }else{
+//                        alert(data.message);
+////    			layer.msg(data.message,{icon:2});
+//                    }
+//                }
+//            });
+//
+        }
+
+        function showResponse(responseText, statusText, xhr, $form){
+            if(statusText=="success"){
+                $.fancybox.close();
+                $('#calendar').fullCalendar('refetchEvents'); //重新获取所有事件数据
+//		if(responseText==1){
+//
+//		}else{
+//			console.log(responseText);
+////			alert(responseText);
+//		}
+            }else{
+//		alert(2);
+                alert(statusText);
+            }
+        }
+    </script>

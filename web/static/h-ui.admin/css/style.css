@@ -1,0 +1,58 @@
+@charset "utf-8";
+/* 你自己的样式 */
+
+
+
+.navbar {background-color: #540240;}
+
+#Hui-userbar ul li {display: inline-block;height: 40px;line-height: 40px}
+#Hui-userbar ul li:hover{background: none!important}
+#Hui-userbar ul li a{font-size: 12px; padding: 0 4px}
+#Hui-userbar ul li a:hover{background: none!important;}
+#Hui-userbar ul li .top-list:hover{color: red}
+#Hui-userbar ul li a i{margin-right: 2px}
+
+
+.Hui-aside {background-color: #f8f9f9 ;}
+.Hui-aside a{color: #333;padding: 8px 80px 8px 0px;}
+.Hui-aside a:hover{text-decoration: none}
+.navbar-navs{/*position: absolute;top: 45px;right: 20px;*/    float: right;margin-top: 46px;}
+.navbar-navs li{line-height: 35px;font-size: 12px;margin-right:4px;/*background: #85C5F8;*/background: #bce2fc;border-radius: 5px 5px 0px 0px;}
+.navbar-navs li:hover{background: #fff;}
+.navbar-navs li a{padding: 0 10px!important;}
+.navbar-navs li a:hover{color: #94467a;}
+.leftNavActive{background:#840463}
+.leftAActive{color:#fff!important;}
+
+.demo1 {width: 16px;height: 20px;overflow: hidden;float: left;margin-right: 4px}
+.demo1 .del{width: 16px;height: 16px;position: relative;vertical-align: middle;}
+.leftSpan{vertical-align: middle;}
+.Hui-aside .menu_dropdown dt a:hover .demo1 .del{left:-16px;border-right:16px solid transparent;-webkit-filter:drop-shadow(16px 0 0px #fff);filter:drop-shadow( 16px 0 0px #fff);}
+.leftImg{left:-16px;border-right:16px solid transparent;-webkit-filter:drop-shadow(16px 0 0px #fff);filter:drop-shadow( 16px 0 0px #fff)}
+
+/*登录页面样式*/
+*{margin: 0px;padding: 0px}
+.header{width: 100%;height: 80px;position: absolute;top:0px;background-color: #540240;overflow: hidden;}
+/*.img{width: 1300px;height: 80px;line-height: 80px;margin: auto}*/
+/*.body{width: 100%;position: absolute;top:100px;height: 585px;overflow: hidden;margin:30px auto 0 auto;background: url("./images/logincheck.png") no-repeat center center;}*/
+/*.bodyContent{width: 1300px;height: 100%;margin: auto;position: relative}*/
+.body{width: 100%;position: fixed;top: 80px;height: 88%;margin: 0px auto;background-image: url(../../../images/logincheck.png);background-color: #fff;background-repeat: no-repeat;background-position: 14% 40%;/*background-size:100% 100%;-moz-background-size:100% 100%;*/}
+.bodyContent{height: 100%;margin: 60px auto 0 auto;position: relative}
+/*.lineB{height: 497px;border-right:2px solid #54003F;position: absolute;right: 44%;  top: 40px;}*/
+.lineB{height: 460px;position: absolute;right: 44%;top: 60px;display: none}
+@media screen and (min-width:1600px){
+    .lineB{display: block}
+}
+.login_content{position: absolute;top: 90px;right: 205px;width: 400px;height: 390px;background: #FFF;/*border: 1px solid #DCDCDC;*/border-radius: 4px;box-shadow: 0px 0px 30px #aaa}
+.login_title{margin:0px 30px ;border: 0;font: inherit;font-size: 100%;vertical-align: baseline;color: #454646;}
+.login_title h1{color: #82376f;font-weight: 400;text-align: center;padding: 20px 0px 0px;font-size: 28px}
+.login_title span{margin-left: 10px;font-family: Arial;font-size: 20px;color: #949596;}
+.line{height: 24px;width: 100%;margin-top: 20px;text-align: center}
+.line div{width: 60px;height:2px;background: #82376f;margin-top: 12px}
+.divip{margin:0px 64px 0px 40px}
+.divips{margin: 0px 40px;}
+.divip .ipn,.divip .ipp{height: 40px;line-height: 40px;font-size: 14px;width: 100%;border: 1px solid #82376F;border-radius: 0px;background: #fff;outline: none;padding: 0px 10px}
+.submit{color:transparent;height: 38px!important;line-height: 40px;font-size: 14px;width: 100%!important;border: none;background: #82376F;border-radius: 4px;text-align: center;color: #fff;}
+.submit:hover{cursor: pointer}
+.footer{height: 50px;line-height: 50px;text-align: center;width: 100%;background-color: #540240;color: #fff;position: fixed;bottom:0;overflow: hidden;}
+

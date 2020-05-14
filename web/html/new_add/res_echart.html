@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+     <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" /> 
+     <!-- <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" /> -->
+      <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />  
+     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+    #main{
+    width: 600px;
+    height:400px;
+    margin:40px 100px;
+}
+ #foot{
+    width: 650px;
+    height:400px;
+    margin:0 100px;
+}
+    </style>
+    </head>
+    <body>
+     <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span>统计分析</span>
+    </h6>
+      <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="main"></div>
+    <div id="foot"></div>
+    <script src="../../lib/echarts/3.4.0/echarts.common.min.js"></script>
+    <script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+    <script>
+    $.ajax({
+        type: 'get',
+        url: '/api/resourceStatisticPieData',
+        dataType: 'json',
+        success: function (data){
+        var myChart = echarts.init(document.getElementById('main'));
+        option = {
+            title : {
+            text: '资源类型数量比例图',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: ['文档','图片','视频','压缩文件','可执行文件']
+        },
+        series : [
+        {
+            name: '',
+            type: 'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            data:[
+                {value:data.result.pie.text, name:'文档'},
+                {value:data.result.pie.img, name:'图片'},
+                {value:data.result.pie.video, name:'视频'},
+                {value:data.result.pie.file, name:'压缩文件'},
+                {value:data.result.pie.executable, name:'可执行文件'}
+            ],
+        itemStyle: {
+            emphasis: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+myChart.setOption(option);
+var mChart = echarts.init(document.getElementById('foot'));
+
+
+var option = {
+            title: {
+                text: '资源数量柱状图',
+                x:'center'
+            },
+            tooltip: {},
+            legend: {
+                data:['销量']
+            },
+            xAxis: {
+                name:'资源类型',
+                data: ["文档","图片","视频","压缩文件","可执行文件"]
+            },
+            yAxis: {
+                name:'数量'
+            },
+            series: [{
+                name: '',
+                type: 'bar',
+                data: [data.result.bar[0],data.result.bar[1],data.result.bar[2],data.result.bar[3],data.result.bar[4]]
+            }]
+        };
+mChart.setOption(option);
+        }
+    })
+</script>
+ </body>
+ </html>

@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>虚拟仿真实验教学管理与共享平台</title>
+	<link type="text/css" rel="stylesheet" href="css/owl.carousel.css">
+	<link type="text/css" rel="stylesheet" href="css/owl.theme.css">
+	<style type="text/css">
+	*{padding: 0;margin: 0;list-style-type:none;}
+	html,body{width: 100%;height: 100%;background-image: url('./images/1.png');background-size: 100% 100%;position: relative;}
+	/*.logo{width: 20%;height: 13%;position: fixed;top: 36.5%;margin-top: -5%;left: 48%;margin-left: -8%;}
+	.logo img{width: 100%;height: 100%;}*/
+	#scroll{width:80%;height:40%;margin:0 auto;top:35%;font-family:"Microsoft Yahei";}
+	#scroll .owl-wrapper-outer{margin:0 auto;}
+	#scroll .item{position:relative;width:88%;height:387px;margin:0 auto;overflow:hidden;border: 1px solid #CF1DF3;}
+	/*#scroll .item{position:relative;width:88%;height:50%;margin:0 auto;overflow:hidden;border: 1px solid #CF1DF3;}*/
+	#scroll .labimg{width:337px;height:190px;}
+	#scroll .labimg img{width:100%;height:100%;}
+	#scroll .txt{position:relative;left:0;bottom:0;width:100%;height:25%;padding:10px;background-color: rgba(86,44,185,0.5);color: #FFFFFF;}
+	#scroll .buttonImg{display: flex;justify-content: center;align-items: center;}
+	#scroll h3{width:95%;margin-bottom:6px;padding-top:6px;font:700 18px/25px arial,"Microsoft Yahei";overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 1;-webkit-box-orient: vertical;}
+	#scroll p{width:95%;line-height:18px;font-size:12px;text-indent: 2em;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 3;-webkit-box-orient: vertical;}
+	.owl-theme .owl-controls .owl-buttons div{position:absolute;top:180px;width:30px;height:60px;margin:0;padding:0;border-radius:0;font:60px/60px "宋体";background-color:transparent;overflow:hidden;_display:none;}
+	.owl-theme .owl-controls .owl-buttons .owl-prev{left:-40px;}
+	.owl-theme .owl-controls .owl-buttons .owl-next{right:-40px;}
+	.owl-theme .owl-controls .owl-buttons .owl-prev:before{content:"<";}
+	.owl-theme .owl-controls .owl-buttons .owl-next:before{content:">";}
+	.line{border: 2px solid #47D8FD;border-radius: 5px;}
+	.lineHeart{border-bottom: 4px solid #0C4895;}
+	.bottom{margin-top: 30px;text-align: center;color: white;font-family:"微软雅黑";font-weight:bold;font-size: 1.4em;}
+	.bottom span{margin-left:0.8em;margin-right:0.8em;}
+	</style>
+</head>
+<body>
+	<!-- <div class="logo">
+		<img src="./images/logos.png" />
+	</div> -->
+	<!-- 轮播图 -->
+	<div id="scroll" class="owl-carousel">
+		<!-- <div class="item">
+			<div class="labimg">
+				<img src="images/banner/1.png" alt="">
+			</div>
+			<div class="line">
+				<div class="lineHeart"></div>
+			</div>
+			<div class="txt">
+				<h3>虚拟仿真校级公共实验室(津南校区)</h3>
+				<p>由实验室设备处与计控学院共建面向全校教学的"虚拟仿真实验教学中心"，依托虚拟现实、人工智能、多媒体、人机交互、数据库和网络通讯等技术，构建高度仿真的虚拟实验环境和实验对象，培养学生基于虚拟仿真仿真技术进行课程学习、设计实验、成果展示与分享能力，达到教学所要求的教学效果。</p>
+			</div>
+			<div class="buttonImg">
+				<a href="javascript:void(0)" class="lab" value="1">
+					<img src="images/button.png" />
+				</a>
+			</div>	
+			</div>
+		</div> -->
+	</div>
+	<div style="margin-top: 350px;text-align: center;"><a href="javascript:void(0)" onclick = "labInto('kong')" ><img src="images/3.png"></a></div>
+	<div class="bottom"><p>虚<span>/</span>拟<span>/</span>科<span>/</span>技<span>/</span>开<span>/</span>启<span>/</span>未<span>/</span>来<span>/</span>智<span>/</span>能<span>/</span>教<span>/</span>育</p></div>
+</body>
+</html>
+<script type="text/javascript" src="lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="js/owl.carousel.min.js"></script>
+<script type="text/javascript">
+
+
+	obj();
+	function obj(){
+		var labName = document.getElementById('scroll');
+	    var labNameOption = "";
+	    labName.innerHTML = null;
+		$.ajax({
+			type:'post',
+			url:'/api/labQuery',
+			dataType:'json',
+			success:function (data) {
+				if(data.code == "001"){
+					data = data.result;
+		            for(var i = 0;i < data.length;i++){
+		                labNameOption +=
+	                					'<div class="item">' +
+											'<div class="labimg">' +
+												'<img src="../' + data[i].imgurl + '" alt="">' +
+											'</div>' +
+											'<div class="line">' +
+												'<div class="lineHeart"></div>' +
+											'</div>' +
+											'<div class="txt">' +
+												'<h3>' + data[i].name + '</h3>' +
+												'<p>' + data[i].content + '</p>' +
+											'</div>' +
+											'<div class="buttonImg">' +
+												'<a href="javascript:void(0)" onclick="labInto(' + data[i].id + ')">' +
+												// '<a href="javascript:void(0)" class="lab" value="' + data[i].id + '">' +
+													'<img src="images/button.png" />' +
+												'</a>' +
+											'</div>' +	
+										'</div>';
+		            }
+		            labName.innerHTML = labNameOption;
+		            Initialization();
+				}else{
+					window.location.reload();
+				}
+			},
+			error:function (err) {
+				console.error(err);
+			}
+		});
+	}
+
+	//初始化轮播图配置
+	function Initialization(){
+		$('#scroll').owlCarousel({
+			items: 4,
+			autoPlay: true,
+			navigation: true,
+			navigationText: ["",""],
+			scrollPerPage: true,
+			pagination: false,
+		});
+	}
+
+	//点击校级平台
+  	function labInto (id) {
+  	    sessionStorage.setItem('platform',id);
+  	    $.ajax({
+            type:'post',
+            url:'/api/checkLogin',
+            data: {
+                'platform': id,
+            },
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                	 var str = JSON.stringify(data);
+                     sessionStorage.setItem("key", str);
+                    // layer.msg("登录成功",{icon:1,time:500},function(){
+                        window.location.href = "index.html";
+                    // });
+                }else{
+                    // layer.msg(data.message,{icon:3});
+                    window.location.href = "home.html";
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+  	};
+
+</script>

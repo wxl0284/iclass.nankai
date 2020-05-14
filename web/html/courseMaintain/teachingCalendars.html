@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.min.css">
+    <link href='../../lib/FullCalendar/full/fullcalendar.min.css' rel='stylesheet' />
+    <link href="../../lib/laydate/theme/default/laydate.css">
+    <link href="../../lib/layer/2.4/skin/layer.css">
+    <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        .fc-toolbar h2 {margin: 0;font-size: 24px;}
+        .row ul{margin: 0px;padding: 0px}
+        .row ul li {list-style: none}
+        .block{display:block;height: 15px;width: 25px;border-radius: 3px;float: left}
+        .block-text{margin-left: 6px}
+    </style>
+</head>
+<body>
+<div class="IndexRight">
+    <h6 class="page_title">
+        <img src="../../images/module_title.png">
+        <span id="name"></span>
+        <!--<span style="margin-left: 30%;font-size: 16px;color: #792659">南开大学 2019-2020 学年度校历</span>-->
+    </h6>
+    <div class="row">
+        <div class="col-md-2">
+            <ul>
+                <li>
+                    <i class="block" style="background: #C1C1C1;"></i>
+                    <span class="block-text">实验室禁用</span>
+                </li>
+                <li>
+                    <i class="block" style="background: #3A87AD;"></i>
+                    <span class="block-text">预约审核通过</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10">
+            <div id="main" style="width: 80%;">
+                <div id='calendar' ></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js" ></script>
+<script src='../../lib/FullCalendar/full/moment.min.js'></script>
+<script src='../../lib/FullCalendar/full/fullcalendar.min.js'></script>
+<script src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="../../lib/laydate/laydate.js"></script>
+<script src="../../lib/layer/2.4/layer.js"></script>
+
+<script>
+    //课程记录id
+    var str=window.parent.location.href.split("?")[1].substr("3");
+    var id = str.substring(0,str.indexOf("&"));
+    //课程id
+    var ids =window.parent.location.href.split("&")[1].substr("4");
+    $(document).ready(function() {
+        var date = new Date();
+        var D = date.getDate();
+        var M = date.getMonth();
+        var Y = date.getFullYear();
+        $('#calendar').fullCalendar({
+            header:{
+                left: 'prev,next,today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            views: {
+                month: {
+                    titleFormat: 'YYYY年MM月'
+                },
+                week: {
+                    titleFormat: "YYYY年MM月D日"
+                },
+                day: {
+                    titleFormat: 'YYYY年MM月D日'
+                }
+            },
+            eventLimit: true,
+            navLinks: true, // can click day/week names to navigate views
+            businessHours: true, // display business hours
+            editable: false,
+            selectOverlap: function(event) {
+                return event.constraint === 'disable';
+            },
+            events: function(start,end,timezone, callback) {
+                $.ajax({
+                    type: "post",
+                    url: "/api/teachCalendar",
+                    data: {id:id,curriculum_id:ids},
+                    dataType: 'json',
+                    success: function(data) { // 获取当前月的数据
+                        var arr = [];
+                        if(data.code == "001") {
+                            $("#name").text("《" +data.result.curriculum_name+ "》教学日历");
+                            //禁用全天
+                            for (var i = 0; i < data.result.unuse.whole.length; i++) {
+                                var title = data.result.unuse.whole[i].title;
+                                var start = data.result.unuse.whole[i].start_time.substr(0,10);
+                                var end = data.result.unuse.whole[i].end_time.substr(0,10);
+                                var rendering = 'background';
+                                var color =  '#C1C1C1';
+                                arr.push({
+                                    title : title,
+                                    start : start,
+                                    end : end,
+                                    rendering : rendering,
+                                    color : color,
+                                    defaultDate: true
+                                })
+                            }
+                            //禁用一段时间的某天某一段时间
+                            for (var j = 0; j < data.result.unuse.half.length; j++) {
+//                                var title = data.result.unuse.half[j].curriculum_name;
+//                                var  constraint =  data.result.data[j].teacher_name;
+                                var start = data.result.unuse.half[j].start_time;
+                                var end = data.result.unuse.half[j].end_time;
+                                var  constraint =  "disable";
+                                arr.push({
+                                    title : "实验室禁用",
+                                    start : start,
+                                    color: "#C1C1C1",
+                                    textColor:'#333',
+                                    constraint : constraint
+                                })
+                            }
+                            //预约
+                            for (var j = 0; j < data.result.data.length; j++) {
+                                var title = data.result.data[j].curriculum_name;
+//                                var  constraint =  data.result.data[j].teacher_name;
+                                var start = data.result.data[j].start_time;
+                                var end = data.result.data[j].end_time;
+                                var  constraint =  "disable";
+                                arr.push({
+                                    title : title,
+                                    start : start,
+                                    end : end,
+                                    constraint : constraint
+                                })
+                            }
+                        }
+                        callback(arr);
+                    }
+                });
+            }
+        });
+    });
+
+
+</script>
+</html>

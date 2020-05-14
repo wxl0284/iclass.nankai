@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" /> 
+     <!-- <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" /> -->
+      <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />  
+     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <style>
+        #table{
+            border-top:1px solid #ddd ;
+            width:100%;
+            margin:15px 3px ;
+        
+        }
+        tr{
+            border-bottom:1px solid #ddd;
+        }
+       th,td{
+            padding:5px;
+            text-align: center;
+        }
+        .tr_title{
+            background-color: #F8F8F9;
+        }
+        input{
+            position: relative;
+            margin: 10px 0;
+            left:85%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            height:30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="IndexRight">
+        <h6 class="page_title">
+            <img src="../../images/module_title.png">
+            <span>查看课程</span>
+        </h6>
+        <input type="search" placeholder="请输入资源名称或资源类型" >
+  
+     <table id="table" data-toggle="table" table-no-bordered="false"  data-toggle="table"  data-method="post" data-toolbar="#toolbar" data-pagination="true"  data-page-list="[5,10,15]" data-unique-id="id" data-page-size="10">
+            <thead>
+            <tr class="tr_title">
+                <th data-field="curriculum_num" data-align="center">课程编号</th>
+                <th data-field="curriculum_name" data-align="center">课程名称</th>
+                <th data-field="resource_name" data-align="center">资源名称</th>
+                <th data-field="resource_type" data-align="center">资源类型</th>
+                <th data-field="Formatter" data-formatter="operateFormatter" data-align="center">操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</body>
+<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="../../static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../../lib/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script>
+    Load();
+    function Load() {
+        $.ajax({
+            type:'get',
+            url:'/api/AssessmentList',
+            dataType:'json',
+            success:function (data) {
+                if(data.code=="001"){
+                    var $table = $('#table');
+                    var datas = data.result;
+                    $table.bootstrapTable('load',datas);
+                } else {
+                    layer.msg(data.message,{icon:2});
+                }
+            },
+            error:function(err){
+                console.error(err);
+            }
+        });
+    }
+//    操作显示在表格
+    function operateFormatter(value, row, index) {
+        return [
+            '<a style="margin-left:10px;color: blue" title="查看详情" onclick="select(\''+ row.id + '\')">查看详情</a>'
+        ].join('');
+    }
+    function select(id) {
+        //将学生id存入session
+        window.sessionStorage["student_id"] = id;
+        var $ifrem = window.parent.document.getElementById("iframe");
+        $($ifrem).attr("src","html/new_add/course_details.html?id="+id);
+    }
+    //搜索
+    $("input").blur(function () {
+        var input_val=$(this).val();
+        $('table tbody tr').hide().filter(':contains('+input_val+')').show();
+    });
+</script>
+</html>
