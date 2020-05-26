@@ -349,7 +349,7 @@ function exportExcel($filename,$data){
 
 	//判断当前键值是否存在数组中
 	function isExistInArray(array &$abc,$key){
-	   if(isSet($abc[$key])){
+	   if(isset($abc[$key])){
 	     return $abc[$key];
 	   }
 	   return null;

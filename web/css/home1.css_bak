@@ -42,7 +42,7 @@
 	top:65px;
 }
 
-/*.room {
+.room {
 	width:532px;
 	height:580px;
 	display: inline-block;
@@ -90,58 +90,6 @@
 	font-size: 15px;
 	color: #a1a1a1;
 	font-weight: bold;
-} */
-
-#labs {
-	min-width: 100px;
-	min-height: 100px;
-	top: 12%;
-}
-
-#lab1 {
-	background: url('../images/zh_rm1.png') no-repeat;
-}
-
-#lab2 {
-	background: url('../images/zh_rm2.png') no-repeat;
-}
-
-#lab3 {
-	background: url('../images/zh_rm3.png') no-repeat;
-}
-
-.labs {
-	width: 1200px; height: 186px;
-	margin-bottom: 20px;
-}
-
-a.hov {
-	display: inline-block;
-	width: 337px; height: 140px;
-	position: relative;
-	top: 12%;
-	margin-right: 1.5%;
-}
-
-a.hov span {
-	position: absolute;
-	top: 21%;
-	right: 9.5%;
-	font-size: 14px;
-	color:#838383;
-	display: inline-block;
-	text-align: center;
-	width: 107px;
-}
-
-a.hov img {
-	position: absolute;
-	top: 60%;
-	right: 10%;
-}
-
-.lab1 {
-	margin-left: 8.8%;
 }
 
 #foot {

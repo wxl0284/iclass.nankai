@@ -327,7 +327,6 @@ class Login extends Controller
             header("Location: https://".$_SERVER['SERVER_NAME']."/web/home.html");exit;
 
 			} catch (Exception $e) {
-				echo "出错了";
 				echo $e->getMessage();
 				header("Location: " . $loginServer . "?service=" . $address);
 			}
@@ -336,10 +335,7 @@ class Login extends Controller
 			header("Location: " . $loginServer . "?service=" . $address);
 			exit;
 		} 
-		
-		
-		
-		
+			
     }
 
     public function caslogin ()
