@@ -9,8 +9,8 @@
 	<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
 	<title>虚拟仿真实验教学管理与共享平台</title>
 	<script>
-		var value = sessionStorage.getItem("key");
-		var obj = JSON.parse(value);
+		var value = sessionStorage.getItem("key"); //home.html页面从后台获取的用户权限等信息
+		var obj = JSON.parse(value);console.log(obj);
 		if(obj == null) {
 			window.location.href = "login.html";
 		}

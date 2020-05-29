@@ -29,16 +29,27 @@
                     <span class='hov' style="background: url('./images/rm6.png') no-repeat"><a>B智慧实验室<br>(津南校区)<img src='./images/nm.png'></a></span>
                 </div>
             </div>            
-        </div> -->
+        </div> 原来的2竖列模式-->
         <div id='labs' class='p_a'>
-            <div id='lab1' class='labs'>
-                <a class='hov lab1' style="background: url('./images/lab1.png') no-repeat"><span>TEAL智慧教室<br>(八里台校区)<img src='./images/nm.png'></span></a><a class='hov' style="background: url('./images/lab2.png') no-repeat"><span>A智慧教室<br>(津南校区)<img src='./images/nm.png'></span></a>
+            <div id='lab1' class='labs p_r'><img src='./images/l1.png' class='p_a img_left'><a class='hov lab1' style="background: url('./images/lab1.png') no-repeat"><span>TEAL智慧教室<br>(八里台校区)<img src='./images/nm.png'></span></a><a class='hov' style="background: url('./images/lab2.png') no-repeat"><span>A智慧教室<br>(津南校区)<img src='./images/nm.png'></span></a><a class='hov' style="background: url('./images/lab1.png') no-repeat"><span>TEAL智慧教室<br>(八里台校区)<img src='./images/nm.png'></span></a><img src='./images/r1.png' class='p_a img_right'>
+                <!--<img src='./images/l1.png' class='p_a img_left'> 
+                    <a class='hov lab1' style="background: url('./images/lab1.png') no-repeat"><span>TEAL智慧教室<br>(八里台校区)<img src='./images/nm.png'></span></a>
+                <a class='hov' style="background: url('./images/lab2.png') no-repeat"><span>A智慧教室<br>(津南校区)<img src='./images/nm.png'></span></a>
+                <a class='hov' style="background: url('./images/lab1.png') no-repeat"><span>TEAL智慧教室<br>(八里台校区)<img src='./images/nm.png'></span></a>
+                <a class='hov' style="display:none; background: url('./images/lab2.png') no-repeat"><span>A智慧教室<br>(津南校区)<img src='./images/nm.png'></span></a>
+                <a class='hov' style="display:none; background: url('./images/lab1.png') no-repeat"><span>TEAL智慧教室<br>(八里台校区)<img src='./images/nm.png'></span></a>
+                <a class='hov' style="display:none; background: url('./images/lab2.png') no-repeat"><span>A智慧教室<br>(津南校区)<img src='./images/nm.png'></span></a>
+                <a class='hov' style="display:none; background: url('./images/lab2.png') no-repeat"><span>A智慧教室<br>(津南校区)<img src='./images/nm.png'></span></a>
+                <a class='hov' style="display:none; background: url('./images/lab1.png') no-repeat"><span>TEAL智慧教室<br>(八里台校区)<img src='./images/nm.png'></span></a>
+                <a class='hov' style="display:none; background: url('./images/lab2.png') no-repeat"><span>A智慧教室<br>(津南校区)<img src='./images/nm.png'></span></a>
+                <a class='hov' style="display:none; background: url('./images/lab2.png') no-repeat"><span>A智慧教室<br>(津南校区)<img src='./images/nm.png'></span></a> 
+                <img src='./images/r1.png' class='p_a img_right'>-->
             </div>
-            <div id='lab2' class='labs'>
-                <a class='hov lab1' style="background: url('./images/lab3.png') no-repeat"><span>虚拟仿真校级<br>实验室(津南校区)<img src='./images/nm.png'></span></a><a class='hov' style="background: url('./images/lab4.png') no-repeat"><span>A智慧实验室<br>(八里台校区)<img src='./images/nm.png'></span></a><a class='hov' style="background: url('./images/lab5.png') no-repeat"><span>B智慧实验室<br>(津南校区)<img src='./images/nm.png'></span></a>
+            <div id='lab2' class='labs p_r'>
+                <img src='./images/l1.png' class='p_a img_left'><a class='hov lab1' style="background: url('./images/lab3.png') no-repeat"><span>虚拟仿真校级<br>实验室(津南校区)<img src='./images/nm.png'></span></a><a class='hov' style="background: url('./images/lab4.png') no-repeat"><span>A智慧实验室<br>(八里台校区)<img src='./images/nm.png'></span></a><a class='hov' style="background: url('./images/lab5.png') no-repeat"><span>B智慧实验室<br>(津南校区)<img src='./images/nm.png'></span></a><img src='./images/r1.png' class='p_a img_right'>
             </div>
-            <div id='lab3' class='labs'>
-                <a class='hov lab1' style="background: url('./images/lab6.png') no-repeat"><span>自主录播教室<br>(津南校区公共教学楼B516)<img src='./images/nm.png'></span></a>
+            <div id='lab3' class='labs p_r'>
+                <img src='./images/l1.png' class='p_a img_left'><a class='hov lab1' onclick="labInto(3)" style="background: url('./images/lab6.png') no-repeat"><span>自主录播教室<br>(津南校区公共教学楼B516)<img src='./images/nm.png'></span></a><img src='./images/r1.png' class='p_a img_right'>
             </div>
         </div>
     </div>
@@ -93,6 +104,265 @@
             }
           })
        
-      })
+        //3类实验室左右箭头事件效果
+        var labs = $('div.labs');
+
+        labs.each(function () {
+            let t = $(this);
+            let a_num = t.find('a').length;
+            //console.log(a_num);
+            if ( a_num > 3 )
+            {
+                t.find('img.img_right').css('display', 'inline-block');
+            }else{
+                t.find('img.img_right').css('display', 'none');
+            }
+
+            t.find('img.img_left').css('display', 'none');
+        });
+
+        var lab1 = $('#lab1');
+        var lab2 = $('#lab2');
+        var lab3 = $('#lab3');
+
+        var right_img1 = lab1.find('.img_right');
+        var right_img2 = lab2.find('.img_right');
+        var right_img3 = lab3.find('.img_right');
+
+        var left_img1 = lab1.find('.img_left');
+        var left_img2 = lab2.find('.img_left');
+        var left_img3 = lab3.find('.img_left');
+
+        labs.find('.img_right').hover(
+
+            function () {
+                $(this).attr('src', './images/r2.png').css('cursor', 'pointer');
+            },
+
+            function () {
+                $(this).attr('src', './images/r1.png');
+            }
+        )
+
+        labs.find('.img_left').hover(
+
+            function () {
+                $(this).attr('src', './images/l2.png').css('cursor', 'pointer');
+            },
+
+            function () {
+                $(this).attr('src', './images/l1.png');
+            }
+        )
+
+        var labs1_i = 0;//第1栏右边箭头点击次数
+        var labs2_i = 0;//第2栏右边箭头点击次数
+        var labs3_i = 0;//第3栏右边箭头点击次数
+
+        right_img1.click(function () {
+            
+            let a = lab1.find('a');
+            let num = a.length;
+
+            if ( labs1_i < num )
+            {
+                labs1_i += 1;
+            }
+
+            if ( labs1_i > 0 )
+            {
+                left_img1.css('display', '');
+            }
+
+            for ( let i = 3*(labs1_i-1); i <= 3*(labs1_i-1) + 2; i++ )
+            {//每点击一次右边箭头隐藏前面三个  加载后面三个
+                if ( a[i] )
+                {
+                    a[i].style.display = 'none';
+                }
+
+                if ( a[i+3] )
+                {
+                    a[i+3].style.display = '';
+                }
+            }
+
+            if ( ( num - labs1_i*3 ) <= 3 )
+            {//右边剩余a元素数量3个以下
+                $(this).css('display', 'none');
+            }
+
+        })//right_img1 click结束
+
+        left_img1.click(function () {
+            let a = lab1.find('a');
+            let num = a.length;
+
+            for ( let i = 3*(labs1_i-1); i <= 3*(labs1_i-1) + 2; i++ )
+            {//每点击一次左边箭头显示前面三个  隐藏后面三个
+                if ( a[i] )
+                {
+                    a[i].style.display = '';
+                }
+
+                if ( a[i+3] )
+                {
+                    a[i+3].style.display = 'none';
+                }
+            }
+
+            if ( labs1_i >= 1 )
+            {
+                labs1_i -= 1;
+            }
+
+            if ( labs1_i == 0 )
+            {
+                $(this).css('display', 'none');
+            }
+
+            if ( ( num - labs1_i*3 ) > 3 )
+            {//右边剩余a元素数量3个以下
+                right_img1.css('display', '');
+            }
+        })//left_img1 click结束
+
+        right_img2.click(function () {
+            
+            let a = lab2.find('a');
+            let num = a.length;
+
+            if ( labs2_i < num )
+            {
+                labs2_i += 1;
+            }
+
+            if ( labs2_i > 0 )
+            {
+                left_img2.css('display', '');
+            }
+
+            for ( let i = 3*(labs2_i-1); i <= 3*(labs2_i-1) + 2; i++ )
+            {//每点击一次右边箭头隐藏前面三个  加载后面三个
+                if ( a[i] )
+                {
+                    a[i].style.display = 'none';
+                }
+
+                if ( a[i+3] )
+                {
+                    a[i+3].style.display = '';
+                }
+            }
+
+            if ( ( num - labs2_i*3 ) <= 3 )
+            {//右边剩余a元素数量3个以下
+                $(this).css('display', 'none');
+            }
+
+        })//right_img2 click结束
+
+        left_img2.click(function () {
+            let a = lab2.find('a');
+            let num = a.length;
+
+            for ( let i = 3*(labs2_i-1); i <= 3*(labs2_i-1) + 2; i++ )
+            {//每点击一次左边箭头显示前面三个  隐藏后面三个
+                if ( a[i] )
+                {
+                    a[i].style.display = '';
+                }
+
+                if ( a[i+3] )
+                {
+                    a[i+3].style.display = 'none';
+                }
+            }
+
+            if ( labs2_i >= 1 )
+            {
+                labs2_i -= 1;
+            }
+
+            if ( labs2_i == 0 )
+            {
+                $(this).css('display', 'none');
+            }
+
+            if ( ( num - labs2_i*3 ) > 3 )
+            {//右边剩余a元素数量3个以下
+                right_img2.css('display', '');
+            }
+        })//left_img2 click结束
+
+        right_img3.click(function () {
+            
+            let a = lab3.find('a');
+            let num = a.length;
+
+            if ( labs3_i < num )
+            {
+                labs3_i += 1;
+            }
+
+            if ( labs3_i > 0 )
+            {
+                left_img3.css('display', '');
+            }
+
+            for ( let i = 3*(labs3_i-1); i <= 3*(labs3_i-1) + 2; i++ )
+            {//每点击一次右边箭头隐藏前面三个  加载后面三个
+                if ( a[i] )
+                {
+                    a[i].style.display = 'none';
+                }
+
+                if ( a[i+3] )
+                {
+                    a[i+3].style.display = '';
+                }
+            }
+
+            if ( ( num - labs3_i*3 ) <= 3 )
+            {//右边剩余a元素数量3个以下
+                $(this).css('display', 'none');
+            }
+
+        })//right_img2 click结束
+
+        left_img3.click(function () {
+            let a = lab3.find('a');
+            let num = a.length;
+
+            for ( let i = 3*(labs3_i-1); i <= 3*(labs3_i-1) + 2; i++ )
+            {//每点击一次左边箭头显示前面三个  隐藏后面三个
+                if ( a[i] )
+                {
+                    a[i].style.display = '';
+                }
+
+                if ( a[i+3] )
+                {
+                    a[i+3].style.display = 'none';
+                }
+            }
+
+            if ( labs3_i >= 1 )
+            {
+                labs3_i -= 1;
+            }
+
+            if ( labs3_i == 0 )
+            {
+                $(this).css('display', 'none');
+            }
+
+            if ( ( num - labs3_i*3 ) > 3 )
+            {//右边剩余a元素数量3个以下
+                right_img3.css('display', '');
+            }
+        })//left_img3 click结束
+
+      })//jquery ready 结束
 
 </script>

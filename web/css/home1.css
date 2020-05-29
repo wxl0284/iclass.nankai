@@ -121,6 +121,8 @@ a.hov {
 	position: relative;
 	top: 12%;
 	margin-right: 1.5%;
+	cursor: pointer;
+	left: 8.8%;
 }
 
 a.hov span {
@@ -131,18 +133,27 @@ a.hov span {
 	color:#838383;
 	display: inline-block;
 	text-align: center;
-	width: 107px;
+	width: 112px;
 }
 
 a.hov img {
 	position: absolute;
-	top: 60%;
-	right: 10%;
+	top: 53px;
+	right: 7%;
 }
 
-.lab1 {
-	margin-left: 8.8%;
+.img_left {
+	top:44.5%; left: 5.4%;
 }
+
+.img_right {
+	top:44.5%; right: 0.7%;
+	/* background: url('../images/r1.png') no-repeat; */
+}
+
+/* img.img_right:hover {
+	background: url('../images/r2.png') no-repeat !important;
+} */
 
 #foot {
 	text-align: center;

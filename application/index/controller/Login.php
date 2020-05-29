@@ -151,8 +151,10 @@ class Login extends Controller
                 }
             }
         }
+
         //查询用户权限
         $auth = self::getAuth($user_arr['id']);
+       
         if($auth){
             $datetime = date('Y-m-d H:i:s');
             $username = $user_arr['name'];
@@ -411,7 +413,7 @@ class Login extends Controller
             ["disciplinCode"] => NULL
             ["className"] => NULL
             ["classCode"] => NULL
-          }*/
+          }
           
           $user_info = [
             "name" => "许丽",
@@ -435,7 +437,7 @@ class Login extends Controller
             "disciplinCode" => NULL,
             "className" => NULL,
             "classCode" => NULL
-          ]; 
+          ]; */
           
 
           /*array(21) {
@@ -460,7 +462,7 @@ class Login extends Controller
             ["disciplinCode"] => NULL
             ["className"] => NULL
             ["classCode"] => NULL
-          }
+          }*/
           
           $user_info = [
             "name" => "田野",
@@ -484,7 +486,7 @@ class Login extends Controller
             "disciplinCode" => NULL,
             "className" => NULL,
             "classCode" => NULL
-          ];*/
+          ];
           
           Session::set("user_infocas",$user_info);
           header("Location:iclass.com/web/home.html");
@@ -544,9 +546,10 @@ class Login extends Controller
 
     /**
      * 获取权限
+     * $lab_admin: 是否是当前实验室的管理员 默认为true(即：是管理员)
      * @return array|bool
      */
-    protected static function getAuth($id)
+    protected static function getAuth($id, $lab_admin=true)
     {
         if($id){
             //根据传入的用户id查找到关联的角色id
@@ -558,15 +561,19 @@ class Login extends Controller
 
             $corr_role = explode(',',$corr['role_id']);
 
-            $show = self::getShow($corr['role_id']);
+            //如果 $lab_admin为false 则删除$corr_role中值为2的元素
 
+
+            $show = self::getShow($corr['role_id']);
+          
             //根据角色id查找到权限
             $cond = [
                 'id' => array('in',$corr_role)
             ];
 
-            $res = Db::name('role')->where($cond)->select();
-
+            $res = Db::name('role')->where($cond)->fetchSql(true)->select();
+            //$res = Db::name('role')->where($cond)->select();
+            halt($res);
             //处理权限，得到一个权限id的数组
             $rules = '';
             $roleMap = []; // 角色关系
@@ -588,6 +595,7 @@ class Login extends Controller
                 //获取一级导航
                 $rule = implode(',',$ruleArr);
                 $col = RuleModel::all($rule);
+        
                 $primary = [];
                 if(null !== $col){
                     foreach ($col as $key => $value){
@@ -623,6 +631,7 @@ class Login extends Controller
                 $auth['role'] = $roleMap;
                 $auth['rule'] = $corr['role_id'];
                 $auth['show'] = $show;
+    
                 return $auth;
             }else{
                 return false;
