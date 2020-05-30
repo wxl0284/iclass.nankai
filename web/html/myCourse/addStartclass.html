@@ -200,6 +200,10 @@
 <script src="../../lib/layer/2.4/layer.js"></script>
 <script src="../../static/h-ui.admin/js/date.js"></script>
 <script>
+    //获取当前用户名
+    var User = sessionStorage.getItem("User");
+    var Userobj = JSON.parse(User);
+
     //加载课程select
     var courseName = document.getElementById('courseName');
     var courseNameOption = "";
@@ -207,6 +211,9 @@
     $.ajax({
         type: 'get',
         url: "/api/listCheckedCourse",
+        data: {
+            teacher_id: Userobj.user_id
+        },
         dataType: 'json',
         success:function(data){
             data = data.result;
@@ -251,10 +258,7 @@
             labName.innerHTML += labNameOption;
         }
     });
-    //获取当前用户名
-    var User = sessionStorage.getItem("User");
-    var Userobj = JSON.parse(User);
-    console.log(Userobj);
+  
     $("#teacher").val(Userobj.user_name);
     $("#refill").on("click",function () {
         var $ifrem = window.parent.document.getElementById("iframe");
@@ -274,10 +278,20 @@
     var starTimeB_e = $("#starTimeB"); //开始日期(重复范围)
     var endTimeB_e = $("#endTimeB");//结束日期(重复范围)
     //时间插件初始
+    var min_time = '';
+
     laydate.render({
         elem: '#starTime',
         type: 'datetime',
-        min: date(),
+        //min: min_time,
+        //max: '22:00:00',
+        //min:date(),
+        change: function (v, date, end ){
+            //console.log(v);
+            v = v.split(' ');
+            min_time = v[0] + " 08:00:00";
+            this.min = min_time;            
+        },
         done: function (v, date_obj, end) {
             let p = v.indexOf(' ');//v是'2020-05-28 09:06:07'
             let h = parseInt( v.substring(p, p+3) );
@@ -301,11 +315,14 @@
     laydate.render({
         elem: '#endTime',
         type: 'datetime',
-        min: date(),
+        min: '08:00:00',
+        max: '22:00:00',
     });
     laydate.render({
         elem: '#starTimeT',
         type: 'time',
+        min: '08:00:00',
+        max: '22:00:00',
         done: function (v, date_obj, end) {
             //选择好开始时间后 自动将结束时间加2小时
             let h = parseInt( v.substring(0, 2) );
@@ -328,6 +345,8 @@
     laydate.render({
         elem: '#endTimeT',
         type: 'time',
+        min: '08:00:00',
+        max: '22:00:00',
     });
     laydate.render({
         elem: '#starTimeB',

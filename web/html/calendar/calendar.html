@@ -227,7 +227,9 @@
     laydate.render({
         elem: '#starTime',
         type: 'datetime',
-        min: date(),
+        //min: date(),
+        min: '08:00:00',
+        max: '22:00:00',
         done: function (v, date_obj, end) {
             //选择好开始时间后 自动将结束时间加2小时
             let p = v.indexOf(' ');//v是'2020-04-28 09:06:07'
@@ -250,11 +252,14 @@
     laydate.render({
         elem: '#endTime',
         type: 'datetime',
-        min: date(),
+        min: '08:00:00',
+        max: '22:00:00',
     });
     laydate.render({
         elem: '#starTimeT',
         type: 'time',
+        min: '08:00:00',
+        max: '22:00:00',
         done: function (v, date_obj, end) {
             //选择好开始时间后 自动将结束时间加2小时
             let h = parseInt( v.substring(0, 2) );
@@ -276,6 +281,8 @@
     laydate.render({
         elem: '#endTimeT',
         type: 'time',
+        min: '08:00:00',
+        max: '22:00:00',
     });
     laydate.render({
         elem: '#starTimeB',

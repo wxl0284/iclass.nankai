@@ -97,12 +97,30 @@ class Login extends Controller
 
         $user_info = session::get('user_infocas');
         $platform = input('post.platform');  //接收实验室名称
-
+    
         //获取实验室名称
-        $lab = Db::name('lab')->where('id',$platform)->value('name');
+        $lab = Db::name('lab')->where('id',$platform)->field('name, manager')->find();
 
         //获取学生号或者教工号
         $user_uid = $user_info['studentNumber']?$user_info['studentNumber']:$user_info['teaching_number'];
+
+        //判断此用户是否为此实验室负责人
+
+        if ( $lab['manager'] )
+        {
+            $lab['manager'] = explode(',', $lab['manager']);
+            if ( in_array($user_uid, $lab['manager']) )
+            {
+                $lab_admin = true;//是当前实验室负责人
+            }else{
+                $lab_admin = false;//不是当前实验室负责人
+            }
+        }else{
+            $lab_admin = false;
+        }
+
+        //halt($lab_admin);
+    
         //查询本地数据库是否有该用户
         $map = [
             'user_uid'      => $user_uid,
@@ -153,7 +171,45 @@ class Login extends Controller
         }
 
         //查询用户权限
-        $auth = self::getAuth($user_arr['id']);
+        $auth = self::getAuth($user_arr['id'], $lab_admin);
+        //halt($auth);
+
+        //如果是'自主录播教室'，没有‘开课申请’这个功能，所以在此处删除$auth中的‘开课申请’ 和‘开课审批’
+        if ( $platform == 3 )
+        {
+            //删除‘开课申请’
+            $temp = $auth['auth'][1]['child'];
+           
+            foreach ($temp as $k => $v)
+            {
+                $p = array_search('开课申请', $v);
+
+                if ( $p !== false )
+                {
+                    array_splice($temp, $k, 1); //删除‘开课申请’所在的数组项
+                }
+            }
+
+            $auth['auth'][1]['child'] = $temp;
+
+            //删除‘开课审批’
+            $temp = $auth['auth'][4]['child'];
+           
+            foreach ($temp as $k => $v)
+            {
+                $p = array_search('开课审批', $v);
+
+                if ( $p !== false )
+                {
+                    array_splice($temp, $k, 1); //删除‘开课审批’所在的数组项
+                }
+            }
+
+            $auth['auth'][4]['child'] = $temp;
+        }
+
+        //halt()
+        //删除$auth中的‘开课审批’和‘开课审批’结束
        
         if($auth){
             $datetime = date('Y-m-d H:i:s');
@@ -171,7 +227,7 @@ class Login extends Controller
                 $auth['user_info']['user_name'] = $username;
                 $auth['user_info']['user_id'] = $user_arr['id'];
                 $auth['domain'] = 'https://'.$_SERVER['SERVER_NAME'];
-                $auth['lab_name'] = $lab;
+                $auth['lab_name'] = $lab['name'];
 
                 $logArr = [
                     'ip' => $_SERVER['REMOTE_ADDR'],
@@ -342,29 +398,30 @@ class Login extends Controller
 
     public function caslogin ()
     {
-       /* array(21) {
-            ["name"] => string(9) "王鸿鹏"
-            ["phone"] => string(11) "13920518337"
-            ["national"] => string(6) "汉族"
-            ["genders"] => string(3) "男"
-            ["email"] => string(20) "hpwang@nankai.edu.cn"
-            ["other_post"] => string(9) "副教授"
-            ["educationals"] => string(21) "博士研究生毕业"
-            ["teaching_number"] => string(6) "009060"
-            ["studentNumber"] => NULL
-            ["type"] => string(1) "2"
-            ["role"] => string(94) "ROLECNNAME:教工,ROLEIDENTIFY:ROLE_TEACHER-ROLECNNAME:0101 事业编 on,ROLEIDENTIFY:00010101"
-            ["department"] => string(63) "[DEPARTMENTNAME:人工智能学院,DEPARTMENTIDENTIFY:20180168]"
-            ["post"] => string(2) "[]"
-            ["faculetName"] => NULL
-            ["faculetCode"] => NULL
-            ["gradName"] => NULL
-            ["gradCode"] => NULL
-            ["disciplinName"] => NULL
-            ["disciplinCode"] => NULL
-            ["className"] => NULL
-            ["classCode"] => NULL
-          } 
+       
+       /* $user_info = [
+            "name" => "吴强",
+            "phone" => "13820773331",
+            "national" => "回族",
+            "genders" => "男",
+            "email" => "WuQiang@nankai.edu.cn",
+            "other_post" => "教授",
+            "educationals" => "博士研究生毕业",
+            "teaching_number" => "003160",
+            "studentNumber" => NULL,
+            "type" => "2",
+            "role" => "ROLECNNAME:教工,ROLEIDENTIFY:ROLE_TEACHER-ROLECNNAME:0101 事业编 on,ROLEIDENTIFY:00010101",
+            "department" => "DEPARTMENTNAME:泰达应用物理研究院,DEPARTMENTIDENTIFY:20180164",
+            "post" => "[]",
+            "faculetName" => NULL,
+            "faculetCode" => NULL,
+            "gradName" => NULL,
+            "gradCode" => NULL,
+            "disciplinName" => NULL,
+            "disciplinCode" => NULL,
+            "className" => NULL,
+            "classCode" => NULL
+          ];
         
           $user_info = [
             "name" => "王鸿鹏",
@@ -388,34 +445,9 @@ class Login extends Controller
             "disciplinCode" => NULL,
             "className" => NULL,
             "classCode" => NULL
-          ];*/
-
-
-        /*array(21) {
-            ["name"] => string(6) "许丽"
-            ["phone"] => string(11) "13902002664"
-            ["national"] => string(6) "汉族"
-            ["genders"] => string(3) "女"
-            ["email"] => string(18) "xuli@nankai.edu.cn"
-            ["other_post"] => string(9) "实验师"
-            ["educationals"] => string(21) "硕士研究生毕业"
-            ["teaching_number"] => string(6) "013023"
-            ["studentNumber"] => NULL
-            ["type"] => string(1) "2"
-            ["role"] => string(94) "ROLECNNAME:教工,ROLEIDENTIFY:ROLE_TEACHER-ROLECNNAME:0101 事业编 on,ROLEIDENTIFY:00010101"
-            ["department"] => string(63) "[DEPARTMENTNAME:人工智能学院,DEPARTMENTIDENTIFY:20180168]"
-            ["post"] => string(2) "[]"
-            ["faculetName"] => NULL
-            ["faculetCode"] => NULL
-            ["gradName"] => NULL
-            ["gradCode"] => NULL
-            ["disciplinName"] => NULL
-            ["disciplinCode"] => NULL
-            ["className"] => NULL
-            ["classCode"] => NULL
-          }
-          
-          $user_info = [
+          ];
+                  
+         $user_info = [
             "name" => "许丽",
             "phone" => "13902002664",
             "national" => "汉族",
@@ -438,32 +470,7 @@ class Login extends Controller
             "className" => NULL,
             "classCode" => NULL
           ]; */
-          
-
-          /*array(21) {
-            ["name"] => string(6) "田野"
-            ["phone"] => string(11) "18722543443"
-            ["national"] => string(6) "汉族"
-            ["genders"] => string(3) "男"
-            ["email"] => string(14) "nkjrty@126.com"
-            ["other_post"] => string(33) "助理研究员（自然科学）"
-            ["educationals"] => string(21) "硕士研究生毕业"
-            ["teaching_number"] => string(6) "013047"
-            ["studentNumber"] => NULL
-            ["type"] => string(1) "2"
-            ["role"] => string(94) "ROLECNNAME:教工,ROLEIDENTIFY:ROLE_TEACHER-ROLECNNAME:0101 事业编 on,ROLEIDENTIFY:00010101"
-            ["department"] => string(54) "[DEPARTMENTNAME:教务处,DEPARTMENTIDENTIFY:20180014]"
-            ["post"] => string(2) "[]"
-            ["faculetName"] => NULL
-            ["faculetCode"] => NULL
-            ["gradName"] => NULL
-            ["gradCode"] => NULL
-            ["disciplinName"] => NULL
-            ["disciplinCode"] => NULL
-            ["className"] => NULL
-            ["classCode"] => NULL
-          }*/
-          
+         
           $user_info = [
             "name" => "田野",
             "phone" => "18722543443",
@@ -560,9 +567,17 @@ class Login extends Controller
             $corr = Db::name('corrUserRole')->where($map)->find();
 
             $corr_role = explode(',',$corr['role_id']);
+    
+            //如果 $lab_admin为false 则删除$corr_role中值为2的元素（即不去查实验室负责人的权限）
+            if ( $lab_admin === false )
+            {
+                $k = array_search('2', $corr_role);
 
-            //如果 $lab_admin为false 则删除$corr_role中值为2的元素
-
+                if ( false !== $k )
+                {
+                    array_splice($corr_role, $k, 1);
+                }
+            }
 
             $show = self::getShow($corr['role_id']);
           
@@ -571,9 +586,7 @@ class Login extends Controller
                 'id' => array('in',$corr_role)
             ];
 
-            $res = Db::name('role')->where($cond)->fetchSql(true)->select();
-            //$res = Db::name('role')->where($cond)->select();
-            halt($res);
+            $res = Db::name('role')->where($cond)->select();
             //处理权限，得到一个权限id的数组
             $rules = '';
             $roleMap = []; // 角色关系

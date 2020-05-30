@@ -366,9 +366,9 @@ class Apply extends BaseController
     public function listCheckedCourse() {
 
         $lab_id = Session::get('user_infocas.labid');  //获取当前进入的实验室id
-        //$user_id = input()['teacher_id'];//获取选中老师的user_id
-        $user_id = Session::get('user_info.user_id');
-        //halt($a);
+        
+        //$user_id = Session::get('user_info.user_id'); //原来用此值
+        $user_id = input()['teacher_id'];//获取选中老师的user_id，后来改用此值
     
         $res = [];
 
