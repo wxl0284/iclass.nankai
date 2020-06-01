@@ -64,10 +64,10 @@
                 <tr>
                     <!--<th data-field="curriculum_num" data-align="center">课程号</th>-->
                     <th data-field="curriculum_name" data-align="center">课程名称</th>
-                    <!--<th data-field="user_name" data-align="center">主讲教师</th>-->
                     <th data-field="college_name" data-align="center">开课院系</th>
                     <th data-formatter="thAlready" data-align="center">课程状态</th>
-                    <th data-formatter="operation" data-align="center">操作</th>
+                    <th data-field="reason" data-align="center">驳回原因</th>
+                    <th data-formatter="operation_1" data-align="center">操作</th>
                 </tr>
                 </thead>
             </table>
@@ -75,6 +75,7 @@
     </div><!-- 驳回的课程 结束-->
 
 </div>
+<style> .del { cursor: pointer;} </style>
 </body>
 <script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
@@ -104,17 +105,24 @@
             console.error(err);
         }
     });
-    function operation(value, row, index) {
+    function operation (value, row, index) {
         return [
-            '<a style="color: #338FD0" class="del" onclick="details(\''+ row.id + '\')" title="查看详情">查看详情</a>',
-            '<a style="margin-left:8px;color: red" class="del" onclick="del(\''+ row.id + '\')" title="删除">删除</a>'
+            '<a style="color: #338FD0" class="del" onclick="details(\''+ row.id + '\')">查看详情</a>',
+            '<a style="margin-left:8px;color: red" class="del" onclick="del(\''+ row.id + '\')">删除</a>'
         ].join('');
     }
-    function details(id) {
+    function operation_1 (value, row, index) {
+        return [
+            '<a style="color: #338FD0" class="del" onclick="details(\''+ row.id + '\')" >查看详情</a>',
+            '<a style="margin-left:8px;color: #338FD0" class="del" onclick="submit_again()" >再次申请</a>',
+            '<a style="margin-left:8px;color: red" class="del" onclick="del(\''+ row.id + '\')" >删除</a>'
+        ].join('');
+    }
+    function details (id) {
         var $ifrem = window.parent.document.getElementById("iframe");
         $($ifrem).attr("src","html/myCourse/classDetails.html?id=" +id);
     }
-    function del(id) {
+    function del (id) {
         layer.open({
             title:false,
             icon: 3,
@@ -142,6 +150,13 @@
             },btn2: function(){
             },cancel: function(){}
         });
+    }//del() 结束
+    /*
+    submit_again()：加载startClass.html 页面，同时把此门课程的信息
+    */
+    function submit_again ()
+    {
+        $("#addCurse").click();
     }
     //加载我的课程审核中的课程
     $.ajax({
@@ -169,8 +184,26 @@
         success:function (data) {
             if(data.code=="001"){
                 let $table = $('#reject_lesson');
+                
                 let datas = data.result;
+                let num = datas.length;
+
+                if ( num > 0 )
+                {
+                    for ( let i=0; i < num; i++ )
+                    {
+                        let t = datas[i].reason.split('||');
+                        if ( t[1] )
+                        {
+                            datas[i].reason = t[0] + ', ' + t[1];
+                        }else{
+                            datas[i].reason = t[0];;
+                        }
+                    }
+                    
+                }
                 $table.bootstrapTable('load',datas);
+                
             } else {
                 layer.msg(data.message,{icon:2});
             }

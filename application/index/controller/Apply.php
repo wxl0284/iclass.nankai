@@ -98,14 +98,17 @@ class Apply extends BaseController
      */
     public function check()
     {
-        $id = input('post.id');
-        $status = input('post.status');
+        $d = input();
 
+        $id = $d['id'];
+        $status = $d['status'];
+        
         $update = [
             'status'         => $status,
             'curriculum_num' => date('Y') . time(),
             'checker_id'    => Session::get('user_info.user_id'),
-            'check_time'    => date("Y-m-d H:i:s",time())
+            'check_time'    => date("Y-m-d H:i:s",time()),
+            'reason'        => $d['reason']
         ];
 
         $ret = Db::name('start_curriculum')->where('id',$id)->update($update);
@@ -246,7 +249,7 @@ class Apply extends BaseController
         $lab_id = Session::get('user_infocas.labid');  //获取当前进入的实验室id
         
         if($user_id){
-            $fields = 'a.id,a.status,a.curriculum_name,a.curriculum_guide,a.curriculum_rec,a.belong_college,b.name as teacher,c.college_name';
+            $fields = 'a.id,a.status,a.curriculum_name,a.curriculum_guide,a.curriculum_rec,a.belong_college,a.reason,b.name as teacher,c.college_name';
 
             $map = [
                 'a.status'  => 2,//start_curriculum表 status=2 被驳回
@@ -265,7 +268,6 @@ class Apply extends BaseController
         }
         jsonReturn('001',$res);
     }//reject_lessons 结束
-
 
     //-------------------------------------------------上课---------------------------------------------------------//
 

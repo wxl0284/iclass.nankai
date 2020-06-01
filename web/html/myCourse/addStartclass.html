@@ -277,84 +277,62 @@
     var Pattern_e = $("#Pattern"); //定时模式
     var starTimeB_e = $("#starTimeB"); //开始日期(重复范围)
     var endTimeB_e = $("#endTimeB");//结束日期(重复范围)
+    
     //时间插件初始
-    var min_time = '';
-
-    laydate.render({
+    var starTime_obj = laydate.render({
         elem: '#starTime',
         type: 'datetime',
-        //min: min_time,
-        //max: '22:00:00',
-        //min:date(),
-        change: function (v, date, end ){
-            //console.log(v);
-            v = v.split(' ');
-            min_time = v[0] + " 08:00:00";
-            this.min = min_time;            
-        },
+        min: date(),
         done: function (v, date_obj, end) {
+
             let p = v.indexOf(' ');//v是'2020-05-28 09:06:07'
             let h = parseInt( v.substring(p, p+3) );
             let v1 = '';
 
-            if ( h >= 22 )
+            h += 2;
+            if ( h < 10 )
             {
-                layer.alert('开始时间太晚了');return;
-            }else{
-                h += 2;
-                if ( h < 10 )
-                {
-                    h = '0' + h;
-                }
-
-                v1 = v.replace(/ \d{2}/, ' ' + h );
-                endTime_e.val(v1);
+                h = '0' + h;
             }
+
+            v1 = v.replace(/ \d{2}/, ' ' + h );
+            endTime_e.val(v1);
         }//done 结束
     });
-    laydate.render({
+    var endTime_obj = laydate.render({
         elem: '#endTime',
         type: 'datetime',
-        min: '08:00:00',
-        max: '22:00:00',
     });
     laydate.render({
         elem: '#starTimeT',
         type: 'time',
         min: '08:00:00',
-        max: '22:00:00',
+        max: '20:00:00',
         done: function (v, date_obj, end) {
             //选择好开始时间后 自动将结束时间加2小时
             let h = parseInt( v.substring(0, 2) );
-
-            if ( h >= 22 )
+            h += 2;
+            if ( h < 10 )
             {
-                layer.alert('开始时间太晚了');return;
-            }else{
-                h += 2;
-                if ( h < 10 )
-                {
-                    h = '0' + h;
-                }
-               let v1 = v.replace(/\d{2}/, h );
-               endTimeT_e.val(v1);
+                h = '0' + h;
             }
-           
+            let v1 = v.replace(/\d{2}/, h );
+            endTimeT_e.val(v1);
         }
     });
     laydate.render({
         elem: '#endTimeT',
         type: 'time',
         min: '08:00:00',
-        max: '22:00:00',
+        max: '20:00:00',
     });
-    laydate.render({
+    var starTimeB_obj = laydate.render({
         elem: '#starTimeB',
-        min: date()
+        //min: date()
     });
-    laydate.render({
+    var endTimeB_obj = laydate.render({
         elem: '#endTimeB',
-        min: date()
+        //min: date(tomorrow)
     });
     $(document).ready(function() {
         var date = new Date();
@@ -385,6 +363,46 @@
             navLinks: true, // can click day/week names to navigate views
             businessHours: true, // display business hours
             editable: false,
+            dayClick: function (date, event, view) {//设置每天可选时间段
+                
+                let y = date._d.getFullYear();
+                let m = date._d.getMonth();
+                let d = date._d.getDate();
+                let conf = starTime_obj.config;
+                let conf1 = endTime_obj.config;
+                
+                conf.min.year = y;
+                conf.min.month = m;
+                conf.min.date = d;
+                conf.min.hours= 8;
+                conf.min.minutes=0;
+
+                conf.max.year = y;
+                conf.max.month = m;
+                conf.max.date = d;
+                conf.max.hours= 20;
+                conf.max.minutes=0;
+
+                conf1.min.year = y;
+                conf1.min.month = m;
+                conf1.min.date = d;
+                conf1.min.hours= 8;
+                conf1.min.minutes=0;
+
+                conf1.max.year = y;
+                conf1.max.month = m;
+                conf1.max.date = d;
+                conf1.max.hours= 20;
+                conf1.max.minutes=0;
+
+                starTimeB_obj.config.min.year = y;
+                starTimeB_obj.config.min.month = m;
+                starTimeB_obj.config.min.date = d;
+
+                endTimeB_obj.config.min.year = y;
+                endTimeB_obj.config.min.month = m;
+                endTimeB_obj.config.min.date = d + 1;
+            },
             selectOverlap: function(event) {
                 /*return event.rendering === 'background';
                 return event.constraint === 'disable';*/
