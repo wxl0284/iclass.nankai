@@ -69,6 +69,10 @@
                                 <i class="block" style="background: #3A87AD;"></i>
                                 <span class="block-text">审核通过</span>
                             </li>
+                            <li>
+                                <i class="block" style="background: #ABD35A;"></i>
+                                <span class="block-text">等待审核</span>
+                            </li>
                         </ul>
                     </div>
                     <div class="col-md-8">
@@ -376,24 +380,28 @@
                 conf.min.date = d;
                 conf.min.hours= 8;
                 conf.min.minutes=0;
+                conf.min.seconds=0;
 
                 conf.max.year = y;
                 conf.max.month = m;
                 conf.max.date = d;
                 conf.max.hours= 20;
                 conf.max.minutes=0;
+                conf.max.seconds=0;
 
                 conf1.min.year = y;
                 conf1.min.month = m;
                 conf1.min.date = d;
                 conf1.min.hours= 8;
                 conf1.min.minutes=0;
+                conf1.min.seconds=0;
 
                 conf1.max.year = y;
                 conf1.max.month = m;
                 conf1.max.date = d;
                 conf1.max.hours= 20;
                 conf1.max.minutes=0;
+                conf1.max.seconds=0;
 
                 starTimeB_obj.config.min.year = y;
                 starTimeB_obj.config.min.month = m;
@@ -535,6 +543,7 @@
     $("#submits").on("click",function () {
         $(this).attr("data-dismiss","modal");
         $('#myModal').on('hide.bs.modal');
+        $("#submit").click();
     });
 
     $("#submit").click(function () {
@@ -572,8 +581,8 @@
                     obj.start = starTime_e.val();//开始时间
                     obj.end = endTime_e.val();//结束时间
                     obj.allDay = false;
-                    obj.backgroundColor = '#FFAA00';
-                    obj.textColor = '#19A15F';
+                    obj.backgroundColor = '#ABD35A';
+                    obj.textColor = '#710555';
 
                     full_Calendar.fullCalendar('removeEvents', [obj.id]);//先删除日程
                     full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
@@ -631,8 +640,8 @@
                     obj.id = 'course2';
                     obj.title = courseName_e.find('option:selected').text();//课程
                     obj.allDay = false;
-                    obj.backgroundColor = '#FFAA00';
-                    obj.textColor = '#19A15F';
+                    obj.backgroundColor = '#ABD35A';
+                    obj.textColor = '#710555';
 
                     //然后循环渲染日程 计算总共有多少天
                     function  DateDiff (sDate1, sDate2)

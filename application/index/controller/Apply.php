@@ -22,8 +22,8 @@ class Apply extends BaseController
     {
         $user_id = Session::get('user_info.user_id');
         
-        $data = input('post.');
-        // print_r($data);exit;
+        $data = input('');
+
         if(!$data['belong_college']){
             jsonReturn('002',null,"请选择学院信息！");
             return;
@@ -36,35 +36,61 @@ class Apply extends BaseController
             jsonReturn('002',null,"请选择实验室！");
             return;
         }
-        //验证该门课程是否已经申请过
-        $where = [
-            'curriculum_name' => $data['curriculum_name'],
-            'status'          => array('neq',2)
-        ];
-        $res  = Db::name('startCurriculum')->where($where)->find();
-        if($res){
-            jsonReturn('002',null,"您已经申请了该门课程！");
-        }else{
-            $insert = [
-                'lab_id'           => $data['lab_id'],     
+
+       
+        if ( !$data['id'] )//首次提交开课申请
+        {
+            //验证该门课程是否已经申请过
+            $where = [
+                'curriculum_name' => $data['curriculum_name'],
+                'status'          => array('neq',2)
+            ];
+            $res  = Db::name('startCurriculum')->where($where)->find();
+            if($res){
+                jsonReturn('002',null,"您已经申请了该门课程！");
+            }else{
+                $insert = [
+                    'lab_id'           => $data['lab_id'],     
+                    'curriculum_name'  => $data['curriculum_name'],
+                    'curriculum_guide' => $data['curriculum_guide'],
+                    'curriculum_rec'   => $data['curriculum_rec'],
+                    'belong_college'   => $data['belong_college'],
+                    'user_id'          => $user_id,
+                    'flag'             => 0,
+                    'create_time'      => date("Y-m-d H:i:s"),
+                    'update_time'      => date("Y-m-d H:i:s")
+                ];
+
+                $id = Db::name('startCurriculum')->insertGetId($insert);
+
+                if($id){
+                    jsonReturn('001',$id,'已申请，请等待审核！');
+                }else{
+                    jsonReturn('002',null,'申请失败，请重新申请！');
+                }
+            }
+        }else{//被驳回后再次提交开课申请
+            $temp = [
                 'curriculum_name'  => $data['curriculum_name'],
                 'curriculum_guide' => $data['curriculum_guide'],
                 'curriculum_rec'   => $data['curriculum_rec'],
                 'belong_college'   => $data['belong_college'],
                 'user_id'          => $user_id,
                 'flag'             => 0,
+                'status'             => 0,//未审核
                 'create_time'      => date("Y-m-d H:i:s"),
                 'update_time'      => date("Y-m-d H:i:s")
             ];
 
-            $id = Db::name('startCurriculum')->insertGetId($insert);
-
-            if($id){
-                jsonReturn('001',$id,'已申请，请等待审核！');
+            $r = Db::table('nk_start_curriculum')->where('id', $data['id'])->update($temp);
+            
+            if ($r)
+            {
+                jsonReturn('001', $data['id'], '已申请，请等待审核！');
             }else{
-                jsonReturn('002',null,'申请失败，请重新申请！');
+                jsonReturn('002', null, '提交失败，请重新提交！');
             }
-        }
+        }//else 结束
         
     }
 
@@ -108,7 +134,6 @@ class Apply extends BaseController
             'curriculum_num' => date('Y') . time(),
             'checker_id'    => Session::get('user_info.user_id'),
             'check_time'    => date("Y-m-d H:i:s",time()),
-            'reason'        => $d['reason']
         ];
 
         $ret = Db::name('start_curriculum')->where('id',$id)->update($update);
@@ -249,7 +274,7 @@ class Apply extends BaseController
         $lab_id = Session::get('user_infocas.labid');  //获取当前进入的实验室id
         
         if($user_id){
-            $fields = 'a.id,a.status,a.curriculum_name,a.curriculum_guide,a.curriculum_rec,a.belong_college,a.reason,b.name as teacher,c.college_name';
+            $fields = 'a.lab_id,a.id,a.status,a.curriculum_name,a.curriculum_guide,a.curriculum_rec,a.belong_college,a.reason,b.name as teacher,c.college_name';
 
             $map = [
                 'a.status'  => 2,//start_curriculum表 status=2 被驳回
@@ -265,6 +290,15 @@ class Apply extends BaseController
                 ->where($map)
                 ->select();
 
+        }
+
+        if ( $res )//处理被驳回课程中 课程介绍和大纲的html实体
+        {
+            foreach ($res as $k => $v)
+            {
+                $res[$k]['curriculum_guide'] = html_entity_decode( $v['curriculum_guide'] );
+                $res[$k]['curriculum_rec'] = html_entity_decode( $v['curriculum_rec'] );
+            }
         }
         jsonReturn('001',$res);
     }//reject_lessons 结束

@@ -431,24 +431,28 @@
                 conf.min.date = d;
                 conf.min.hours= 8;
                 conf.min.minutes=0;
+                conf.min.seconds=0;
 
                 conf.max.year = y;
                 conf.max.month = m;
                 conf.max.date = d;
                 conf.max.hours= 20;
                 conf.max.minutes=0;
+                conf.max.seconds=0;
 
                 conf1.min.year = y;
                 conf1.min.month = m;
                 conf1.min.date = d;
                 conf1.min.hours= 8;
                 conf1.min.minutes=0;
+                conf1.min.seconds=0;
 
                 conf1.max.year = y;
                 conf1.max.month = m;
                 conf1.max.date = d;
                 conf1.max.hours= 20;
                 conf1.max.minutes=0;
+                conf1.max.seconds=0;
 
                 starTimeB_obj.config.min.year = y;
                 starTimeB_obj.config.min.month = m;
@@ -712,7 +716,7 @@
                 obj.start = starTime_e.val();
                 obj.end = endTime_e.val();
                 obj.title = name_e.find('option:selected').text();
-                obj.backgroundColor = '#3a87ad';
+                obj.backgroundColor = '#ABD35A';
 
                 full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
             }else if ( states === '1' && inputOption == "is_cycle" )//实验室开放 设周期
@@ -774,7 +778,7 @@
                     obj.start = y + '-' + m + '-'+ d + ' ' + starTimeT;
                     obj.end = y + '-' + m + '-'+ d + ' ' + endTimeT;
                     obj.title = name_e.find('option:selected').text();
-                    obj.backgroundColor = '#3a87ad';
+                    obj.backgroundColor = '#ABD35A';
 
                     if ( Pattern === '0' )//不按周
                     {
