@@ -70,7 +70,7 @@
                                 <span class="block-text">审核通过</span>
                             </li>
                             <li>
-                                <i class="block" style="background: #ABD35A;"></i>
+                                <i class="block" style="background: #840463;"></i>
                                 <span class="block-text">等待审核</span>
                             </li>
                         </ul>
@@ -581,8 +581,8 @@
                     obj.start = starTime_e.val();//开始时间
                     obj.end = endTime_e.val();//结束时间
                     obj.allDay = false;
-                    obj.backgroundColor = '#ABD35A';
-                    obj.textColor = '#710555';
+                    obj.backgroundColor = '#840463';
+                    obj.textColor = '#fff';
 
                     full_Calendar.fullCalendar('removeEvents', [obj.id]);//先删除日程
                     full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
@@ -640,8 +640,8 @@
                     obj.id = 'course2';
                     obj.title = courseName_e.find('option:selected').text();//课程
                     obj.allDay = false;
-                    obj.backgroundColor = '#ABD35A';
-                    obj.textColor = '#710555';
+                    obj.backgroundColor = '#840463';
+                    obj.textColor = '#fff';
 
                     //然后循环渲染日程 计算总共有多少天
                     function  DateDiff (sDate1, sDate2)

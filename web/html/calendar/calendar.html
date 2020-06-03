@@ -716,7 +716,8 @@
                 obj.start = starTime_e.val();
                 obj.end = endTime_e.val();
                 obj.title = name_e.find('option:selected').text();
-                obj.backgroundColor = '#ABD35A';
+                obj.backgroundColor = '#840463';
+                obj.textColor = '#fff';
 
                 full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
             }else if ( states === '1' && inputOption == "is_cycle" )//实验室开放 设周期
@@ -778,7 +779,8 @@
                     obj.start = y + '-' + m + '-'+ d + ' ' + starTimeT;
                     obj.end = y + '-' + m + '-'+ d + ' ' + endTimeT;
                     obj.title = name_e.find('option:selected').text();
-                    obj.backgroundColor = '#ABD35A';
+                    obj.backgroundColor = '#840463';
+                    obj.textColor = '#fff';
 
                     if ( Pattern === '0' )//不按周
                     {
