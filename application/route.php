@@ -97,6 +97,7 @@ Route::rule('api/applyList','index/Apply/applyList'); //开课申请列表
 Route::rule('api/check','index/Apply/check'); //开课申请审核
 Route::rule('api/detail','index/Apply/detail'); //开课申请审核查看详情
 Route::rule('api/remove','index/Apply/remove'); //删除开课申请信息
+Route::rule('api/remove_use','index/Apply/remove_use'); //删除课程申请使用信息
 Route::rule('api/applyTeacherCheckedList','index/Apply/applyTeacherCheckedList'); //教师端开课申请已通过审核列表
 Route::rule('api/applyTeacherWaitList','index/Apply/applyTeacherWaitList'); //教师端开课申请待审核审核列表
 Route::get('api/reject_lessons', 'index/Apply/reject_lessons'); //查询被驳回的开课申请

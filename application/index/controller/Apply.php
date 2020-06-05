@@ -212,6 +212,26 @@ class Apply extends BaseController
     }
 
     /**
+     *  删除 课程申请使用
+     */
+    public function remove_use () {
+        $id = input('post.id');
+
+        Db::startTrans();
+        try{
+            //仅删除nk_corr_teaching和nk_order表中记录
+            $del = Db::name('corr_teaching')->where('id', $id)->delete();
+            Db::name('order')->where('corr_id', $id)->delete();
+            Db::commit();
+            jsonReturn('001',$del,"删除成功！");
+        }catch (Exception $e) {
+            Db::rollback();
+            jsonReturn('002',null,"删除失败！");
+        }
+    }
+
+
+    /**
      * 教师端开课申请已通过审核列表
      */
     public function applyTeacherCheckedList(){
@@ -778,14 +798,30 @@ class Apply extends BaseController
                     'create_time' => date('Y-m-d H:i:s'),
                     'update_time' => date('Y-m-d H:i:s')
                 ];
+                /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
+                若有则 更新，若无则insert
+                */
+                $lession_info = Db::name('corr_teaching')->where('curriculum_id', $data['courseName'])->find();
+                
+                if ( $lession_info )
+                {
+                    $id = Db::name('corr_teaching')->where('curriculum_id', $data['courseName'])->update($insert);
+                    
+                    if ($id) {
+                        jsonReturn('001', $id, '申请成功,请等待审核！');
+                    } else {
+                        jsonReturn('001', $data['courseName'], '您重复申请啦！');
+                    }
+                }else{
+                    $id = Db::name('corr_teaching')->insertGetId($insert);
 
-                $id = Db::name('corr_teaching')->insertGetId($insert);
-
-                if ($id) {
-                    jsonReturn('001', $id, '申请成功,请等待审核！');
-                } else {
-                    jsonReturn('002', null, '申请失败！');
+                    if ($id) {
+                        jsonReturn('001', $id, '申请成功,请等待审核！');
+                    } else {
+                        jsonReturn('002', null, '申请失败！');
+                    }
                 }
+                
             }
 
         }elseif ($data['inputOption'] == 'is_cycle') {
@@ -830,12 +866,28 @@ class Apply extends BaseController
                 }else{
                     $insert = self::buildTeacherApplyOrderData($datetimeArr, $data, $user_id);
 
-                    $num = Db::name('corr_teaching')->insertGetId($insert);
+                    /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
+                    若有则 更新，若无则insert
+                    */
+                    $lession_info = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->find();
 
-                    if ($num) {
-                        jsonReturn('001', $num, '申请成功,请等待审核！！');
-                    } else {
-                        jsonReturn('002', null, '申请失败！');
+                    if ( $lession_info )
+                    {
+                        $id = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->update($insert);
+                        
+                        if ($id) {
+                            jsonReturn('001', $id, '申请成功,请等待审核！');
+                        } else {
+                            jsonReturn('001', $insert['curriculum_id'], '您重复申请啦！');
+                        }
+                    }else{
+                        $id = Db::name('corr_teaching')->insertGetId($insert);
+
+                        if ($id) {
+                            jsonReturn('001', $id, '申请成功,请等待审核！');
+                        } else {
+                            jsonReturn('002', null, '申请失败！');
+                        }
                     }
                 }
             }elseif ((int)$data['pattern'] === 1){
@@ -888,12 +940,29 @@ class Apply extends BaseController
                     jsonReturn('002', null, '该时间段已被占用！');
                 }else{
                     $insert = self::buildTeacherApplyOrderData($datetimeArr, $data, $user_id);
-                    $num = Db::name('corr_teaching')->insertGetId($insert);
 
-                    if ($num) {
-                        jsonReturn('001', $num, '申请成功,请等待审核！！');
-                    } else {
-                        jsonReturn('002', null, '申请失败！');
+                    /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
+                    若有则 更新，若无则insert
+                    */
+                    $lession_info = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->find();
+
+                    if ( $lession_info )
+                    {
+                        $id = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->update($insert);
+                        
+                        if ($id) {
+                            jsonReturn('001', $id, '申请成功,请等待审核！');
+                        } else {
+                            jsonReturn('001', $insert['curriculum_id'], '您重复申请啦！');
+                        }
+                    }else{
+                        $id = Db::name('corr_teaching')->insertGetId($insert);
+
+                        if ($id) {
+                            jsonReturn('001', $id, '申请成功,请等待审核！');
+                        } else {
+                            jsonReturn('002', null, '申请失败！');
+                        }
                     }
                 }
             }
@@ -1046,12 +1115,14 @@ class Apply extends BaseController
     }
 
     /**
-     * 上课申请审核
+     * 使用申请 审核
      */
     public function teachCheck()
     {
-        $id = input('post.id');
-        $status = input('post.status');
+        $d = input();
+
+        $id = $d['id'];
+        $status = $d['status'];
 
         $lab_id = Session::get('user_infocas.labid');
 
@@ -1061,7 +1132,7 @@ class Apply extends BaseController
         if($data){
             $time_info = unserialize($data['time_info']);
         }
-
+        
         //判断当前处于审核通过还是驳回状态
         if($status == '1'){
             //将预约日期处理成可以查询的格式
@@ -1135,8 +1206,10 @@ class Apply extends BaseController
             $update = [
                 'status'        => $status,
                 'checker_id'    => Session::get('user_info.user_id'),
-                'check_time'    => date("Y-m-d H:i:s",time())
+                'check_time'    => date("Y-m-d H:i:s",time()),
+                'reason'        => $d['reason'],
             ];
+            //halt($update);
             DB::startTrans();
             try{
                 Db::name('corr_teaching')->where('id',$id)->update($update);
@@ -1148,10 +1221,7 @@ class Apply extends BaseController
                 Db::rollback();
                 jsonReturn("002",null,'审核失败！');
             }
-        }
-
-       
-       
+        }       
     }
 
     /**
@@ -1296,7 +1366,7 @@ class Apply extends BaseController
      */
     public function teachApplyUnAccessCheckList()
     {
-        $fields = 'a.id,a.curriculum_id,a.status,d.name as user_name,c.college_name,b.curriculum_name,b.curriculum_num';
+        $fields = 'a.id,a.reason,a.curriculum_id,a.status,d.name as user_name,c.college_name,b.curriculum_name,b.curriculum_num';
 
         $user_id = Session::get('user_info.user_id');
         $lab_id = Session::get('user_infocas.labid');  //获取实验室id

@@ -52,7 +52,6 @@
     </table>
 
 </div>
-<style> .no {display: none;} </style>
 <div id='refuse' style='display: none;text-align: center;'>
     <select style="width: 80%;margin: 10px;">
         <option value='实验室/教室不开放'>实验室/教室不开放</option>
@@ -129,6 +128,7 @@
                             content: refuse,
                             area: ['300px', '260px'],                           
                             btn: ['确定','取消'],
+                            closeBtn: 0,
                             yes: function () {
                                 reason_str = refuse.find('select').val() + '||' + $.trim( $('#reason').val() );
 
