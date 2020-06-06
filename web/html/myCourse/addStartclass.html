@@ -28,9 +28,9 @@
         <img src="../../images/module_title.png">
         <span>新增上课申请</span>
     </h6>
-    <!--<div class="prompt">-->
-        <!--<div class="text">带*的为必填</div>-->
-    <!--</div>-->
+    <div class="prompt">
+        <div class="text">带*的为必填</div>
+    </div>
     <table class="table table-bordered tables">
         <tbody>
         <tr>
@@ -664,7 +664,7 @@
                     }
 
                     full_Calendar.fullCalendar('removeEvents', [obj.id]);//先删除渲染日程
-
+                    
                     for (let i = 0; i <= num; i++)
                     {                            
                         let today = starTimeB + ' ' + '00:00:00';
@@ -683,10 +683,10 @@
                         obj.start = y + '-' + m + '-'+ d + ' ' + starTimeT;
                         obj.end = y + '-' + m + '-'+ d + ' ' + endTimeT_e;
                         
-                        if ( Pattern_e.val() ==1 && $.inArray(w, chk_value) > -1 )//如果这一天在周的数组里
+                        if ( Pattern_e.val() == 1 && $.inArray(w, chk_value) > -1 )//如果这一天在周的数组里
                         {
                             full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
-                        }else{//不按周 设周期
+                        }else if(Pattern_e.val() == 0){//不按周 设周期
                         
                             full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
                         }

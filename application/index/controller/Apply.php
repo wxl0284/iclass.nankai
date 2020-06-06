@@ -826,7 +826,7 @@ class Apply extends BaseController
 
         }elseif ($data['inputOption'] == 'is_cycle') {
             if((int)$data['pattern'] === 0){
-                //开放 设置周期 无定时
+                //开放 设置周期 不按周
 
                 if(strtotime($data['starTimeT']) > strtotime($data['endTimeT'])){
                     jsonReturn("002",null,"您设置的具体时间不合理");
@@ -967,7 +967,7 @@ class Apply extends BaseController
                 }
             }
         }
-    }
+    }//teachApply 结束
 
     /**
      * 上课申请审批列表
@@ -1087,7 +1087,39 @@ class Apply extends BaseController
 
     }
 
+    /*被驳回的使用申请日程信息
+    */
+    public function reject_use_info ()
+    {
+        $id = input('post.id');
+        $lab_id = Session::get('user_infocas.labid');  //获取当前进入的实验室id
+        $current = []; //这是当前查询的那一条记录的数据
 
+        $fields = 'a.id,a.status,a.info,a.time_info,d.name as user_name,c.college_name,b.curriculum_name,b.curriculum_num';
+
+        $map = [
+            'a.id' => $id,
+            'a.lab_id' => $lab_id,
+        ];
+
+        $current = Db::name('corr_teaching')
+            ->alias('a')
+            ->field($fields)
+            ->join('nk_start_curriculum b','a.curriculum_id=b.id')
+            ->join('nk_base_college c','a.college_id=c.id')
+            ->join('nk_user d','d.id=a.teacher_id')
+            ->where($map)
+            ->select();
+           
+        if($current){
+            foreach ($current as $k => $v) {
+                $current[$k]['time_info'] = unserialize($v['time_info']);
+            }
+        }
+
+        $res['current'] = $current;
+        jsonReturn('001',$res);
+    }
     /**
      * 删除上课申请信息
      */
@@ -1183,38 +1215,20 @@ class Apply extends BaseController
                     jsonReturn("002",null,'审核失败！');
                 }
             }
-        }else{
-            //组织插入数据
-            $size = count($time_info);
-            $insert = [];
-            for ($i = 0; $i<$size; $i++) {
-                $insert[] = [
-                    'corr_id'       =>  $id,
-                    'teacher_id'    =>  $data['teacher_id'],
-                    'curriculum_id' =>  $data['curriculum_id'],
-                    'college_id'    =>  $data['college_id'],
-                    'status'        =>  $status,
-                    'lab_id'        =>  $lab_id,
-                    'start_time'    =>  $time_info[$i]['start_time'],
-                    'end_time'      =>  $time_info[$i]['end_time'],
-                    'create_time'   =>  date("Y-m-d H:i:s"),
-                    'update_time'   =>  date("Y-m-d H:i:s")
-                ];
-            }
-
-            //更新并插入
+        }else{//被驳回
+            //更新
             $update = [
                 'status'        => $status,
                 'checker_id'    => Session::get('user_info.user_id'),
                 'check_time'    => date("Y-m-d H:i:s",time()),
                 'reason'        => $d['reason'],
             ];
-            //halt($update);
+       
             DB::startTrans();
             try{
                 Db::name('corr_teaching')->where('id',$id)->update($update);
                 Db::name('start_curriculum')->where('id',$data['curriculum_id'])->update(['flag' => 0]);
-                $num = Db::name('order')->insertAll($insert);
+                //$num = Db::name('order')->insertAll($insert); //被驳回时无须此操作
                 Db::commit();
                 jsonReturn('001', $num, "审核完成！");
             }catch (Exception $e) {
@@ -1222,6 +1236,14 @@ class Apply extends BaseController
                 jsonReturn("002",null,'审核失败！');
             }
         }       
+    }
+
+    /**
+     * 重新提交 上课申请
+     */
+    public function apply_again ()
+    {
+        halt('again');
     }
 
     /**
@@ -1393,6 +1415,7 @@ class Apply extends BaseController
             ->join('nk_user d','a.teacher_id=d.id')
             ->where($map)
             ->select();
+        //$res['lab_id'] = $lab_id;
 
         jsonReturn('001',$res);
     }

@@ -103,7 +103,9 @@ Route::rule('api/applyTeacherWaitList','index/Apply/applyTeacherWaitList'); //�
 Route::get('api/reject_lessons', 'index/Apply/reject_lessons'); //查询被驳回的开课申请
 Route::rule('api/listCheckedCourse','index/Apply/listCheckedCourse'); //已经审核通过可以选为上课的课程
 Route::rule('api/teachApplyInfo','index/Apply/teachApplyInfo'); //上课申请详情
+Route::rule('api/reject_use_info','index/Apply/reject_use_info'); //驳回的使用申请信息
 Route::rule('api/teachApply','index/Apply/teachApply'); //新增上课申请
+Route::rule('api/apply_again','index/Apply/apply_again'); //重新提交  上课申请
 Route::rule('api/teachApplyList','index/Apply/teachApplyList'); //上课申请审批列表
 Route::rule('api/teachCheck','index/Apply/teachCheck'); //上课申请审核
 Route::rule('api/teachRemove','index/Apply/teachRemove'); //删除上课申请信息

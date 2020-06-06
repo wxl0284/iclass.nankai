@@ -399,7 +399,7 @@ class Login extends Controller
     public function caslogin ()
     {
        
-      /*$user_info = [
+      $user_info = [
             "name" => "吴强",
             "phone" => "13820773331",
             "national" => "回族",
@@ -422,7 +422,7 @@ class Login extends Controller
             "className" => NULL,
             "classCode" => NULL
           ];
-        /* 
+        /*/* 
           $user_info = [
             "name" => "王鸿鹏",
             "phone" => "13920518337",
@@ -445,7 +445,7 @@ class Login extends Controller
             "disciplinCode" => NULL,
             "className" => NULL,
             "classCode" => NULL
-          ];*/
+          ];
               
          $user_info = [
             "name" => "许丽",
@@ -469,7 +469,7 @@ class Login extends Controller
             "disciplinCode" => NULL,
             "className" => NULL,
             "classCode" => NULL
-          ];   
+          ];  */ 
          
          /*$user_info = [
             "name" => "田野",

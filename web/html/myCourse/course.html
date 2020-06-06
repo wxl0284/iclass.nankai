@@ -4,11 +4,18 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.css">
+    <link href='../../lib/FullCalendar/full/fullcalendar.min.css' rel='stylesheet' />
     <link rel="stylesheet" href="../../lib/bootstrap-table/bootstrap-table.css">
     <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
+    <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" />
     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
     <style>
         .btn{padding: 2px 4px}
+        #calendars {max-width: 600px;}
+        .cycles{position: relative;border: 1px solid #E0E0E0;padding: 20px;box-sizing: border-box;margin-bottom: 14px}
+        .cycles .title{position: absolute;top: -1em;left: 30px;line-height: 2em;padding: 0 1em;background-color: #fff;}
+        .cycles .select{position: absolute;top: -10px;left: 140px;line-height: 2em;padding: 0 1em;background-color: #fff;width: 80px;}
+        .fc-toolbar h2 {margin: 0;font-size: 24px;}
     </style>
 </head>
 <body>
@@ -72,18 +79,205 @@
                 </table>
             </div>
         </div>
+<!-----------------------------申请使用 再次申请--------------------------------------->
+<style>
+    .row ul{margin: 0px;padding: 0px}
+    .row ul li {list-style: none}
+    .block{display:block;height: 15px;width: 25px;border-radius: 3px;float: left}
+    .block-text{margin-left: 6px}
+</style>
+    <div class="panel panel-default panel-success" id='apply_again' style='display: none;'>
+        <div class="panel-heading">重新提交上课申请</div>
+        <div class="panel-body">
+            <table class="table table-bordered tables">
+                <tbody>
+                <tr>
+                    <td class="tableLeft">主讲教师</td>
+                    <td><input id="teacher" type="text" style="width: 400px;" disabled ></td>
+                </tr>
+                <tr>
+                    <td class="tableLeft">课程名称</td>
+                    <td>
+                        <!-- <select id="courseName" style="width: 400px;"></select> -->
+                        <input id="courseName" type="text" style="width: 400px;" disabled >
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tableLeft">开课院系</td>
+                    <td>
+                        <!-- <select id="department" style="width: 400px;"></select> -->
+                        <input id="department" type="text" style="width: 400px;" disabled >
+                    </td>
+                </tr>
+               <!--  <tr>
+                    <td class="tableLeft">所属实验室</td>
+                    <td>
+                        <select id="lab" style="width: 400px;"></select> 
+                        <input id="lab" type="text" style="width: 400px;" disabled >
+                    </td>
+                </tr>-->
+                <tr>
+                    <td class="tableLeft">教学计划</td>
+                    <td>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <ul>
+                                    <li>
+                                        <i class="block" style="background: #C1C1C1;"></i>
+                                        <span class="block-text">实验室禁用</span>
+                                    </li>
+                                    <li>
+                                        <i class="block" style="background: #3A87AD;"></i>
+                                        <span class="block-text">审核通过</span>
+                                    </li>
+                                    <li>
+                                        <i class="block" style="background: #840463;"></i>
+                                        <span class="block-text">等待审核</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-8">
+                                <div id="main" style="width: 60%;">
+                                    <div id='calendars' ></div>
+                                </div>
+                            </div>
+                        </div>
+        
+                    </td>
+                </tr>
+                <tr>
+                    <td  colspan="2" style="text-align: center">
+                        <input id="submit" class="btn btn-primary size-MINI radius" type="button" value="提交">
+                        <input id="refill" class="btn btn-default size-MINI" type="button" value="返回">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <!--弹窗-->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">选择时间</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="inlineRadio" class="col-sm-3 control-label">是否设置周期</label>
+                                    <div class="col-sm-9" style="width: 65%" id="inlineRadio">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="inlineRadio"  value="is_cycle">是
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="inlineRadio"  value="not_cycle" checked>否
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="Single">
+                                    <div class="form-group">
+                                        <label for="starTime" class="col-sm-3 control-label">开始时间</label>
+                                        <div class="col-sm-9" style="width: 65%">
+                                            <input type="text" class="form-control layui-input" id="starTime" readonly="readonly">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="endTime" class="col-sm-3 control-label">结束时间</label>
+                                        <div class="col-sm-9" style="width: 65%">
+                                            <input type="text" class="form-control layui-input" id="endTime" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="cycle" hidden>
+                                    <div class="cycles">
+                                        <span class="title">具体时间</span>
+                                        <div class="form-group">
+                                            <label for="starTimeT" class="col-sm-2 control-label">开始时间</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control layui-input" id="starTimeT" readonly="readonly">
+                                            </div>
+                                            <label for="endTimeT" class="col-sm-2 control-label">结束时间</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control layui-input" id="endTimeT" readonly="readonly">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cycles">
+                                        <span class="title">定时模式</span>
+                                        <select class="select" id="Pattern">
+                                            <option value="0">无</option>
+                                            <option value="1">按周</option>
+                                        </select>
+                                        <div id="inlineCheckbox" style="text-align: center" hidden>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" value="1">周一
+                                            </label>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" value="2">周二
+                                            </label>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" value="3">周三
+                                            </label>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" value="4">周四
+                                            </label>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" value="5">周五
+                                            </label>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" value="6">周六
+                                            </label>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" value="0">周日
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="cycles">
+                                        <span class="title">重复范围</span>
+                                        <div class="form-group">
+                                            <label for="starTimeB" class="col-sm-2 control-label">开始日期</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control layui-input" id="starTimeB" readonly="readonly">
+                                            </div>
+                                            <label for="endTimeB" class="col-sm-2 control-label">结束日期</label>
+                                            <div class="col-sm-4">
+                                                <input type="text" class="form-control layui-input" id="endTimeB" readonly="readonly">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="submits" type="button" class="btn btn-primary">确定</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+<!-----------------------------申请使用 再次申请 结束--------------------------------------->
+</div>
 <style> .del { cursor: pointer;} </style>
 </body>
 <script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
 <script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
 <script type="text/javascript" src="../../lib/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script src='../../lib/FullCalendar/full/moment.min.js'></script>
+<script src='../../lib/FullCalendar/full/fullcalendar.min.js'></script>
 <script type="text/javascript" src="../../lib/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" src="../../lib/ueditor/ueditor.all.min.js"></script>
 <script type="text/javascript" src="../../lib/ueditor/zh-cn.js"></script>
+<script src="../../lib/laydate/laydate.js"></script>
 <script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script src="../../static/h-ui.admin/js/date.js"></script>
 <script>
+    //获取当前用户名
+    var User = sessionStorage.getItem("User");
+    var Userobj = JSON.parse(User);
+
     $("#addCurse").click(function () {
         var $ifrem = window.parent.document.getElementById("iframe");
         $($ifrem).attr("src","html/myCourse/addStartclass.html")
@@ -158,7 +352,7 @@
 
     //加载我的课程未通过审核的课程
     var reject_lession_data = null; //存储被驳回的课程信息
-
+    var lab_id = '{}'
     $.ajax({
         type:'get',
         url:'/api/teachApplyUnAccessCheckList',
@@ -166,7 +360,6 @@
         success:function (data) {
             if(data.code=="001"){
                 var $table = $('#tableDoms');
-
                 let datas = data.result;
                 let num = datas.length;
 
@@ -187,10 +380,7 @@
                     
                 }
 
-
-
-
-                $table.bootstrapTable('load',datas);
+            $table.bootstrapTable('load',datas);
             } else {
                 layer.msg(data.message,{icon:2});
             }
@@ -202,7 +392,7 @@
 
     function operation (value, row, index) {
         return [
-            '<a style="color: #338FD0" class="del" onclick="details(\''+ row.id + '\')" >查看详情</a>',
+            '<a style="color: #338FD0" class="del" onclick="details(\''+ row.id + '\',\'' + row.status +'\')" >查看详情</a>',
             '<a style="margin-left:8px;color: #338FD0" class="del" onclick="submit_again(\'' + index + '\')" >再次申请</a>',
             '<a style="margin-left:8px;color: red" class="del" onclick="del(\''+ row.id + '\')" >删除</a>'
         ].join('');
@@ -238,9 +428,434 @@
         });
     }//del() 结束
 
-    function details (id) {
+    function details (id, status) {
         var $ifrem = window.parent.document.getElementById("iframe");
         $($ifrem).attr("src","html/myCourse/lessionDetails.html?id=" + id + "&ids=" + status);
     }
+
+    var full_Calendar = null;//全局变量 fullcalendar
+    var starTime_e = $('#starTime');
+    var endTime_e = $('#endTime');
+    var endTimeT_e = $('#endTimeT');    
+
+    var courseName_e = $("#courseName"); //_e表示元素
+    var department_e = $("#department");
+    var lab_e = $("#lab");
+    var starTimeT_e = $("#starTimeT");
+    var Pattern_e = $("#Pattern"); //定时模式
+    var starTimeB_e = $("#starTimeB"); //开始日期(重复范围)
+    var endTimeB_e = $("#endTimeB");//结束日期(重复范围)
+    var sbmt = $('#submit');
+    var apply_again = $('#apply_again');
+
+    /*
+    submit_again()：显示再次编辑提交
+    */
+    function submit_again (index)
+    {
+        $('#teacher').val( reject_lession_data[index].user_name );
+        $('#courseName').val( reject_lession_data[index].curriculum_name );
+        $('#department').val( reject_lession_data[index].college_name );
+    
+
+        sbmt.attr('lession', reject_lession_data[index].id);//被驳回的上课申请的 id
+        apply_again.css('display', '');//显示再次提交的div
+        let p = apply_again.offset().top;
+        $(document).scrollTop(p-200);
+    }//submit_again 结束
+    
+    //时间插件初始
+    var starTime_obj = laydate.render({
+        elem: '#starTime',
+        type: 'datetime',
+        min: date(),
+        done: function (v, date_obj, end) {
+
+            let p = v.indexOf(' ');//v是'2020-05-28 09:06:07'
+            let h = parseInt( v.substring(p, p+3) );
+            let v1 = '';
+
+            h += 2;
+            if ( h < 10 )
+            {
+                h = '0' + h;
+            }
+
+            v1 = v.replace(/ \d{2}/, ' ' + h );
+            endTime_e.val(v1);
+        }//done 结束
+    });
+    var endTime_obj = laydate.render({
+        elem: '#endTime',
+        type: 'datetime',
+    });
+    laydate.render({
+        elem: '#starTimeT',
+        type: 'time',
+        min: '08:00:00',
+        max: '20:00:00',
+        done: function (v, date_obj, end) {
+            //选择好开始时间后 自动将结束时间加2小时
+            let h = parseInt( v.substring(0, 2) );
+            h += 2;
+            if ( h < 10 )
+            {
+                h = '0' + h;
+            }
+            let v1 = v.replace(/\d{2}/, h );
+            endTimeT_e.val(v1);
+        }
+    });
+    laydate.render({
+        elem: '#endTimeT',
+        type: 'time',
+        min: '08:00:00',
+        max: '20:00:00',
+    });
+    var starTimeB_obj = laydate.render({
+        elem: '#starTimeB',
+        //min: date()
+    });
+    var endTimeB_obj = laydate.render({
+        elem: '#endTimeB',
+        //min: date(tomorrow)
+    });
+    $(document).ready(function() {
+        var date = new Date();
+        var D = date.getDate();
+        var M = date.getMonth();
+        var Y = date.getFullYear();
+
+        full_Calendar = $('#calendars');
+
+        full_Calendar.fullCalendar({
+            header:{
+                left: 'prev,next,today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            views: {
+                month: {
+                    titleFormat: 'YYYY年MM月'
+                },
+                week: {
+                    titleFormat: "YYYY年MM月D日"
+                },
+                day: {
+                    titleFormat: 'YYYY年MM月D日'
+                }
+            },
+            eventLimit: true, //
+            navLinks: true, // can click day/week names to navigate views
+            businessHours: true, // display business hours
+            editable: false,
+            dayClick: function (date, event, view) {//设置每天可选时间段
+                
+                let y = date._d.getFullYear();
+                let m = date._d.getMonth();
+                let d = date._d.getDate();
+                let conf = starTime_obj.config;
+                let conf1 = endTime_obj.config;
+                
+                conf.min.year = y;
+                conf.min.month = m;
+                conf.min.date = d;
+                conf.min.hours= 8;
+                conf.min.minutes=0;
+                conf.min.seconds=0;
+
+                conf.max.year = y;
+                conf.max.month = m;
+                conf.max.date = d;
+                conf.max.hours= 20;
+                conf.max.minutes=0;
+                conf.max.seconds=0;
+
+                conf1.min.year = y;
+                conf1.min.month = m;
+                conf1.min.date = d;
+                conf1.min.hours= 8;
+                conf1.min.minutes=0;
+                conf1.min.seconds=0;
+
+                conf1.max.year = y;
+                conf1.max.month = m;
+                conf1.max.date = d;
+                conf1.max.hours= 20;
+                conf1.max.minutes=0;
+                conf1.max.seconds=0;
+
+                starTimeB_obj.config.min.year = y;
+                starTimeB_obj.config.min.month = m;
+                starTimeB_obj.config.min.date = d;
+
+                endTimeB_obj.config.min.year = y;
+                endTimeB_obj.config.min.month = m;
+                endTimeB_obj.config.min.date = d + 1;
+            },
+            selectOverlap: function(event) {
+                /*return event.rendering === 'background';
+                return event.constraint === 'disable';*/
+                return true;
+            },
+            events: function(start,end,timezone, callback) {
+                
+            },//events 结束
+
+            selectable: true, //允许用户拖动
+            select: function( startDate, endDate, allDay, jsEvent, view ){
+                var start =$.fullCalendar.formatDate(startDate,'YYYY-MM-DD 00:00:00');
+                var end =$.fullCalendar.formatDate(endDate,'YYYY-MM-DD 00:00:00');
+                var starTimeT =$.fullCalendar.formatDate(startDate,'00:00:00');
+                var endTimeT =$.fullCalendar.formatDate(endDate,'00:00:00');
+                var starTimeB =$.fullCalendar.formatDate(startDate,'YYYY-MM-DD');
+                var endTimeB =$.fullCalendar.formatDate(endDate,'YYYY-MM-DD');
+                $('#myModal').modal({
+                    keyboard: true
+                });
+                $("#starTime").val(start);
+                $("#endTime").val(end);
+                $("#starTimeT").val(starTimeT);
+                $("#endTimeT").val(endTimeT);
+                $("#starTimeB").val(starTimeB);
+                $("#endTimeB").val(endTimeB);
+            }
+        });
+    });
+    //弹窗点确定
+    //是否设置周期单选事件
+    var inputOption = "not_cycle";
+    $("#inlineRadio label").click(function(){
+        $(this).children("input").prop("checked",true);
+        inputOption = $(this).children("input").val();
+        if(inputOption == "is_cycle") {
+            $("#Pattern").val(0);
+            $(".cycle").show();
+            $(".Single").hide();
+        }else {
+            $(".cycle").hide();
+            $(".Single").show();
+        }
+    });
+    //定时模式select下拉
+    $("#Pattern").click(function(){
+        if($("#Pattern").val() == "0") {
+            $("#inlineCheckbox").hide();
+        }else {
+            $("#inlineCheckbox").show();
+        }
+    });
+    //模态框关闭后的操作
+    $('#myModal').on('hide.bs.modal', function () {
+        $(".Single").show();
+        $(".cycle").hide();
+        $("#inlineCheckbox").hide();
+        //inputOption = "not_cycle";
+        $("#inlineRadio label").children("input:eq(0)").removeAttr("checked");
+        $("#inlineRadio label").children("input:eq(1)").prop("checked",true);
+    });
+
+    $("#submits").on("click",function () {
+        $(this).attr("data-dismiss","modal");
+        $('#myModal').on('hide.bs.modal');
+        $("#submit").click();
+    });
+
+    $("#submit").click(function () {
+        let courseName = courseName_e.val();
+        let department = department_e.val();
+        let labId = lab_e.val();
+        let starTime = (Date.parse(new Date(starTime_e.val())))/1000; //开始时间
+        let endTime = (Date.parse(new Date(endTime_e.val())))/1000;//结束时间
+        let starTimeT = starTimeT_e.val(); //开始时间(具体时间)
+        let endTimeT = endTimeT_e.val();//结束时间(具体时间)
+        let Pattern = Pattern_e.val(); //定时模式
+       
+        let chk_value = []; //选中的周数组
+        
+        $('#inlineCheckbox input[type="checkbox"]:checked').each(function(value, e){
+            chk_value.push($(this).val());
+        });
+
+        let starTimeB = starTimeB_e.val(); //开始日期(重复范围)
+        let endTimeB = endTimeB_e.val();  //结束日期(重复范围)
+
+        if((courseName == null) || (department == null) || (labId == null)) {
+            layer.msg("课程名称或开课院系或实验室不能为空");
+        } else {
+            if(inputOption== "not_cycle") {
+                //不设置周期
+                if(((Date.parse(new Date(date())))/1000 > endTime) || ((Date.parse(new Date(date())))/1000 > starTime) ) {
+                    layer.msg("所选时间不能小于当前时间");
+                }else if(starTime > endTime) {
+                    layer.msg("开始时间不能小于结束时间");
+                } else {
+                    let obj = {};
+                    obj.id = 'course1';
+                    obj.title = courseName_e.find('option:selected').text();//课程的名称;
+                    obj.start = starTime_e.val();//开始时间
+                    obj.end = endTime_e.val();//结束时间
+                    obj.allDay = false;
+                    obj.backgroundColor = '#840463';
+                    obj.textColor = '#fff';
+
+                    full_Calendar.fullCalendar('removeEvents', [obj.id]);//先删除日程
+                    full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
+
+                    let index = layer.alert('请您确定申请信息，无误后确定提交', {
+                        closeBtn: 0,
+                        shade:0,
+                        btn: ['确定提交','我要修改'],
+                        yes:function(){
+                            //提交数据
+                            $.ajax({
+                                type:'post',
+                                url:'/api/apply_again',
+                                data: {
+                                    "user_name": Userobj.user_name,
+                                    "user_id": Userobj.user_id,
+                                    'courseName': courseName,
+                                    'lab_id': labId,
+                                    'department': department,
+                                    'inputOption': inputOption,  //是否设置周期
+                                    'start_time': starTime,
+                                    'end_time': endTime,
+                                    'teacher_id':Userobj.user_id
+                                },
+                                dataType:'json',
+                                success:function (data) {
+                                    if(data.code=="001"){
+                                        layer.msg(data.message,{icon:1},function(){
+                                            var $ifrem = window.parent.document.getElementById("iframe");
+                                            $($ifrem).attr("src","html/myCourse/course.html")
+                                        });
+                                    } else {
+                                        layer.msg(data.message,{icon:2});
+                                    }
+                                },
+                                error:function(err){
+                                    console.error(err);
+                                }
+                            });//ajax结束
+                        },//yes 结束
+                        btn2:function(){
+                            layer.close(index);
+                        }
+                    });//layer.alert 结束
+                }
+            }else {
+                //设置周期
+                if(((Date.parse(new Date(date())))/1000 > (Date.parse(new Date(starTimeB+' '+ starTimeT)))/1000) || ((Date.parse(new Date(date())))/1000 > (Date.parse(new Date(endTimeB+' '+ endTimeT)))/1000)) {
+                    layer.msg("所选时间不能小于当前时间");
+                } else if(Date.parse(starTimeB)/1000 > Date.parse(endTimeB)/1000 ) {
+                    layer.msg("开始时间不能小于结束时间");
+                }else {
+
+                    let obj = {};
+                    obj.id = 'course2';
+                    obj.title = courseName_e.find('option:selected').text();//课程
+                    obj.allDay = false;
+                    obj.backgroundColor = '#840463';
+                    obj.textColor = '#fff';
+
+                    //然后循环渲染日程 计算总共有多少天
+                    function  DateDiff (sDate1, sDate2)
+                    {
+                        let s1 = new Date(sDate1.replace(/-/g, "/"));
+                            
+                        let s2 = new Date(sDate2.replace(/-/g, "/"));
+
+                        let days = s2.getTime() - s1.getTime();
+
+                        let time = parseInt(days / (1000 * 60 * 60 * 24));
+                        return  time; 
+                    }
+
+                    let num =  DateDiff (starTimeB, endTimeB);
+
+                    if ( num < 1 )
+                    {
+                        layer.msg('结束日期与开始日期为同一天', {icon:2, time:1000});return;
+                    }
+
+                    full_Calendar.fullCalendar('removeEvents', [obj.id]);//先删除渲染日程
+                    
+                    for (let i = 0; i <= num; i++)
+                    {                            
+                        let today = starTimeB + ' ' + '00:00:00';
+                        today = new Date( Date.parse( today.replace(/-/g, "/") ) );//转为时间对象
+                        let tomorrow = today.getTime() + i*24*60*60*1000;
+                        tomorrow = new Date( tomorrow );
+
+                        let w = tomorrow.getDay() + '';
+
+                        let y = tomorrow.getFullYear();
+                        let m = tomorrow.getMonth() + 1;
+                        if ( m < 10 ) m = '0' + m;
+                        let d = tomorrow.getDate();
+                        if ( d < 10 ) d = '0' + d;
+
+                        obj.start = y + '-' + m + '-'+ d + ' ' + starTimeT;
+                        obj.end = y + '-' + m + '-'+ d + ' ' + endTimeT_e;
+                        
+                        if ( Pattern_e.val() == 1 && $.inArray(w, chk_value) > -1 )//如果这一天在周的数组里
+                        {
+                            full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
+                        }else if(Pattern_e.val() == 0){//不按周 设周期
+                        
+                            full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
+                        }
+
+                    }//for 循环渲染日程 循环结束
+
+                    let index = layer.alert('请您确定申请信息，无误后确定提交', {
+                        closeBtn: 0,
+                        shade: 0,
+                        btn: ['确定提交','我要修改'],
+                        yes:function(){
+                            //提交数据
+                            $.ajax({
+                                type:'post',
+                                url:'/api/teachApply',
+                                data: {
+                                    "user_name": Userobj.user_name,
+                                    "user_id": Userobj.user_id,
+                                    'courseName': courseName,
+                                    'lab_id': labId,
+                                    'department': department,
+                                    'inputOption': inputOption,  //是否设置周期
+                                    'starTimeT': starTimeT,    //开始时间(具体时间)
+                                    'endTimeT': endTimeT,  //结束时间(具体时间)
+                                    'pattern': Pattern,  //定时模式
+                                    'chk_value': chk_value,    //选中的周数组
+                                    'start_date': starTimeB,  //开始日期(重复范围)
+                                    'end_date': endTimeB, //结束日期(重复范围)
+                                    'teacher_id':Userobj.user_id
+                                },
+                                dataType:'json',
+                                success:function (data) {
+                                    if(data.code=="001"){
+                                        layer.msg(data.message,{icon:1},function(){
+                                            var $ifrem = window.parent.document.getElementById("iframe");
+                                            $($ifrem).attr("src","html/myCourse/course.html")
+                                        });
+                                    } else {
+                                        layer.msg(data.message,{icon:2});
+                                    }
+                                },
+                                error:function(err){
+                                    console.error(err);
+                                }
+                            });//ajax 结束
+                        },//yes 结束
+                        btn2:function(){
+                            layer.close(index);
+                        }
+                    });//layer.alert 结束
+                    
+                }
+            }
+        }
+    })//submit.click 结束
 </script>
 </html>

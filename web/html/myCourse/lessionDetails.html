@@ -59,17 +59,10 @@
                                 <span class="block-text">实验室禁用</span>
                             </li>
                             <li>
-                                <i class="block" style="background: #3A87AD;"></i>
-                                <span class="block-text">审核通过</span>
+                                <i class="block" style="background: #FF2121;"></i>
+                                <span class="block-text">被驳回</span>
                             </li>
-                            <li>
-                                <i class="block" style="background: #6FA8DF;"></i>
-                                <span class="block-text">当前数据(未审核)</span>
-                            </li>
-                            <li>
-                                <i class="block" style="background: #5FB878;"></i>
-                                <span class="block-text">当前数据(审核通过)</span>
-                            </li>
+                            
                         </ul>
                     </div>
                     <div class="col-md-8">
@@ -82,7 +75,7 @@
         </tr>
         <tr>
             <td  colspan="2" style="text-align: center">
-                <input id="refill" class="btn btn-default size-MINI" type="button" value="返回">
+                <input id="refill" class="btn btn-default size-MINI" type="button" value="返 回">
             </td>
         </tr>
         </tbody>
@@ -130,13 +123,13 @@
             businessHours: true, // display business hours
             editable: false,
             selectOverlap: function(event) {
-//                return event.rendering === 'background';
+                //return event.rendering === 'background';
                 return event.constraint === 'disable';
             },
             events: function(start,end,timezone, callback) {
                 $.ajax({
                     type: "post",
-                    url: "/api/teachApplyInfo",
+                    url: "/api/reject_use_info",
                     data:{id:id},
                     dataType: 'json',
                     success: function(data) { // 获取当前月的数据
@@ -153,27 +146,17 @@
                                 var start = data.result.current[0].time_info[a].start_time;
                                 var end = data.result.current[0].time_info[a].end_time;
                                 var  constraint =  "disable";
-                                if(status == "0") {
-                                    arr.push({
-                                        title : $("#curriculum_name").text(),
-                                        start : start,
-                                        end : end,
-                                        color: "#6FA8DF",
-                                        defaultDate: constraint
-                                    })
-                                }else if(status == "1") {
-                                    arr.push({
-                                        title : $("#curriculum_name").text(),
-                                        start : start,
-                                        end : end,
-                                        color: "#5FB878",
-                                        defaultDate: constraint
-                                    })
-                                }
-
+                                
+                                arr.push({
+                                    title : $("#curriculum_name").text(),
+                                    start : start,
+                                    end : end,
+                                    color: "#FF2121",
+                                    defaultDate: constraint
+                                })
                             }
 
-                            //禁用全天
+                           /* //禁用全天
                             for (var i = 0; i < data.result.unuse.whole.length; i++) {
                                 var title = data.result.unuse.whole[i].title;
                                 var start = data.result.unuse.whole[i].start_time.substr(0,10);
@@ -217,7 +200,7 @@
                                     end : end,
                                     constraint : constraint
                                 })
-                            }
+                            }*/
                         }
                         callback(arr);
                     }//success 结束
@@ -230,7 +213,7 @@
     //返回按钮
     $("#refill").on("click",function () {
         var $ifrem = window.parent.document.getElementById("iframe");
-        $($ifrem).attr("src","html/subject/course.html");
+        $($ifrem).attr("src","html/myCourse/course.html");
     })
 </script>
 </html>

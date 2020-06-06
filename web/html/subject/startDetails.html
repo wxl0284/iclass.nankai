@@ -268,7 +268,7 @@
             businessHours: true, // display business hours
             editable: false,
             selectOverlap: function(event) {
-//                return event.rendering === 'background';
+                //return event.rendering === 'background';
                 return event.constraint === 'disable';
             },
             events: function(start,end,timezone, callback) {
@@ -317,7 +317,7 @@
                                 var start = data.result.unuse.whole[i].start_time.substr(0,10);
                                 var end = data.result.unuse.whole[i].end_time.substr(0,10);
                                 var rendering = 'background';
-//                                var color =  '#C1C1C1';
+                                //var color =  '#C1C1C1';
                                 arr.push({
                                     title : title,
                                     start : start,
@@ -329,8 +329,8 @@
                             }
                             //禁用一段时间的某天某一段时间
                             for (var j = 0; j < data.result.unuse.half.length; j++) {
-//                                var title = data.result.unuse.half[j].curriculum_name;
-//                                var  constraint =  data.result.data[j].teacher_name;
+                                //var title = data.result.unuse.half[j].curriculum_name;
+                                //var  constraint =  data.result.data[j].teacher_name;
                                 var start = data.result.unuse.half[j].start_time;
                                 var end = data.result.unuse.half[j].end_time;
                                 var  constraint =  "disable";
@@ -345,7 +345,7 @@
                             //预约已经完成的
                             for (var j = 0; j < data.result.data.length; j++) {
                                 var title = data.result.data[j].curriculum_name;
-//                                var  constraint =  data.result.data[j].teacher_name;
+                                //var  constraint =  data.result.data[j].teacher_name;
                                 var start = data.result.data[j].start_time;
                                 var end = data.result.data[j].end_time;
                                 var  constraint =  "disable";
