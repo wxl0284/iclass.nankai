@@ -166,8 +166,8 @@ return [
 
     'log'                    => [
         // 日志记录方式，内置 file socket 支持扩展
-        'type'  => '\\log\\Mysql',
-        //'type'  => 'test',//关闭日志
+        //'type'  => '\\log\\Mysql',
+        'type'  => 'test',//关闭日志
         // 日志保存目录
         'path'  => LOG_PATH,
         // 日志记录级别

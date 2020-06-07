@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="../../static/h-ui.admin/css/iconStyle.css" />
     <link rel="stylesheet" href="../../lib/layer/2.4/skin/layer.css" />
     <link rel="stylesheet" href="../../static/h-ui.admin/css/public.css" />
+    <script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
     <style>
         .btn{padding: 2px 4px}
-        #calendars {max-width: 600px;}
+        #calendars {width: 600px;}
         .cycles{position: relative;border: 1px solid #E0E0E0;padding: 20px;box-sizing: border-box;margin-bottom: 14px}
         .cycles .title{position: absolute;top: -1em;left: 30px;line-height: 2em;padding: 0 1em;background-color: #fff;}
         .cycles .select{position: absolute;top: -10px;left: 140px;line-height: 2em;padding: 0 1em;background-color: #fff;width: 80px;}
@@ -123,12 +124,8 @@
                             <div class="col-md-3">
                                 <ul>
                                     <li>
-                                        <i class="block" style="background: #C1C1C1;"></i>
-                                        <span class="block-text">实验室禁用</span>
-                                    </li>
-                                    <li>
-                                        <i class="block" style="background: #3A87AD;"></i>
-                                        <span class="block-text">审核通过</span>
+                                        <i class="block" style="background: #ff2121;"></i>
+                                        <span class="block-text">被驳回</span>
                                     </li>
                                     <li>
                                         <i class="block" style="background: #840463;"></i>
@@ -148,7 +145,7 @@
                 <tr>
                     <td  colspan="2" style="text-align: center">
                         <input id="submit" class="btn btn-primary size-MINI radius" type="button" value="提交">
-                        <input id="refill" class="btn btn-default size-MINI" type="button" value="返回">
+                        <!-- <input id="refill" class="btn btn-default size-MINI" type="button" value="返回"> -->
                     </td>
                 </tr>
                 </tbody>
@@ -261,19 +258,20 @@
 </div>
 <style> .del { cursor: pointer;} </style>
 </body>
-<script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
+<script src='../../lib/FullCalendar/full/moment.min.js'></script>
+<script src='../../lib/FullCalendar/full/fullcalendar.min.js'></script>
 <script type="text/javascript" src="../../lib/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../../lib/bootstrap-table/bootstrap-table.js"></script>
 <script type="text/javascript" src="../../lib/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
-<script src='../../lib/FullCalendar/full/moment.min.js'></script>
-<script src='../../lib/FullCalendar/full/fullcalendar.min.js'></script>
-<script type="text/javascript" src="../../lib/ueditor/ueditor.config.js"></script>
+
+<!-- <script type="text/javascript" src="../../lib/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" src="../../lib/ueditor/ueditor.all.min.js"></script>
-<script type="text/javascript" src="../../lib/ueditor/zh-cn.js"></script>
+<script type="text/javascript" src="../../lib/ueditor/zh-cn.js"></script> -->
 <script src="../../lib/laydate/laydate.js"></script>
 <script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
 <script src="../../static/h-ui.admin/js/date.js"></script>
 <script>
+    var full_Calendar = $('#calendars');//全局变量 fullcalendar
     //获取当前用户名
     var User = sessionStorage.getItem("User");
     var Userobj = JSON.parse(User);
@@ -352,7 +350,7 @@
 
     //加载我的课程未通过审核的课程
     var reject_lession_data = null; //存储被驳回的课程信息
-    var lab_id = '{}'
+
     $.ajax({
         type:'get',
         url:'/api/teachApplyUnAccessCheckList',
@@ -433,7 +431,6 @@
         $($ifrem).attr("src","html/myCourse/lessionDetails.html?id=" + id + "&ids=" + status);
     }
 
-    var full_Calendar = null;//全局变量 fullcalendar
     var starTime_e = $('#starTime');
     var endTime_e = $('#endTime');
     var endTimeT_e = $('#endTimeT');    
@@ -451,81 +448,22 @@
     /*
     submit_again()：显示再次编辑提交
     */
+    var lab_id = '';
+
     function submit_again (index)
     {
         $('#teacher').val( reject_lession_data[index].user_name );
         $('#courseName').val( reject_lession_data[index].curriculum_name );
         $('#department').val( reject_lession_data[index].college_name );
-    
+        lab_id = reject_lession_data[index].lab_id;//当前实验室id
 
-        sbmt.attr('lession', reject_lession_data[index].id);//被驳回的上课申请的 id
+        let lession_id = reject_lession_data[index].id; //当前上课申请的id
+       
+        sbmt.attr('lession', index);//根据此index 在提交时获取相关参数
         apply_again.css('display', '');//显示再次提交的div
-        let p = apply_again.offset().top;
-        $(document).scrollTop(p-200);
-    }//submit_again 结束
-    
-    //时间插件初始
-    var starTime_obj = laydate.render({
-        elem: '#starTime',
-        type: 'datetime',
-        min: date(),
-        done: function (v, date_obj, end) {
 
-            let p = v.indexOf(' ');//v是'2020-05-28 09:06:07'
-            let h = parseInt( v.substring(p, p+3) );
-            let v1 = '';
 
-            h += 2;
-            if ( h < 10 )
-            {
-                h = '0' + h;
-            }
-
-            v1 = v.replace(/ \d{2}/, ' ' + h );
-            endTime_e.val(v1);
-        }//done 结束
-    });
-    var endTime_obj = laydate.render({
-        elem: '#endTime',
-        type: 'datetime',
-    });
-    laydate.render({
-        elem: '#starTimeT',
-        type: 'time',
-        min: '08:00:00',
-        max: '20:00:00',
-        done: function (v, date_obj, end) {
-            //选择好开始时间后 自动将结束时间加2小时
-            let h = parseInt( v.substring(0, 2) );
-            h += 2;
-            if ( h < 10 )
-            {
-                h = '0' + h;
-            }
-            let v1 = v.replace(/\d{2}/, h );
-            endTimeT_e.val(v1);
-        }
-    });
-    laydate.render({
-        elem: '#endTimeT',
-        type: 'time',
-        min: '08:00:00',
-        max: '20:00:00',
-    });
-    var starTimeB_obj = laydate.render({
-        elem: '#starTimeB',
-        //min: date()
-    });
-    var endTimeB_obj = laydate.render({
-        elem: '#endTimeB',
-        //min: date(tomorrow)
-    });
-    $(document).ready(function() {
-        var date = new Date();
-        var D = date.getDate();
-        var M = date.getMonth();
-        var Y = date.getFullYear();
-
+        //初始化fullcalendar--------------------------
         full_Calendar = $('#calendars');
 
         full_Calendar.fullCalendar({
@@ -599,7 +537,34 @@
                 return true;
             },
             events: function(start,end,timezone, callback) {
-                
+                $.ajax({
+                    type: "post",
+                    url: "/api/reject_use_info",
+                    data:{id: lession_id},
+                    dataType: 'json',
+                    success: function(data)
+                    { // 获取当前月的数据
+                        let arr = [];
+                        if(data.code == "001")
+                        {
+                            //当前这条数据
+                            for (let a = 0; a < data.result.current[0].time_info.length; a++)
+                            {
+                                let start = data.result.current[0].time_info[a].start_time;
+                                let end = data.result.current[0].time_info[a].end_time;
+                                let  constraint =  "disable";
+                                arr.push({
+                                    title : reject_lession_data[index].curriculum_name,
+                                    start : start,
+                                    end : end,
+                                    color: "#ff2121",
+                                    defaultDate: constraint
+                                })
+                            }
+                        callback(arr);
+                        }
+                    }
+                });//ajax 结束
             },//events 结束
 
             selectable: true, //允许用户拖动
@@ -621,7 +586,69 @@
                 $("#endTimeB").val(endTimeB);
             }
         });
+        //初始化fullcalendar--------------------------结束
+
+        let p = apply_again.offset().top;
+        $(document).scrollTop(p-200);
+    }//submit_again 结束
+    
+    //时间插件初始
+    var starTime_obj = laydate.render({
+        elem: '#starTime',
+        type: 'datetime',
+        min: date(),
+        done: function (v, date_obj, end) {
+
+            let p = v.indexOf(' ');//v是'2020-05-28 09:06:07'
+            let h = parseInt( v.substring(p, p+3) );
+            let v1 = '';
+
+            h += 2;
+            if ( h < 10 )
+            {
+                h = '0' + h;
+            }
+
+            v1 = v.replace(/ \d{2}/, ' ' + h );
+            endTime_e.val(v1);
+        }//done 结束
     });
+    var endTime_obj = laydate.render({
+        elem: '#endTime',
+        type: 'datetime',
+    });
+    laydate.render({
+        elem: '#starTimeT',
+        type: 'time',
+        min: '08:00:00',
+        max: '20:00:00',
+        done: function (v, date_obj, end) {
+            //选择好开始时间后 自动将结束时间加2小时
+            let h = parseInt( v.substring(0, 2) );
+            h += 2;
+            if ( h < 10 )
+            {
+                h = '0' + h;
+            }
+            let v1 = v.replace(/\d{2}/, h );
+            endTimeT_e.val(v1);
+        }
+    });
+    laydate.render({
+        elem: '#endTimeT',
+        type: 'time',
+        min: '08:00:00',
+        max: '20:00:00',
+    });
+    var starTimeB_obj = laydate.render({
+        elem: '#starTimeB',
+        //min: date()
+    });
+    var endTimeB_obj = laydate.render({
+        elem: '#endTimeB',
+        //min: date(tomorrow)
+    });
+   
     //弹窗点确定
     //是否设置周期单选事件
     var inputOption = "not_cycle";
@@ -662,9 +689,11 @@
     });
 
     $("#submit").click(function () {
-        let courseName = courseName_e.val();
-        let department = department_e.val();
-        let labId = lab_e.val();
+        let reject_i = $(this).attr('lession');//被驳回的上课列表的序号index
+
+        let courseName = reject_lession_data[reject_i].curriculum_id;
+        let department = reject_lession_data[reject_i].college_id;
+        let labId = lab_id;
         let starTime = (Date.parse(new Date(starTime_e.val())))/1000; //开始时间
         let endTime = (Date.parse(new Date(endTime_e.val())))/1000;//结束时间
         let starTimeT = starTimeT_e.val(); //开始时间(具体时间)
@@ -692,14 +721,15 @@
                 } else {
                     let obj = {};
                     obj.id = 'course1';
-                    obj.title = courseName_e.find('option:selected').text();//课程的名称;
+                    obj.title = courseName_e.val();//课程的名称;
                     obj.start = starTime_e.val();//开始时间
                     obj.end = endTime_e.val();//结束时间
                     obj.allDay = false;
                     obj.backgroundColor = '#840463';
                     obj.textColor = '#fff';
-
+                    
                     full_Calendar.fullCalendar('removeEvents', [obj.id]);//先删除日程
+                  
                     full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
 
                     let index = layer.alert('请您确定申请信息，无误后确定提交', {
@@ -710,7 +740,7 @@
                             //提交数据
                             $.ajax({
                                 type:'post',
-                                url:'/api/apply_again',
+                                url:'/api/teachApply',
                                 data: {
                                     "user_name": Userobj.user_name,
                                     "user_id": Userobj.user_id,
@@ -720,10 +750,12 @@
                                     'inputOption': inputOption,  //是否设置周期
                                     'start_time': starTime,
                                     'end_time': endTime,
-                                    'teacher_id':Userobj.user_id
+                                    'teacher_id':Userobj.user_id,
+                                    'apply': 'again',//表示再次提交
                                 },
                                 dataType:'json',
                                 success:function (data) {
+                                    sbmt.attr('lession','');
                                     if(data.code=="001"){
                                         layer.msg(data.message,{icon:1},function(){
                                             var $ifrem = window.parent.document.getElementById("iframe");
@@ -753,7 +785,7 @@
 
                     let obj = {};
                     obj.id = 'course2';
-                    obj.title = courseName_e.find('option:selected').text();//课程
+                    obj.title = courseName_e.val();//课程
                     obj.allDay = false;
                     obj.backgroundColor = '#840463';
                     obj.textColor = '#fff';
@@ -830,11 +862,13 @@
                                     'chk_value': chk_value,    //选中的周数组
                                     'start_date': starTimeB,  //开始日期(重复范围)
                                     'end_date': endTimeB, //结束日期(重复范围)
-                                    'teacher_id':Userobj.user_id
+                                    'teacher_id':Userobj.user_id,
+                                    'apply': 'again',//表示再次提交
                                 },
                                 dataType:'json',
                                 success:function (data) {
                                     if(data.code=="001"){
+                                        sbmt.attr('lession','');
                                         layer.msg(data.message,{icon:1},function(){
                                             var $ifrem = window.parent.document.getElementById("iframe");
                                             $($ifrem).attr("src","html/myCourse/course.html")

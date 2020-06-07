@@ -31,7 +31,7 @@
             <ul>
                 <li>
                     <i class="block" style="background: #C1C1C1;"></i>
-                    <span class="block-text">实验室禁用</span>
+                    <span class="block-text">实验室禁用</span> 
                 </li>
                 <li>
                     <i class="block" style="background: #3A87AD;"></i>
@@ -498,8 +498,8 @@
                             //禁用一段时间的某天某一段时间
                             if(data.result.unuse.half){
                                 for (var j = 0; j < data.result.unuse.half.length; j++) {
-    //                                var title = data.result.unuse.half[j].curriculum_name;
-    //                                var  constraint =  data.result.data[j].teacher_name;
+                                    //var title = data.result.unuse.half[j].curriculum_name;
+                                    //var  constraint =  data.result.data[j].teacher_name;
                                     var start = data.result.unuse.half[j].start_time;
                                     var end = data.result.unuse.half[j].end_time;
                                     var  constraint =  "disable";
@@ -517,7 +517,7 @@
                             if(data.result.data){
                                 for (var j = 0; j < data.result.data.length; j++) {
                                     var title = data.result.data[j].curriculum_name;
-    //                                var  constraint =  data.result.data[j].teacher_name;
+                                    //var  constraint =  data.result.data[j].teacher_name;
                                     var start = data.result.data[j].start_time;
                                     var end = data.result.data[j].end_time;
                                     var  constraint =  "disable";
@@ -779,7 +779,7 @@
                     obj.start = y + '-' + m + '-'+ d + ' ' + starTimeT;
                     obj.end = y + '-' + m + '-'+ d + ' ' + endTimeT;
                     obj.title = name_e.find('option:selected').text();
-                    obj.backgroundColor = '#840463';
+                    obj.backgroundColor = '#3A87AD';
                     obj.textColor = '#fff';
 
                     if ( Pattern === '0' )//不按周 

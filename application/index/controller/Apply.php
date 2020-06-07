@@ -798,6 +798,12 @@ class Apply extends BaseController
                     'create_time' => date('Y-m-d H:i:s'),
                     'update_time' => date('Y-m-d H:i:s')
                 ];
+
+                if ( $data['apply'] == 'again' )//是再次提交上课申请
+                {
+                    $insert['status'] = 0;
+                    $insert['reason'] = '';
+                }
                 /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
                 若有则 更新，若无则insert
                 */
@@ -866,6 +872,11 @@ class Apply extends BaseController
                 }else{
                     $insert = self::buildTeacherApplyOrderData($datetimeArr, $data, $user_id);
 
+                    if ( $data['apply'] == 'again' )//是再次提交上课申请
+                    {
+                        $insert['status'] = 0;
+                        $insert['reason'] = '';
+                    }
                     /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
                     若有则 更新，若无则insert
                     */
@@ -941,6 +952,11 @@ class Apply extends BaseController
                 }else{
                     $insert = self::buildTeacherApplyOrderData($datetimeArr, $data, $user_id);
 
+                    if ( $data['apply'] == 'again' )//是再次提交上课申请
+                    {
+                        $insert['status'] = 0;
+                        $insert['reason'] = '';
+                    }
                     /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
                     若有则 更新，若无则insert
                     */
@@ -1230,7 +1246,7 @@ class Apply extends BaseController
                 Db::name('start_curriculum')->where('id',$data['curriculum_id'])->update(['flag' => 0]);
                 //$num = Db::name('order')->insertAll($insert); //被驳回时无须此操作
                 Db::commit();
-                jsonReturn('001', $num, "审核完成！");
+                jsonReturn('001', $num=1, "审核完成！");
             }catch (Exception $e) {
                 Db::rollback();
                 jsonReturn("002",null,'审核失败！');
@@ -1241,10 +1257,10 @@ class Apply extends BaseController
     /**
      * 重新提交 上课申请
      */
-    public function apply_again ()
+    /*public function apply_again ()
     {
         halt('again');
-    }
+    }*/
 
     /**
      * 我的课程已通过课程
@@ -1388,7 +1404,7 @@ class Apply extends BaseController
      */
     public function teachApplyUnAccessCheckList()
     {
-        $fields = 'a.id,a.reason,a.curriculum_id,a.status,d.name as user_name,c.college_name,b.curriculum_name,b.curriculum_num';
+        $fields = 'a.id, a.lab_id, a.college_id, a.reason, a.curriculum_id, a.status,d.name as user_name,c.college_name,b.curriculum_name,b.curriculum_num';
 
         $user_id = Session::get('user_info.user_id');
         $lab_id = Session::get('user_infocas.labid');  //获取实验室id
