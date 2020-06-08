@@ -162,6 +162,8 @@ Route::rule('api/getOneCalendarInfo','index/SchoolCalendar/getOneCalendarInfo');
 Route::rule('api/getCurrentCalendarInfo','index/SchoolCalendar/getCurrentCalendarInfo'); //当前校历
 Route::rule('api/modifyCalendarInfo','index/SchoolCalendar/modifyCalendarInfo'); //修改校历信息
 Route::rule('api/manageSchedule','index/SchoolCalendar/manageSchedule'); //实验室开放情况管理
+Route::rule('api/show_not_open','index/SchoolCalendar/show_not_open'); //点击日历的禁用日程 显示此条禁用信息
+Route::rule('api/open_lab','index/SchoolCalendar/open_lab'); //解除禁用
 Route::rule('api/getTeachers','index/SchoolCalendar/getTeachers'); //获取老师信息
 Route::rule('api/getData','index/SchoolCalendar/getData'); //校历中数据
 Route::rule('api/teacherOrder','index/SchoolCalendar/teacherOrder'); //教师预约

@@ -69,9 +69,49 @@ class SchoolCalendar extends Controller
 
     }
 
+    /**
+     * 管理员点击日历禁用的日程时，显示此条禁用数据
+     */
+    public function show_not_open ()
+    {
+        $d = input();
+        if ( $d['sched_id'] )
+        {
+            $res = Db::table('nk_lab_schedule')->where('sched_id', $d['sched_id'])
+                    ->where('status', 0)->select();
+            
+            if ( $res )
+            {
+                return json( ['data'=>$res,'code'=>'001'] );
+            }else{
+                return json( ['msg'=>'未查到数据','code'=>'002'] );
+            }
+            
+        }
+    }
 
+    /*
+    解除禁用 即删除禁用的数据记录
+    */
 
+    public function open_lab ()
+    {
+        $d = input();
 
+        // 启动事务
+        Db::startTrans();
+
+        try{
+            Db::table('nk_lab_schedule')->where('sched_id', $d['sched_id'])->delete();
+            Db::commit();
+            return json( ['msg'=>'解除OK', 'code'=>'001'] );
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+            return json( ['msg'=>'解除失败', 'code'=>'002'] );
+        }
+
+    }
 
     /**
      * 校历时间范围
@@ -310,15 +350,19 @@ class SchoolCalendar extends Controller
     protected function insertLabSchedule($data){
 
         $lab_id = Session::get('user_infocas.labid');  //实验室id
+        //每次插入数据时 生成一个唯一的值作为sched_id，区分每次设置的禁用数据
+        $sched_id = time() . mt_rand(1,1000000);
+
         foreach ($data as $k => $v) {
             $insert[] = [
                 'start_time' => $v['start_time'],
-                'end_time' => $v['end_time'],
-                'status' => $v['status'],
-                'lab_id'  => $lab_id
+                'end_time'  => $v['end_time'],
+                'status'    => $v['status'],
+                'lab_id'    => $lab_id,
+                'sched_id'  => $sched_id,
             ];
         }
-
+        
         $num = Db::name('labSchedule')->insertAll($insert);
 
         if($num){
@@ -660,6 +704,7 @@ class SchoolCalendar extends Controller
                         'end_time'   => $end_time,
                         'remark'    =>  $data['remark']
                     ];
+
                     $num = self::insertLabSchedule($insertData);
                     if($num){
                         jsonReturn('001',$num,'设置成功！');

@@ -799,7 +799,7 @@ class Apply extends BaseController
                     'update_time' => date('Y-m-d H:i:s')
                 ];
 
-                if ( $data['apply'] == 'again' )//是再次提交上课申请
+                if ( isset($data['apply']) && $data['apply'] == 'again' )//是再次提交上课申请
                 {
                     $insert['status'] = 0;
                     $insert['reason'] = '';
@@ -872,7 +872,7 @@ class Apply extends BaseController
                 }else{
                     $insert = self::buildTeacherApplyOrderData($datetimeArr, $data, $user_id);
 
-                    if ( $data['apply'] == 'again' )//是再次提交上课申请
+                    if ( isset($data['apply']) && $data['apply'] == 'again' )//是再次提交上课申请
                     {
                         $insert['status'] = 0;
                         $insert['reason'] = '';
@@ -952,7 +952,7 @@ class Apply extends BaseController
                 }else{
                     $insert = self::buildTeacherApplyOrderData($datetimeArr, $data, $user_id);
 
-                    if ( $data['apply'] == 'again' )//是再次提交上课申请
+                    if ( isset($data['apply']) && $data['apply'] == 'again' )//是再次提交上课申请
                     {
                         $insert['status'] = 0;
                         $insert['reason'] = '';

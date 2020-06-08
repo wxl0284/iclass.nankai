@@ -197,7 +197,11 @@
         </div>
     </div>
 </div>
-
+    <!--弹窗 显示禁用的日程信息------------------------------>
+    <div id='not_open' style="display: none; text-align: center;">
+        
+    </div>
+    <!--弹窗 显示禁用的日程信息------------------------------>
 </body>
 
 <script src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js" ></script>
@@ -210,6 +214,7 @@
 <!--<script type="text/javascript" src="../../lib/FullCalendar/jquery.fancybox-1.3.1.pack.js" ></script>-->
 
 <script>
+    var not_open_div = $('#not_open');
     var full_Calendar = null;//全局变量 fullcalendar
     var endTime_e = $('#endTime');
     var endTimeT_e = $('#endTimeT');
@@ -390,10 +395,10 @@
 
 
     $(document).ready(function() {
-        var date = new Date();
-        var D = date.getDate();
+        /*var date = new Date();
+        /*var D = date.getDate();
         var M = date.getMonth();
-        var Y = date.getFullYear();
+        var Y = date.getFullYear();*/
 
         full_Calendar = $('#calendar');
 
@@ -462,6 +467,76 @@
                 endTimeB_obj.config.min.month = m;
                 endTimeB_obj.config.min.date = d + 1;
             },
+            eventClick: function(event, ele) {
+                //$('#calendar').fullCalendar('updateEvent', event);
+                if ( event.title == '实验室禁用' )//禁用的日程才去查询此日程信息并显示
+                {
+                    $.ajax({
+                        type: "post",
+                        url: "/api/show_not_open",
+                        data: {sched_id: event.sched_id},
+                        dataType: 'json',
+                        success: function(info) {
+                            if (info.code === '001')
+                            {
+                                let str = '';
+
+                                if ( info.data.length == 1 )//只禁用了一天
+                                {
+                                    str += '<div>当前禁用信息为</div>';
+                                    str += '<div>'+ info.data[0].start_time + '~~' + info.data[0].end_time +'</div>';
+                                    not_open_div.html(str);
+                                }else if ( info.data.length > 1 )//禁用了多天
+                                {
+                                    str += '<div>当前此组禁用信息为</div>';
+                                    for (let i = 0; i < info.data.length; i++)
+                                    {
+                                        str += '<div>'+ info.data[i].start_time + '~~' + info.data[i].end_time +'</div>';
+                                    }
+                                    not_open_div.html(str);
+                                }
+
+                                let ii = layer.open({
+                                    title: '禁用详细信息',
+                                    type: 1,
+                                    closeBtn: 0,
+                                    shade:0,
+                                    area: ['360px', 'auto'],
+                                    btn: ['解除禁用', '取消'],
+                                    content: not_open_div,
+                                    yes: function () {//解除禁用
+                                        $.ajax({
+                                            type: "post",
+                                            url: "/api/open_lab",
+                                            data: {sched_id: event.sched_id},
+                                            dataType: 'json',
+                                            success: function(info) {
+                                               if ( info.code == '001' )
+                                               {
+                                                   layer.msg(info.msg, {icon:1,time:1000});                                                   
+                                                   layer.close(ii);
+                                                   window.location.reload();//刷新页面
+                                               }else if ( info.code == '002' )
+                                               {
+                                                    layer.msg(info.msg, {icon:2});                                            
+                                               }
+                                                
+                                            },//success 结束
+                                            error: function (info) {
+                                                console.log(info);
+                                            } 
+                                        })//ajax 结束
+                                    },//yes 结束
+                                })
+                            }
+                        },//success 结束
+                        error: function (info) {
+                            console.log(info);
+                        } 
+                    })//ajax 结束
+                }
+                
+            },//eventClick 结束
             selectOverlap: function(event) {
             //确定是否允许用户选择事件占用的时间段。值可以是布尔型和函数，默认false。          
                 //return event.rendering === 'background';
@@ -508,6 +583,7 @@
                                         start : start,
                                         color: "#C1C1C1",
                                         textColor:'#333',
+                                        sched_id: data.result.unuse.half[j].sched_id,//为每次设置禁用的之标记
                                         constraint : constraint
                                     })
                                 }
@@ -809,8 +885,6 @@
                 btn: ['确定提交','我要修改'],
                 yes: function(){
                     if((states == "0") && (inputOption== "not_cycle")) {
-                        $(this).attr("data-dismiss","modal");
-                        $('#myModal').on('hide.bs.modal');
                         //实验室不开放，不设置周期
                         $.ajax({
                             type:'post',
@@ -826,6 +900,8 @@
                             },
                             dataType:'json',
                             success:function (data) {
+                                $("#submit").attr("data-dismiss","modal");
+                                $('#myModal').modal('hide');
                                 if(data.code=="001"){
                                     layer.msg(data.message,{icon:1},function () {
                                         $('#calendar').fullCalendar();
@@ -839,8 +915,6 @@
                             }
                         });
                     }else if((states == "0") && (inputOption== "is_cycle")) {
-                        $(this).attr("data-dismiss","modal");
-                        $('#myModal').on('hide.bs.modal');
                         //实验室不开放，设置周期
                         $.ajax({
                             type:'post',
@@ -861,6 +935,8 @@
                             }),
                             dataType:'json',
                             success:function (data) {
+                                $("#submit").attr("data-dismiss","modal");
+                                $('#myModal').modal('hide');
                                 if(data.code=="001"){
                                     layer.msg(data.message,{icon:1},function () {
                                         $('#calendar').fullCalendar();
@@ -874,8 +950,6 @@
                             }
                         });
                     }else if((states == "1") && (inputOption== "not_cycle")) {
-                        $(this).attr("data-dismiss","modal");
-                        $('#myModal').on('hide.bs.modal');
                         //实验室开放，不设置周期
                         $.ajax({
                             type:'post',
@@ -893,6 +967,8 @@
                             },
                             dataType:'json',
                             success:function (data) {
+                                $("#submit").attr("data-dismiss","modal");
+                                $('#myModal').modal('hide');
                                 if(data.code=="001"){
                                     layer.msg(data.message,{icon:1},function () {
                                         $('#calendar').fullCalendar();
@@ -906,8 +982,6 @@
                             }
                         });
                     }else if((states == "1") && (inputOption== "is_cycle")) {
-                        $(this).attr("data-dismiss","modal");
-                        $('#myModal').on('hide.bs.modal');
                         //实验室开放，设置周期
                         $.ajax({
                             type:'post',
@@ -930,6 +1004,8 @@
                             }),
                             dataType:'json',
                             success:function (data) {
+                                $("#submit").attr("data-dismiss","modal");
+                                $('#myModal').modal('hide');
                                 if(data.code=="001"){
                                     layer.msg(data.message,{icon:1},function () {
                                         $('#calendar').fullCalendar();

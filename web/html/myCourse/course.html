@@ -145,7 +145,7 @@
                 <tr>
                     <td  colspan="2" style="text-align: center">
                         <input id="submit" class="btn btn-primary size-MINI radius" type="button" value="提交">
-                        <!-- <input id="refill" class="btn btn-default size-MINI" type="button" value="返回"> -->
+                        <input id="refill" class="btn btn-default size-MINI" type="button" value="返回">
                     </td>
                 </tr>
                 </tbody>
@@ -728,7 +728,7 @@
                     obj.backgroundColor = '#840463';
                     obj.textColor = '#fff';
                     
-                    full_Calendar.fullCalendar('removeEvents', [obj.id]);//先删除日程
+                    full_Calendar.fullCalendar('removeEvents');//先删除日程
                   
                     full_Calendar.fullCalendar('renderEvent', obj, true);//渲染日程
 
@@ -758,6 +758,7 @@
                                     sbmt.attr('lession','');
                                     if(data.code=="001"){
                                         layer.msg(data.message,{icon:1},function(){
+                                            apply_again.css('display', 'none');
                                             var $ifrem = window.parent.document.getElementById("iframe");
                                             $($ifrem).attr("src","html/myCourse/course.html")
                                         });
@@ -810,7 +811,7 @@
                         layer.msg('结束日期与开始日期为同一天', {icon:2, time:1000});return;
                     }
 
-                    full_Calendar.fullCalendar('removeEvents', [obj.id]);//先删除渲染日程
+                    full_Calendar.fullCalendar('removeEvents');//先删除渲染日程
                     
                     for (let i = 0; i <= num; i++)
                     {                            
@@ -870,6 +871,7 @@
                                     if(data.code=="001"){
                                         sbmt.attr('lession','');
                                         layer.msg(data.message,{icon:1},function(){
+                                            apply_again.css('display', 'none');
                                             var $ifrem = window.parent.document.getElementById("iframe");
                                             $($ifrem).attr("src","html/myCourse/course.html")
                                         });
@@ -891,5 +893,9 @@
             }
         }
     })//submit.click 结束
+
+    $('#refill').click(function () {
+        apply_again.css('display', 'none');
+    })
 </script>
 </html>

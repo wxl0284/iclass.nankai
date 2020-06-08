@@ -399,7 +399,7 @@ class Login extends Controller
     public function caslogin ()
     {
        
-      /*$user_info = [
+     $user_info = [
             "name" => "吴强",
             "phone" => "13820773331",
             "national" => "回族",
@@ -447,7 +447,7 @@ class Login extends Controller
             "classCode" => NULL
           ]; */
               
-         $user_info = [
+         /* $user_info = [
             "name" => "许丽",
             "phone" => "13902002664",
             "national" => "汉族",
@@ -545,7 +545,6 @@ class Login extends Controller
         Session::delete('user_info.user_id');
         Session::delete('user_infocas');
         Session::delete('user_infocas.labid');
-
 
         jsonReturn('001');
 
