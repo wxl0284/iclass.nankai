@@ -178,34 +178,42 @@ class Login extends Controller
         if ( $platform == 3 )
         {
             //删除‘开课申请’
-            $temp = $auth['auth'][1]['child'];
+			if ( isset($auth['auth'][1]['child']) )
+			{
+				$temp = $auth['auth'][1]['child'];
            
-            foreach ($temp as $k => $v)
-            {
-                $p = array_search('开课申请', $v);
+				foreach ($temp as $k => $v)
+				{
+					$p = array_search('开课申请', $v);
 
-                if ( $p !== false )
-                {
-                    array_splice($temp, $k, 1); //删除‘开课申请’所在的数组项
-                }
-            }
+					if ( $p !== false )
+					{
+						array_splice($temp, $k, 1); //删除‘开课申请’所在的数组项
+					}
+				}
 
-            $auth['auth'][1]['child'] = $temp;
+				$auth['auth'][1]['child'] = $temp;
+			}
+            
 
             //删除‘开课审批’
-            $temp = $auth['auth'][4]['child'];
+			if ( isset($auth['auth'][4]['child']) )
+			{
+				$temp = $auth['auth'][4]['child'];
            
-            foreach ($temp as $k => $v)
-            {
-                $p = array_search('开课审批', $v);
+				foreach ($temp as $k => $v)
+				{
+					$p = array_search('开课审批', $v);
 
-                if ( $p !== false )
-                {
-                    array_splice($temp, $k, 1); //删除‘开课审批’所在的数组项
-                }
-            }
+					if ( $p !== false )
+					{
+						array_splice($temp, $k, 1); //删除‘开课审批’所在的数组项
+					}
+				}
 
-            $auth['auth'][4]['child'] = $temp;
+				$auth['auth'][4]['child'] = $temp;
+			}
+            
         }
 
         //halt()
@@ -261,8 +269,8 @@ class Login extends Controller
     }
 
 
-    //获取用户信息 原函数名为caslogin
-    public function caslogin_wxl()
+    //获取用户信息 
+    public function caslogin()
     {
 		// cas服务器登录地址
 		$loginServer = "https://sso.nankai.edu.cn/sso/login";
@@ -395,11 +403,13 @@ class Login extends Controller
 		} 
 			
     }
-
-    public function caslogin ()
+    /*
+    caslogin_wxl()用来在我电脑替代caslogin()
+    */
+    public function caslogin_wxl ()
     {
        
-     $user_info = [
+     /* $user_info = [
             "name" => "吴强",
             "phone" => "13820773331",
             "national" => "回族",
@@ -422,7 +432,7 @@ class Login extends Controller
             "className" => NULL,
             "classCode" => NULL
           ];
-        /* 
+        
           $user_info = [
             "name" => "王鸿鹏",
             "phone" => "13920518337",
