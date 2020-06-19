@@ -22,6 +22,9 @@
         .block-text{margin-left: 6px}
     </style>
 </head>
+<script>
+    var plat_form = sessionStorage.getItem('platform');//获取当前实验室的id
+</script>
 <body>
 <div class="IndexRight">
     <h6 class="page_title">
@@ -37,7 +40,7 @@
             <td class="tableLeft"><span style='color:red;'>*</span>主讲教师</td>
             <td><input id="teacher" type="text" style="width: 400px;" disabled ></td>
         </tr>
-        <tr>
+        <tr id='course_tr'>
             <td class="tableLeft"><span style='color:red;'>*</span>课程名称</td>
             <td>
                 <select id="courseName" style="width: 400px;"></select>
@@ -212,6 +215,17 @@
     var courseName = document.getElementById('courseName');
     var courseNameOption = "";
     courseName.innerHTML = null;
+    /*
+     如果plat_form为3，即当前进入的“自主录播教室（津南校区公共教学楼B516）” ，不用开课，所以页面不显示‘课程名称’
+     页面显示此教室在数据表nk_start_curriculum里添加的一个申请人（字段user_id）是此实验室负责人：田野，申请开的一门默认课程
+     在接下来的ajax将Userobj.user_id置为745（田野的user_id）
+    */
+    if ( plat_form == 3 )
+    { 
+        Userobj.user_id = 745;
+        $('#course_tr').css('display', 'none');
+    }
+
     $.ajax({
         type: 'get',
         url: "/api/listCheckedCourse",
@@ -226,6 +240,11 @@
                 courseNameOption +="<option value='"+data[i].id+"'>"+data[i].curriculum_name + "</option>";
             }
             courseName.innerHTML += courseNameOption;
+            if ( plat_form == 3 )
+            { 
+                Userobj.user_id = 745;
+                $('#courseName').val('114');
+            }
         }
     });
     //加载开课院系select

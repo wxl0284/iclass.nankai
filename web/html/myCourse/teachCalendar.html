@@ -38,8 +38,8 @@
                     <span class="block-text">审核通过</span>
                 </li>
                 <li>
-                    <i class="block" style="background: #F5A203;"></i>
-                    <span class="block-text">修改后正在等待审核</span>
+                    <i class="block" style="background: #840463;"></i>
+                    <span class="block-text">等待审核</span>
                 </li>
             </ul>
         </div>
@@ -271,74 +271,81 @@
                     dataType: 'json',
                     success: function(data) { // 获取当前月的数据
                         var arr = [];
-                        if(data.code == "001") {
+                        if(data.code == "001") {console.log(data.result);
                             //禁用全天
-                            for (var i = 0; i < data.result.unuse.whole.length; i++) {
-                                var title = data.result.unuse.whole[i].title;
-//                                var id = data.rsult.unuse.whole[i].id;
-                                var start = data.result.unuse.whole[i].start_time.substr(0,10);
-                                var end = data.result.unuse.whole[i].end_time.substr(0,10);
-                                var rendering = 'background';
-                                var color =  '#C1C1C1';
-                                arr.push({
-                                    title : title,
-                                    start : start,
-                                    end : end,
-                                    rendering : rendering,
-                                    color : color,
-                                    defaultDate: true
-                                })
-                            }
+							if ( data.result.unuse.whole )
+							{
+								for (var i = 0; i < data.result.unuse.whole.length; i++) {
+									var title = data.result.unuse.whole[i].title;
+									var start = data.result.unuse.whole[i].start_time.substr(0,10);
+									var end = data.result.unuse.whole[i].end_time.substr(0,10);
+									var rendering = 'background';
+									var color =  '#C1C1C1';
+									arr.push({
+										title : title,
+										start : start,
+										end : end,
+										rendering : rendering,
+										color : color,
+										defaultDate: true
+									})
+								}
+							}
+                           
                             //禁用一段时间的某天某一段时间
-                            for (var j = 0; j < data.result.unuse.half.length; j++) {
-//                                var title = data.result.unuse.half[j].curriculum_name;
-//                                var  constraint =  data.result.data[j].teacher_name;
-//                                var  id =  data.result.data[j].id;
-                                var start = data.result.unuse.half[j].start_time;
-                                var end = data.result.unuse.half[j].end_time;
-                                var  constraint =  "disable";
-                                arr.push({
-                                    title : "实验室禁用",
-                                    start : start,
-                                    color: "#C1C1C1",
-                                    textColor:'#333',
-                                    constraint : constraint
-                                })
-                            }
+							if ( data.result.unuse.half )
+							{
+								for (var j = 0; j < data.result.unuse.half.length; j++) {
+									var start = data.result.unuse.half[j].start_time;
+									var end = data.result.unuse.half[j].end_time;
+									var  constraint =  "disable";
+									arr.push({
+										title : "实验室禁用",
+										start : start,
+										color: "#C1C1C1",
+										textColor:'#333',
+										constraint : constraint
+									})
+								}
+							}
+                            
                             //预约
-                            for (var j = 0; j < data.result.data.length; j++) {
-                                var title = data.result.data[j].curriculum_name;
-                                var id = data.result.data[j].id;
-                                var curriculum_id = data.result.data[j].curriculum_id;
-                                var college_id = data.result.data[j].college_id;
-                                var start = data.result.data[j].start_time;
-                                var end = data.result.data[j].end_time;
-                                var  constraint =  "disable";
-                                var soft = data.result.data[j].soft;
-                                if(soft == 1) {
-                                    arr.push({
-                                        title : title,
-                                        id: id,
-                                        curriculum_id: curriculum_id,
-                                        college_id: college_id,
-                                        color: "#F5A203",
-                                        start : start,
-                                        end : end,
-                                        constraint : constraint
-                                    })
-                                }else {
-                                    arr.push({
-                                        title : title,
-                                        id: id,
-                                        curriculum_id: curriculum_id,
-                                        college_id: college_id,
-                                        start : start,
-                                        end : end,
-                                        constraint : constraint
-                                    })
-                                }
-
-                            }
+							if ( data.result.data )
+							{
+								for (var j = 0; j < data.result.data.length; j++) {
+									var title = data.result.data[j].curriculum_name;
+									var id = data.result.data[j].id;
+									var curriculum_id = data.result.data[j].curriculum_id;
+									var college_id = data.result.data[j].college_id;
+									var start = data.result.data[j].start_time;
+									var end = data.result.data[j].end_time;
+									var  constraint =  "disable";
+									var soft = data.result.data[j].soft;
+									if(soft == 1) {
+										arr.push({
+											title : title,
+											id: id,
+											curriculum_id: curriculum_id,
+											college_id: college_id,
+											color: "#840463",
+											start : start,
+											end : end,
+											constraint : constraint
+										})
+									}else {
+										arr.push({
+											title : title,
+											id: id,
+											curriculum_id: curriculum_id,
+											college_id: college_id,
+											start : start,
+											end : end,
+											constraint : constraint
+										})
+									}
+								}
+							}
+                            
                         }
                         callback(arr);
                     }
@@ -412,10 +419,8 @@
                 });
             }
         }else {
-            layer.msg("请选择课程名称");
+            layer.msg("请选择课程名  称");
         }
     })
-
-
 </script>
 </html>

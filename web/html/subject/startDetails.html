@@ -96,7 +96,7 @@
 </div>
     <div id='refuse' style='display: none;text-align: center;'>
         <select style="width: 80%;margin: 10px;">
-            <option value='实验室/教室不开放'>实验室/教室不开放</option>
+            <option value='实验室/教室暂不开放'>实验室/教室暂不开放</option>
             <option value='与已通过的老师使用时间冲突'>与已通过的老师使用时间冲突</option>
             <option value='其他原因'>其他原因（请备注）</option>
         </select>
@@ -287,75 +287,86 @@
                             $("#user_name").text(data.result.current[0].user_name);
                             $("#info").text(data.result.current[0].info);
                             //当前这条数据
-                            for (var a = 0; a < data.result.current[0].time_info.length; a++) {
-                                var start = data.result.current[0].time_info[a].start_time;
-                                var end = data.result.current[0].time_info[a].end_time;
-                                var  constraint =  "disable";
-                                if(status == "0") {
-                                    arr.push({
-                                        title : $("#curriculum_name").text(),
-                                        start : start,
-                                        end : end,
-                                        color: "#6FA8DF",
-                                        defaultDate: constraint
-                                    })
-                                }else if(status == "1") {
-                                    arr.push({
-                                        title : $("#curriculum_name").text(),
-                                        start : start,
-                                        end : end,
-                                        color: "#5FB878",
-                                        defaultDate: constraint
-                                    })
-                                }
-
-                            }
+							if ( data.result.current[0].time_info )
+							{
+								for (var a = 0; a < data.result.current[0].time_info.length; a++) {
+									var start = data.result.current[0].time_info[a].start_time;
+									var end = data.result.current[0].time_info[a].end_time;
+									var  constraint =  "disable";
+									if(status == "0") {
+										arr.push({
+											title : $("#curriculum_name").text(),
+											start : start,
+											end : end,
+											color: "#6FA8DF",
+											defaultDate: constraint
+										})
+									}else if(status == "1") {
+										arr.push({
+											title : $("#curriculum_name").text(),
+											start : start,
+											end : end,
+											color: "#5FB878",
+											defaultDate: constraint
+										})
+									}
+								}
+							}                
 
                             //禁用全天
-                            for (var i = 0; i < data.result.unuse.whole.length; i++) {
-                                var title = data.result.unuse.whole[i].title;
-                                var start = data.result.unuse.whole[i].start_time.substr(0,10);
-                                var end = data.result.unuse.whole[i].end_time.substr(0,10);
-                                var rendering = 'background';
-                                //var color =  '#C1C1C1';
-                                arr.push({
-                                    title : title,
-                                    start : start,
-                                    end : end,
-                                    rendering : rendering,
-                                    color: "#C1C1C1",
-                                    defaultDate: true
-                                })
-                            }
+							if ( data.result.unuse.whole )
+							{
+								for (var i = 0; i < data.result.unuse.whole.length; i++) {
+									var title = data.result.unuse.whole[i].title;
+									var start = data.result.unuse.whole[i].start_time.substr(0,10);
+									var end = data.result.unuse.whole[i].end_time.substr(0,10);
+									var rendering = 'background';
+									//var color =  '#C1C1C1';
+									arr.push({
+										title : title,
+										start : start,
+										end : end,
+										rendering : rendering,
+										color: "#C1C1C1",
+										defaultDate: true
+									})
+								}
+							}
+                            
                             //禁用一段时间的某天某一段时间
-                            for (var j = 0; j < data.result.unuse.half.length; j++) {
-                                //var title = data.result.unuse.half[j].curriculum_name;
-                                //var  constraint =  data.result.data[j].teacher_name;
-                                var start = data.result.unuse.half[j].start_time;
-                                var end = data.result.unuse.half[j].end_time;
-                                var  constraint =  "disable";
-                                arr.push({
-                                    title : "实验室禁用",
-                                    start : start,
-                                    color: "#C1C1C1",
-                                    textColor:'#333',
-                                    constraint : constraint
-                                })
-                            }
+							if ( data.result.unuse.half )
+							{
+								for (var j = 0; j < data.result.unuse.half.length; j++) {
+									var start = data.result.unuse.half[j].start_time;
+									var end = data.result.unuse.half[j].end_time;
+									var  constraint =  "disable";
+									arr.push({
+										title : "实验室禁用",
+										start : start,
+										color: "#C1C1C1",
+										textColor:'#333',
+										constraint : constraint
+									})
+								}
+							}
+                            
                             //预约已经完成的
-                            for (var j = 0; j < data.result.data.length; j++) {
-                                var title = data.result.data[j].curriculum_name;
-                                //var  constraint =  data.result.data[j].teacher_name;
-                                var start = data.result.data[j].start_time;
-                                var end = data.result.data[j].end_time;
-                                var  constraint =  "disable";
-                                arr.push({
-                                    title : title,
-                                    start : start,
-                                    end : end,
-                                    constraint : constraint
-                                })
-                            }
+							if ( data.result.data )
+							{
+								for (var j = 0; j < data.result.data.length; j++) {
+									var title = data.result.data[j].curriculum_name;                          
+									var start = data.result.data[j].start_time;
+									var end = data.result.data[j].end_time;
+									var  constraint =  "disable";
+									arr.push({
+										title : title,
+										start : start,
+										end : end,
+										constraint : constraint
+									})
+								}
+							}
+                            
                         }
                         callback(arr);
                     }

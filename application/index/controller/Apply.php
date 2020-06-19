@@ -38,7 +38,7 @@ class Apply extends BaseController
         }
 
        
-        if ( !$data['id'] )//首次提交开课申请
+        if ( !isset($data['id']) )//首次提交开课申请
         {
             //验证该门课程是否已经申请过
             $where = [
@@ -129,11 +129,19 @@ class Apply extends BaseController
         $id = $d['id'];
         $status = $d['status'];
         
+        if ( isset($d['reason']) && !empty($d['reason']) )
+		{
+			$reason = $d['reason'];
+		}else{
+			$reason = '';
+		}
+		
         $update = [
             'status'         => $status,
             'curriculum_num' => date('Y') . time(),
             'checker_id'    => Session::get('user_info.user_id'),
             'check_time'    => date("Y-m-d H:i:s",time()),
+            'reason'    => $reason,
         ];
 
         $ret = Db::name('start_curriculum')->where('id',$id)->update($update);
@@ -741,6 +749,7 @@ class Apply extends BaseController
         $data = input('post.');
 
         $user_id = Session::get('user_info.user_id');
+
         if(!$data['courseName']){
             jsonReturn("002",null,"请选择课程");
             return;
@@ -803,10 +812,32 @@ class Apply extends BaseController
                 {
                     $insert['status'] = 0;
                     $insert['reason'] = '';
+
+                    $id = Db::name('corr_teaching')->where('curriculum_id', $data['courseName'])
+                        ->where('teacher_id', $user_id)    
+                        ->update($insert);
+                    
+                    if ($id) {
+                        jsonReturn('001', $id, '申请成功,请等待审核！');
+                    } else {
+                        jsonReturn('001', $data['courseName'], '您重复申请啦！');
+                    }
+
+                }else{
+                    $id = Db::name('corr_teaching')->insertGetId($insert);
+
+                    if ($id) {
+                        jsonReturn('001', $id, '申请成功,请等待审核！');
+                    } else {
+                        jsonReturn('002', null, '申请失败！');
+                    }
                 }
+
+               
                 /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
                 若有则 更新，若无则insert
                 */
+                /*
                 $lession_info = Db::name('corr_teaching')->where('curriculum_id', $data['courseName'])->find();
                 
                 if ( $lession_info )
@@ -826,7 +857,7 @@ class Apply extends BaseController
                     } else {
                         jsonReturn('002', null, '申请失败！');
                     }
-                }
+                }*/
                 
             }
 
@@ -876,20 +907,15 @@ class Apply extends BaseController
                     {
                         $insert['status'] = 0;
                         $insert['reason'] = '';
-                    }
-                    /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
-                    若有则 更新，若无则insert
-                    */
-                    $lession_info = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->find();
 
-                    if ( $lession_info )
-                    {
-                        $id = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->update($insert);
-                        
+                        $id = Db::name('corr_teaching')->where('curriculum_id', $data['courseName'])
+                        ->where('teacher_id', $user_id)    
+                        ->update($insert);
+                    
                         if ($id) {
                             jsonReturn('001', $id, '申请成功,请等待审核！');
                         } else {
-                            jsonReturn('001', $insert['curriculum_id'], '您重复申请啦！');
+                            jsonReturn('001', $data['courseName'], '您重复申请啦！');
                         }
                     }else{
                         $id = Db::name('corr_teaching')->insertGetId($insert);
@@ -900,6 +926,30 @@ class Apply extends BaseController
                             jsonReturn('002', null, '申请失败！');
                         }
                     }
+                    
+                    /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
+                    若有则 更新，若无则insert
+                    */
+                    // $lession_info = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->find();
+
+                    // if ( $lession_info )
+                    // {
+                    //     $id = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->update($insert);
+                        
+                    //     if ($id) {
+                    //         jsonReturn('001', $id, '申请成功,请等待审核！');
+                    //     } else {
+                    //         jsonReturn('001', $insert['curriculum_id'], '您重复申请啦！');
+                    //     }
+                    // }else{
+                    //     $id = Db::name('corr_teaching')->insertGetId($insert);
+
+                    //     if ($id) {
+                    //         jsonReturn('001', $id, '申请成功,请等待审核！');
+                    //     } else {
+                    //         jsonReturn('002', null, '申请失败！');
+                    //     }
+                    // }
                 }
             }elseif ((int)$data['pattern'] === 1){
                 //开放，设置周期，按周定时
@@ -956,20 +1006,15 @@ class Apply extends BaseController
                     {
                         $insert['status'] = 0;
                         $insert['reason'] = '';
-                    }
-                    /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
-                    若有则 更新，若无则insert
-                    */
-                    $lession_info = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->find();
 
-                    if ( $lession_info )
-                    {
-                        $id = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->update($insert);
-                        
+                        $id = Db::name('corr_teaching')->where('curriculum_id', $data['courseName'])
+                        ->where('teacher_id', $user_id)    
+                        ->update($insert);
+                    
                         if ($id) {
                             jsonReturn('001', $id, '申请成功,请等待审核！');
                         } else {
-                            jsonReturn('001', $insert['curriculum_id'], '您重复申请啦！');
+                            jsonReturn('001', $data['courseName'], '您重复申请啦！');
                         }
                     }else{
                         $id = Db::name('corr_teaching')->insertGetId($insert);
@@ -980,6 +1025,29 @@ class Apply extends BaseController
                             jsonReturn('002', null, '申请失败！');
                         }
                     }
+                    /*判断nk_corr_teaching表里是由已有此curriculum_id的课程记录
+                    若有则 更新，若无则insert
+                    */
+                    // $lession_info = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->find();
+
+                    // if ( $lession_info )
+                    // {
+                    //     $id = Db::name('corr_teaching')->where('curriculum_id', $insert['curriculum_id'])->update($insert);
+                        
+                    //     if ($id) {
+                    //         jsonReturn('001', $id, '申请成功,请等待审核！');
+                    //     } else {
+                    //         jsonReturn('001', $insert['curriculum_id'], '您重复申请啦！');
+                    //     }
+                    // }else{
+                    //     $id = Db::name('corr_teaching')->insertGetId($insert);
+
+                    //     if ($id) {
+                    //         jsonReturn('001', $id, '申请成功,请等待审核！');
+                    //     } else {
+                    //         jsonReturn('002', null, '申请失败！');
+                    //     }
+                    // }
                 }
             }
         }

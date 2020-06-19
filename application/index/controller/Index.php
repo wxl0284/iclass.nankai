@@ -17,6 +17,13 @@ class Index extends Controller
         }
     }
 
+    /*public function index(){
+        if(!Session::has('user_info.session_id')){
+            $this->redirect("http://".$_SERVER['SERVER_NAME']."/api/caslogin");
+            //$this->redirect("http://".$_SERVER['SERVER_NAME']."/web/home.html");
+        }
+    }*/
+
     /**
      * 清除缓存
      */

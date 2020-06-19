@@ -1430,9 +1430,9 @@ class SchoolCalendar extends Controller
         $res = [];
         $temp = [];
         $map = [
-            'status' => 0
+            'status' => 0,
         ];
-        $unUse = Db::name('labSchedule')->where($map)->select();
+        $unUse = Db::name('labSchedule')->where($map)->select();//查不开放的数据
 
         if(!empty($unUse)){
             $need = "00:00:00";
@@ -1457,7 +1457,7 @@ class SchoolCalendar extends Controller
             ];
         }else{
             $cond = [
-                'a.status'   => 1,
+                'a.status'   => 1,//nk_order表 审核通过的
                 // 'a.teacher_id' => $user_id,
                 'a.lab_id'     => $lab_id 
             ]; 

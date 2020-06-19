@@ -239,13 +239,20 @@
 
                     for ( let i=0; i < num; i++ )
                     {
-                        let t = datas[i].reason.split('||');
-                        if ( t[1] )
-                        {
-                            datas[i].reason = t[0] + ', ' + t[1];
-                        }else{
-                            datas[i].reason = t[0];
-                        }
+                        if ( datas[i].reason )
+						{
+							let t = datas[i].reason.split('||');
+							
+							if ( t[1] )
+							{
+								datas[i].reason = t[0] + ', ' + t[1];
+							}else{
+								datas[i].reason = t[0];
+							}
+						}else {
+						datas[i].reason = '暂无';
+						}
+						
                     }
                     
                 }
