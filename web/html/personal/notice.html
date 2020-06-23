@@ -57,11 +57,17 @@
         var $ifrem = window.parent.document.getElementById("iframe");
         $($ifrem).attr("src","html/personal/addNotice.html")
     }
+
+    var plat_form = sessionStorage.getItem('platform'); //获取当前实验室的nk_lab中的id 即实验室id号
+
     Load();
     function Load() {
         $.ajax({
             type:'get',
             url:'/api/indexNotice',
+            data: {
+                'lab_id': plat_form,
+            },
             dataType:'json',
             success:function (data) {
                 if(data.code=="001"){
@@ -75,6 +81,17 @@
                 } else {
                     layer.msg(data.message,{icon:2});
                 }
+
+                //获取php设置的cookie 如果 cookie('not_manager', 'yes'); 则不显示新增通知 修改通知 删除
+                let cooki = document.cookie;
+
+                if ( cooki.indexOf('not_manager=yes') > -1 )
+                {
+                    $('#toolbar').css('display', 'none');
+                    $('#table tbody tr td').eq(4).css('display', 'none');//隐藏表格的操作列
+                    $('#table thead tr th').eq(4).css('display', 'none');//隐藏表格的操作列
+                }
+                //获取php设置的cookie 如果 cookie('not_manager', 'yes'); 则不显示新增通知 修改通知 删除 结束
             },
             error:function(err){
                 console.error(err);
@@ -108,11 +125,11 @@
         ].join('');
     }
     //操作显示在表格
-    function operateFormatter(value, row, index) {
+    function operateFormatter(value, row, index,) {
         return [
             '<a style="color: #31B0D5" title="修改信息" onclick="exit(\''+ row.id + '\')">修改信息</a>',
             '<a style="margin-left:10px;color: red" title="删除" onclick="del(\''+ row.id + '\')">删除</a>'
-        ].join('');
+        ].join('');       
     }
     //修改数据
     function exit(id) {

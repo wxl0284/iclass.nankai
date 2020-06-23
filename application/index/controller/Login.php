@@ -270,7 +270,7 @@ class Login extends Controller
 
 
     //获取用户信息 
-    public function caslogin()
+    public function caslogin ()
     {
 		// cas服务器登录地址
 		$loginServer = "https://sso.nankai.edu.cn/sso/login";
@@ -479,8 +479,8 @@ class Login extends Controller
             "disciplinCode" => NULL,
             "className" => NULL,
             "classCode" => NULL
-          ]; 
-         
+          ]; */
+         /*
           $user_info = [
             "name" => "田野",
             "phone" => "18722543443",
@@ -503,7 +503,7 @@ class Login extends Controller
             "disciplinCode" => NULL,
             "className" => NULL,
             "classCode" => NULL
-          ];*/
+          ]; */
           
           Session::set("user_infocas",$user_info);
           header("Location:iclass.com/web/home.html");

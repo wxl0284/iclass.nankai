@@ -12,13 +12,16 @@
     <script type="text/javascript" src="../../lib/jquery/3.1.1/jquery-3.1.1.min.js"></script>
     <style>
         .btn{padding: 2px 4px}
-        #calendars {width: 600px;}
+        #calendars {width:600px;}
         .cycles{position: relative;border: 1px solid #E0E0E0;padding: 20px;box-sizing: border-box;margin-bottom: 14px}
         .cycles .title{position: absolute;top: -1em;left: 30px;line-height: 2em;padding: 0 1em;background-color: #fff;}
         .cycles .select{position: absolute;top: -10px;left: 140px;line-height: 2em;padding: 0 1em;background-color: #fff;width: 80px;}
         .fc-toolbar h2 {margin: 0;font-size: 24px;}
     </style>
 </head>
+<script>
+    var plat_form = sessionStorage.getItem('platform');//获取当前实验室的id
+</script>
 <body>
     <div class="IndexRight">
         <h6 class="page_title">
@@ -94,20 +97,35 @@
                 <tbody>
                 <tr>
                     <td class="tableLeft">主讲教师</td>
-                    <td><input id="teacher" type="text" style="width: 400px;" disabled ></td>
+                    <!-- <td><input id="teacher" type="text" style="width: 400px;" disabled ></td> -->
+                    <td id="teacher"></td>
                 </tr>
                 <tr>
                     <td class="tableLeft">课程名称</td>
-                    <td>
+                    <td id="courseName">
                         <!-- <select id="courseName" style="width: 400px;"></select> -->
-                        <input id="courseName" type="text" style="width: 400px;" disabled >
+                        <!-- <input id="courseName" type="text" style="width: 400px;" disabled > -->
                     </td>
                 </tr>
                 <tr>
                     <td class="tableLeft">开课院系</td>
+                    <td id="department">
+                        <!-- <select id="department" style="width: 400px;"></select> 
+                        <input id="department" type="text" style="width: 400px;" disabled >-->
+                    </td>
+                </tr>
+                <tr id='phone_tr' style="display: none;">
+                    <td class="tableLeft">联系方式</td>
                     <td>
-                        <!-- <select id="department" style="width: 400px;"></select> -->
-                        <input id="department" type="text" style="width: 400px;" disabled >
+                        <!-- <select id="department" style="width: 400px;"></select>-->
+                        <input id="phone" type="text" style="width: 400px;">
+                    </td>
+                </tr>
+                <tr id='resource_tr' style="display: none;">
+                    <td class="tableLeft">录制资源</td>
+                    <td>
+                        <!-- <select id="department" style="width: 400px;"></select>-->
+                        <textarea id='tv_resource' rows="3" style="width: 71.7%;" placeholder="录制内容介绍, 不少于10个字符"></textarea>
                     </td>
                 </tr>
                <!--  <tr>
@@ -280,6 +298,22 @@
         var $ifrem = window.parent.document.getElementById("iframe");
         $($ifrem).attr("src","html/myCourse/addStartclass.html")
     });
+
+    /*
+     如果plat_form为3，即当前进入的“自主录播教室（津南校区公共教学楼B516）” ，不用开课，所以页面不显示‘课程名称’
+     页面显示此教室在数据表nk_start_curriculum里添加的一个申请人（字段user_id）是此实验室负责人：田野，申请开的一门默认课程
+     在接下来的ajax将Userobj.user_id置为745（田野的user_id）
+    */
+    var phone_e = $('#phone'); //联系方式
+    var tv_resource_e = $('#tv_resource'); //录制资源
+
+    if ( plat_form == 3 )
+    { 
+        Userobj.user_id = 745; //自主录播教室 教师的id都设为田野老师
+        $('#resource_tr').css('display', '');
+        $('#phone_tr').css('display', '');
+    }
+
     //加载我的课程已通过课程
     $.ajax({
         type:'get',
@@ -452,9 +486,12 @@
 
     function submit_again (index)
     {
-        $('#teacher').val( reject_lession_data[index].user_name );
-        $('#courseName').val( reject_lession_data[index].curriculum_name );
-        $('#department').val( reject_lession_data[index].college_name );
+        $('#teacher').html( reject_lession_data[index].user_name );
+        $('#courseName').html( reject_lession_data[index].curriculum_name );
+        $('#department').html( reject_lession_data[index].college_name );
+        phone_e.val( reject_lession_data[index].phone ); 
+        tv_resource_e.val( reject_lession_data[index].tv_resource );
+
         lab_id = reject_lession_data[index].lab_id;//当前实验室id
 
         let lession_id = reject_lession_data[index].id; //当前上课申请的id
@@ -699,6 +736,26 @@
         let starTimeT = starTimeT_e.val(); //开始时间(具体时间)
         let endTimeT = endTimeT_e.val();//结束时间(具体时间)
         let Pattern = Pattern_e.val(); //定时模式
+        let phone_val = $.trim( phone_e.val() ); //联系方式
+        let tv_resource_val = $.trim( tv_resource_e.val() ); //录制资源
+
+        //当是自主录播教室时 联系方式及录制资源不能为空，当是其他教室时，这两项置为空
+        if ( plat_form == 3 )
+        {
+            let patn = /^([1-9]{1}\d{7,10})$/;
+            if ( !patn.test( phone_val ) )
+            {
+                layer.msg("联系方式填写错误"); return;
+            }
+
+            if ( tv_resource_val.length < 10 )
+            {
+                layer.msg("录制资源不能少于10个字符"); return;
+            }
+        }else{//其他教室时
+            phone_val = '';
+            tv_resource_val = '';
+        }//处理 联系方式及录制资源 over
        
         let chk_value = []; //选中的周数组
         
@@ -752,6 +809,8 @@
                                     'end_time': endTime,
                                     'teacher_id':Userobj.user_id,
                                     'apply': 'again',//表示再次提交
+                                    'phone': phone_val, //联系方式
+                                    'tv_resource': tv_resource_val, //录制资源
                                 },
                                 dataType:'json',
                                 success:function (data) {
@@ -865,6 +924,8 @@
                                     'end_date': endTimeB, //结束日期(重复范围)
                                     'teacher_id':Userobj.user_id,
                                     'apply': 'again',//表示再次提交
+                                    'phone': phone_val, //联系方式
+                                    'tv_resource': tv_resource_val, //录制资源
                                 },
                                 dataType:'json',
                                 success:function (data) {

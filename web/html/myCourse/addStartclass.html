@@ -58,6 +58,18 @@
                 <select id="lab" style="width: 400px;"></select>
             </td>
         </tr>
+        <tr id='phone_tr' style='display: none;'>
+            <td class="tableLeft"><span style='color:red;'>*</span>联系方式</td>
+            <td>
+                <input id="phone" type="text" style="width: 400px;" placeholder="联系电话">
+            </td>
+        </tr>
+        <tr id='resource_tr' style='display: none;'>
+            <td class="tableLeft"><span style='color:red;'>*</span>录制资源</td>
+            <td>
+                <textarea id='tv_resource' rows="3" style="width: 65.2%;" placeholder="录制内容介绍, 不少于10个字符"></textarea>
+            </td>
+        </tr>
         <tr>
             <td class="tableLeft">教学计划</td>
             <td>
@@ -215,6 +227,8 @@
     var courseName = document.getElementById('courseName');
     var courseNameOption = "";
     courseName.innerHTML = null;
+    var phone_e = $("#phone");//联系方式 自主录播教室需要显示、提交
+    var tv_resource_e = $("#tv_resource");//录制资源 自主录播教室需要显示、提交
     /*
      如果plat_form为3，即当前进入的“自主录播教室（津南校区公共教学楼B516）” ，不用开课，所以页面不显示‘课程名称’
      页面显示此教室在数据表nk_start_curriculum里添加的一个申请人（字段user_id）是此实验室负责人：田野，申请开的一门默认课程
@@ -222,8 +236,14 @@
     */
     if ( plat_form == 3 )
     { 
-        Userobj.user_id = 745;
+        Userobj.user_id = 745; //自主录播教室 教师的id都设为田野老师
         $('#course_tr').css('display', 'none');
+        $('#resource_tr').css('display', '');
+        $('#phone_tr').css('display', '');
+
+        //将联系方式及录制资源 置为空
+        phone_e.val('');
+        tv_resource_e.val('');
     }
 
     $.ajax({
@@ -574,6 +594,8 @@
         let starTimeT = starTimeT_e.val(); //开始时间(具体时间)
         let endTimeT = endTimeT_e.val();//结束时间(具体时间)
         let Pattern = Pattern_e.val(); //定时模式
+        let phone_val = $.trim( phone_e.val() ); //联系方式
+        let tv_resource_val = $.trim( tv_resource_e.val() ); //录制资源
        
         let chk_value = []; //选中的周数组
         
@@ -583,6 +605,23 @@
 
         let starTimeB = starTimeB_e.val(); //开始日期(重复范围)
         let endTimeB = endTimeB_e.val();  //结束日期(重复范围)
+        //当是自主录播教室时 联系方式及录制资源不能为空，当是其他教室时，这两项置为空
+        if ( plat_form == 3 )
+        {
+            let patn = /^([1-9]{1}\d{7,10})$/;
+            if ( !patn.test( phone_val ) )
+            {
+                layer.msg("联系方式填写错误"); return;
+            }
+
+            if ( tv_resource_val.length < 10 )
+            {
+                layer.msg("录制资源不能少于10个字符"); return;
+            }
+        }else{//其他教室时
+            phone_val = '';
+            tv_resource_val = '';
+        }//处理 联系方式及录制资源 over
 
         if((courseName == null) || (department == null) || (labId == null)) {
             layer.msg("课程名称或开课院系或实验室不能为空");
@@ -624,7 +663,9 @@
                                     'inputOption': inputOption,  //是否设置周期
                                     'start_time': starTime,
                                     'end_time': endTime,
-                                    'teacher_id':Userobj.user_id
+                                    'teacher_id':Userobj.user_id,
+                                    'phone': phone_val, //联系方式
+                                    'tv_resource': tv_resource_val, //录制资源
                                 },
                                 dataType:'json',
                                 success:function (data) {
@@ -638,7 +679,7 @@
                                     }
                                 },
                                 error:function(err){
-                                    console.error(err);
+                                    console.log(err);
                                 }
                             });//ajax结束
                         },//yes 结束
@@ -734,7 +775,9 @@
                                     'chk_value': chk_value,    //选中的周数组
                                     'start_date': starTimeB,  //开始日期(重复范围)
                                     'end_date': endTimeB, //结束日期(重复范围)
-                                    'teacher_id':Userobj.user_id
+                                    'teacher_id':Userobj.user_id,
+                                    'phone': phone_val, //联系方式
+                                    'tv_resource': tv_resource_val, //录制资源
                                 },
                                 dataType:'json',
                                 success:function (data) {
@@ -748,7 +791,7 @@
                                     }
                                 },
                                 error:function(err){
-                                    console.error(err);
+                                    console.log(err);
                                 }
                             });//ajax 结束
                         },//yes 结束

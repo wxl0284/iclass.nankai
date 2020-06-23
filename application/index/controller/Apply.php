@@ -804,6 +804,8 @@ class Apply extends BaseController
                     'teacher_id' => $user_id,
                     'time_info' => $time_info,
                     'info' => '上课时间为:'.date("Y-m-d H:i:s", $data['start_time']).'至'.date("Y-m-d H:i:s", $data['end_time']),
+                    'phone' => $data['phone'], //申请者联系方式
+                    'tv_resource' => $data['tv_resource'], //自主录播教室 录制内容说明
                     'create_time' => date('Y-m-d H:i:s'),
                     'update_time' => date('Y-m-d H:i:s')
                 ];
@@ -1097,7 +1099,7 @@ class Apply extends BaseController
         $lab_id = Session::get('user_infocas.labid');  //获取当前进入的实验室id
         $current = []; //这是当前查询的那一条记录的数据
 
-        $fields = 'a.id,a.status,a.info,a.time_info,d.name as user_name,c.college_name,b.curriculum_name,b.curriculum_num';
+        $fields = 'a.id,a.status,a.phone, a.tv_resource, a.info,a.time_info,d.name as user_name,c.college_name,b.curriculum_name,b.curriculum_num';
 
         $map = [
             'a.id' => $id,
@@ -1472,7 +1474,7 @@ class Apply extends BaseController
      */
     public function teachApplyUnAccessCheckList()
     {
-        $fields = 'a.id, a.lab_id, a.college_id, a.reason, a.curriculum_id, a.status,d.name as user_name,c.college_name,b.curriculum_name,b.curriculum_num';
+        $fields = 'a.id, a.lab_id, a.phone, a.tv_resource, a.college_id, a.reason, a.curriculum_id, a.status,d.name as user_name,c.college_name,b.curriculum_name,b.curriculum_num';
 
         $user_id = Session::get('user_info.user_id');
         $lab_id = Session::get('user_infocas.labid');  //获取实验室id

@@ -13,6 +13,7 @@ use think\Db;
 use think\Exception;
 use think\Session;
 use think\Loader;
+use think\Cookie;
 
 class Notice extends BaseController
 {
@@ -23,16 +24,36 @@ class Notice extends BaseController
 	//通知公告列表
 	public function index()
 	{
-        $user_id = Session::get('user_info.user_id');
-
+        $user_id = Session::get('user_info.user_id'); //nk_user表中的id主键
+        
         $map = [
             'b.user_id' => $user_id
         ];
+
+        //检查当前进入实验室/教室的用户 如果不是此实验室/教室负责人 则不显示:新增通知公告、修改信息、删除
+        $lab_id = input('lab_id'); //当前进入的实验室id
+        $lab_manager = Db::table('nk_lab')->where('id', $lab_id)->field('manager')->find();
+
+        if ( $lab_manager )
+        {
+            $managers = explode(',', $lab_manager['manager']);
+
+            //查 当前进入实验室的用户在nk_user表中的user_uid
+            $user_uid = Db::table('nk_user')->where('id', $user_id)->field('user_uid')->find();
+
+            if ( $user_uid && !in_array($user_uid, $managers) )
+            {
+                cookie('not_manager', 'yes');
+            }
+        }
+
+        //检查当前进入实验室/教室的用户 如果不是此实验室/教室负责人 则不显示:新增通知公告、修改信息、删除 结束
 
         $event = Loader::controller('Api','event');
         $role= $event->getRoleInfo();
 
         $sign = '';
+
         if($role){
             if(in_array(2,$role)){
                 $sign = 'show';
@@ -40,7 +61,7 @@ class Notice extends BaseController
                 $sign = 'hide';
             }
 
-//            $ret = Db::name('notice')->order('id desc')->select();
+            //$ret = Db::name('notice')->order('id desc')->select();
             $ret = Db::name('notice')
                 ->alias('a')
                 ->join('nk_corr_user_notice b','a.id=b.notice_id')
@@ -50,7 +71,8 @@ class Notice extends BaseController
                 ->select();
 
 
-            if($ret){
+            if($ret)
+            {
                 $res = [];
                 foreach ($ret as $key => $value) {
                     $time = $value['update_time']?$value['update_time']:$value['create_time'];
@@ -65,6 +87,7 @@ class Notice extends BaseController
             }else{
                 jsonReturn('002',null,'暂无信息！');
             }
+
         }else{
             jsonReturn('002',null,'您暂无权限进行操作！');
         }

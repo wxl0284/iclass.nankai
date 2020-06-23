@@ -20,6 +20,9 @@
         .block-text{margin-left: 6px}
     </style>
 </head>
+<script>
+    var plat_form = sessionStorage.getItem('platform');//获取当前实验室的id
+</script>
 <body>
 <div class="IndexRight">
     <h6 class="page_title">
@@ -50,6 +53,16 @@
         <tr>
             <td class="tableLeft">主讲教师</td>
             <td id="user_name"></td>
+        </tr>
+        <tr id='phone_tr' style='display: none;'>
+            <td class="tableLeft">联系方式</td>
+            <td id="phone"></td>
+        </tr>
+        <tr id='resource_tr' style='display: none;'>
+            <td class="tableLeft">录制资源</td>
+            <td>
+                <div id='tv_resource' style="width: 70.1%;"></div>
+            </td>
         </tr>
         <tr>
             <td class="tableLeft" rowspan="2">教学计划</td>
@@ -110,6 +123,12 @@
 <script type="text/javascript" src="../../lib/layui/layui.all.js"></script>
 <script src="../../lib/layer/2.4/layer.js"></script>
 <script>
+    if ( plat_form == 3 )
+    {
+        $('#phone_tr').css('display', '');
+        $('#resource_tr').css('display', '');
+    }
+
     //记录id
     var str = window.location.href.split("?")[1].substr("3");
     var id = str.substring(0,str.indexOf("&"));
@@ -163,7 +182,7 @@
                                 }
                             },
                             error:function(err){
-                                console.error(err);
+                                console.log(err);
                             }
                         });
                     }else {//驳回
@@ -202,7 +221,7 @@
                                         }
                                     },
                                     error:function(err){
-                                        console.error(err);
+                                        console.log(err);
                                     }
                                 });//ajax 结束
                             },//yes 结束
@@ -286,6 +305,8 @@
                             $("#college_name").text(data.result.current[0].college_name);
                             $("#user_name").text(data.result.current[0].user_name);
                             $("#info").text(data.result.current[0].info);
+                            $("#phone").html(data.result.current[0].phone);
+                            $("#tv_resource").text(data.result.current[0].tv_resource);
                             //当前这条数据
 							if ( data.result.current[0].time_info )
 							{
