@@ -268,7 +268,8 @@
     var rule = datasa.rule;
     var arr = rule.split(",");
 
-
+	var lab_id = sessionStorage.getItem('platform');
+	
     //获取路径
     var domain = datasa.domain;
     //判断显示与否
@@ -284,9 +285,13 @@
                 type:'get',
                 url:'/api/indexNotice',
                 dataType:'json',
+				data: {
+				'lab_id': lab_id,
+            },
                 success:function (data) {
                     if(data.code=="001"){
                         datas = data.result.data;
+						console.log(datas);
                         for(var i=0;i<datas.length;i++) {
                             var li = '';
                             if(datas[i].status == 0) {

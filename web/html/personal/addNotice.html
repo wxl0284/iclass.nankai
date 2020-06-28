@@ -57,6 +57,9 @@
         var $ifrem = window.parent.document.getElementById("iframe");
         $($ifrem).attr("src","html/personal/notice.html")
     });
+	
+	var lab_id = sessionStorage.getItem('platform');
+	
     $("#submit").click(function () {
         var title = $("#title").val();
         var content = ue.getContent();
@@ -65,7 +68,8 @@
             url:'/api/saveNotice',
             data: {
                 'title': title,
-                'content': content
+                'content': content,
+				'lab_id': lab_id,
             },
             dataType:'json',
             success:function (data) {

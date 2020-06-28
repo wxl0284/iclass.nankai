@@ -25,13 +25,10 @@ class Notice extends BaseController
 	public function index()
 	{
         $user_id = Session::get('user_info.user_id'); //nk_user表中的id主键
-        
-        $map = [
-            'b.user_id' => $user_id
-        ];
 
         //检查当前进入实验室/教室的用户 如果不是此实验室/教室负责人 则不显示:新增通知公告、修改信息、删除
         $lab_id = input('lab_id'); //当前进入的实验室id
+		
         $lab_manager = Db::table('nk_lab')->where('id', $lab_id)->field('manager')->find();
 
         if ( $lab_manager )
@@ -41,14 +38,18 @@ class Notice extends BaseController
             //查 当前进入实验室的用户在nk_user表中的user_uid
             $user_uid = Db::table('nk_user')->where('id', $user_id)->field('user_uid')->find();
 
-            if ( $user_uid && !in_array($user_uid, $managers) )
+            if ( $user_uid && !in_array($user_uid['user_uid'], $managers) )
             {
                 cookie('not_manager', 'yes');
             }
         }
 
         //检查当前进入实验室/教室的用户 如果不是此实验室/教室负责人 则不显示:新增通知公告、修改信息、删除 结束
-
+		$map = [
+            'b.user_id' => $user_id,
+			'a.lab_id' => $lab_id
+        ];
+		
         $event = Loader::controller('Api','event');
         $role= $event->getRoleInfo();
 
@@ -69,7 +70,7 @@ class Notice extends BaseController
                 ->where($map)
                 ->order('a.id desc')
                 ->select();
-
+			//halt()
 
             if($ret)
             {
@@ -99,6 +100,7 @@ class Notice extends BaseController
 	public function save()
 	{
 		$data = input('post.');
+		
 		$notice = Db::name('notice');
 
         $notice->startTrans();
@@ -107,7 +109,7 @@ class Notice extends BaseController
             $add = [
                 'title'       => $data['title'],            //标题名
                 'publisher'   => Session::get('user_info.user_name'),		//发布者
-//			'content' 	  => htmlentities($data['content']),			//内容
+				'lab_id'       => $data['lab_id'],
                 'content' 	  => $data['content'],			//内容
                 'browse_num'  => 0,						//浏览次数
                 'create_time' => date("Y-m-d H:i:s"),		//发布时间
