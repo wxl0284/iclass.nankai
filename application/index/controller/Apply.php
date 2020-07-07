@@ -1124,8 +1124,10 @@ class Apply extends BaseController
         //这是设为不开放的数据
         $temp = [];
         $map = [
-            'status' => 0
+            'status' => 0,
+            'lab_id' => $lab_id
         ];
+        
         $unUse = Db::name('labSchedule')->where($map)->select();
 
         if(!empty($unUse)){
