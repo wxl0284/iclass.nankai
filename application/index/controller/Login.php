@@ -433,7 +433,7 @@ class Login extends Controller
             "classCode" => NULL
           ];
         
-          /*$user_info = [
+          $user_info = [
             "name" => "王鸿鹏",
             "phone" => "13920518337",
             "national" => "汉族",
@@ -455,9 +455,9 @@ class Login extends Controller
             "disciplinCode" => NULL,
             "className" => NULL,
             "classCode" => NULL
-          ];
+          ];*/
               
-         $user_info = [
+         /*$user_info = [
             "name" => "许丽",
             "phone" => "13902002664",
             "national" => "汉族",

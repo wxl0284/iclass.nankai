@@ -1427,11 +1427,14 @@ class SchoolCalendar extends Controller
     public function getTeacherOrderData(){
 
         $lab_id = Session::get('user_infocas.labid');
+
         $res = [];
         $temp = [];
         $map = [
             'status' => 0,
+            'lab_id' => $lab_id,
         ];
+        
         $unUse = Db::name('labSchedule')->where($map)->select();//查不开放的数据
 
         if(!empty($unUse)){
