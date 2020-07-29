@@ -333,7 +333,7 @@ class SchoolCalendar extends Controller
      */
     protected function isExist($start_time,$end_time){
         $lab_id = Session::get('user_infocas.labid');  //实验室id
-        $sql = "select `id` from `nk_lab_schedule` WHERE `status`=0 AND `lab_id`='" . $lab_id . "' AND ((`start_time`>='" . $start_time . "' AND `start_time`<='" . $end_time . "') OR (`end_time`>='" . $start_time . "' AND `end_time`<='" . $end_time . "') OR (`start_time`<='" . $start_time . "' AND `end_time`>='" . $end_time . "'))";
+        $sql = "select `id` from `nk_lab_schedule` WHERE `status`=0 AND `lab_id`='" . $lab_id . "' AND ((`start_time`>'" . $start_time . "' AND `start_time`<'" . $end_time . "') OR (`end_time`>'" . $start_time . "' AND `end_time`<'" . $end_time . "') OR (`start_time`<'" . $start_time . "' AND `end_time`>'" . $end_time . "'))";
         
         $is_exist = Db::query($sql);
         if($is_exist){
@@ -681,7 +681,8 @@ class SchoolCalendar extends Controller
         //halt($data);
         //实验室不开放
         if((int)$data['status'] === 0){
-            if($data['inputOption'] == 'not_cycle'){
+            if($data['inputOption'] == 'not_cycle')
+			{
                 //不设置周期
                 $temp = 0;
 
@@ -714,13 +715,24 @@ class SchoolCalendar extends Controller
                 }
             }elseif ($data['inputOption'] == 'is_cycle') {
                 //设置周期
-                if((int)$data['pattern'] === 0){
+                if((int)$data['pattern'] === 0)
+				{
                     //不开放 设置周期 无定时
                     if(strtotime($data['starTimeT']) > strtotime($data['endTimeT'])){
                         jsonReturn("002",null,"您设置的具体时间不合理");
                         return;
                     }
-
+					
+					/*
+					处理$data['endTimeT']，避免因为用户不设置每天的结束的具体‘时：分：秒’
+					会在nk_lab_schedule表中start_time字段是2020-08-14 00:00:00，end_time字段也是2020-08-14 00:00:00
+					*/
+					if ( $data['endTimeT']  === '00:00:00' )
+					{
+						$data['endTimeT'] = '23:59:59'; //当天的最后一秒
+					}
+					//处理$data['endTimeT'] 结束
+					
                     //时间
                     $sTime = $data['starTimeT'];
                     $eTime = $data['endTimeT'];
@@ -754,14 +766,25 @@ class SchoolCalendar extends Controller
                         }
                     }
 
-                }elseif ((int)$data['pattern'] === 1) {
+                }elseif ((int)$data['pattern'] === 1)
+				{
                     //不开放，设置周期，按周定时
 
                     if(strtotime($data['starTimeT']) > strtotime($data['endTimeT'])){
                         jsonReturn("002",null,"您设置的具体时间不合理");
                         return;
                     }
-
+					
+					/*
+					处理$data['endTimeT']，避免因为用户不设置每天的结束的具体‘时：分：秒’
+					会在nk_lab_schedule表中start_time字段是2020-08-14 00:00:00，end_time字段也是2020-08-14 00:00:00
+					*/
+					if ( $data['endTimeT']  === '00:00:00' )
+					{
+						$data['endTimeT'] = '23:59:59'; //当天的最后一秒
+					}
+					//处理$data['endTimeT'] 结束
+					
                     //时间
                     $sTime = $data['starTimeT'];
                     $eTime = $data['endTimeT'];

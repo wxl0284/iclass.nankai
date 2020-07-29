@@ -432,7 +432,7 @@ class Login extends Controller
             "className" => NULL,
             "classCode" => NULL
           ];
-        */
+        
           $user_info = [
             "name" => "王鸿鹏",
             "phone" => "13920518337",
@@ -456,8 +456,8 @@ class Login extends Controller
             "className" => NULL,
             "classCode" => NULL
           ];
-              
-         /*$user_info = [
+              */
+         $user_info = [
             "name" => "许丽",
             "phone" => "13902002664",
             "national" => "汉族",
@@ -480,7 +480,7 @@ class Login extends Controller
             "className" => NULL,
             "classCode" => NULL
           ]; 
-        
+        /*
           $user_info = [
             "name" => "田野",
             "phone" => "18722543443",
@@ -534,11 +534,6 @@ class Login extends Controller
         \phpCAS::logout($param);
     }
 
-
-
-
-
-
     /**
      * 退出登录
      */
@@ -567,7 +562,7 @@ class Login extends Controller
      */
     protected static function getAuth($id, $lab_admin=true)
     {
-        if($id){
+         if($id){
             //根据传入的用户id查找到关联的角色id
             $map = [
                 'user_id' => $id
