@@ -456,7 +456,7 @@ class Login extends Controller
             "className" => NULL,
             "classCode" => NULL
           ];
-              */
+             
          $user_info = [
             "name" => "许丽",
             "phone" => "13902002664",
@@ -480,7 +480,7 @@ class Login extends Controller
             "className" => NULL,
             "classCode" => NULL
           ]; 
-        /*
+         */
           $user_info = [
             "name" => "田野",
             "phone" => "18722543443",
@@ -503,7 +503,7 @@ class Login extends Controller
             "disciplinCode" => NULL,
             "className" => NULL,
             "classCode" => NULL
-          ];*/
+          ];
           
           Session::set("user_infocas",$user_info);
           header("Location:iclass.com/web/home.html");

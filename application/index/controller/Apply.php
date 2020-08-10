@@ -509,7 +509,7 @@ class Apply extends BaseController
             $start_time = $v[0];
             $end_time = $v[1];
             //查找预约时间是否已经被占用
-            $sql = "select `id` from `nk_order` WHERE `status`=1 AND `lab_id`='" . $lab_id . "' AND ((`start_time`>'" . $start_time . "' AND `start_time`<'" . $end_time . "') OR (`end_time`>'" . $start_time . "' AND `end_time`<'" . $end_time . "') OR (`start_time`<'" . $start_time . "' AND `end_time`>'" . $end_time . "'))";
+            $sql = "select `id` from `nk_order` WHERE `status`=1 AND `lab_id`='" . $lab_id . "' AND ((`start_time`>='" . $start_time . "' AND `start_time`<='" . $end_time . "') OR (`end_time`>='" . $start_time . "' AND `end_time`<='" . $end_time . "') OR (`start_time`<='" . $start_time . "' AND `end_time`>='" . $end_time . "'))";
 
             $exist = Db::query($sql);
             if($exist){
@@ -595,11 +595,13 @@ class Apply extends BaseController
         //查找不可预约时间
         $unUse = Db::name('labSchedule')->select();
 
-        for($i = 0; $i<$dateNum; $i++){
+        for($i = 0; $i<$dateNum; $i++)
+        {
             $start = strtotime($datetimeArr[$i][0]);
             $end = strtotime($datetimeArr[$i][1]);
             
-            foreach ($unUse as $k => $v) {
+           /* 原来的代码
+           foreach ($unUse as $k => $v) {
                 if (($start >= strtotime($v['start_time'])) && ($start < strtotime($v['end_time']))) {
                     return false;
                 } elseif (($start >= strtotime($v['start_time'])) && ($end < strtotime($v['end_time']))) {
@@ -607,7 +609,22 @@ class Apply extends BaseController
                 } elseif (($end >= strtotime($v['start_time'])) && ($end < strtotime($v['end_time']))) {
                     return false;
                 }
-            }
+            }*/
+
+            foreach ($unUse as $k => $v)
+			{
+				//判断预约时间段与lab-schedule中各时间段是否交叉 ，如交叉 则返回false			
+				$a = $start > strtotime($v['end_time']);//当前提交的时间与数据库时间段没有交叉冲突
+				$b = $end <strtotime($v['start_time']);//当前提交的时间与数据库时间段没有交叉冲突
+				
+				$res = ( $a || $b );//无冲突
+				
+				if ( !$res )//有交叉冲突
+				{
+					return false;
+				}
+				
+			}
         }
 
         return true;
@@ -808,7 +825,7 @@ class Apply extends BaseController
 
             //判断时间是否已经被预约并且已经通过审核
             $isOrdered = self::checkIsOrdered($datetimeArr);
-
+         
             if ($isOrdered) {
                 jsonReturn('002', null, '该时间段已被占用！');
             } else {
