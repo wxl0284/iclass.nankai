@@ -589,11 +589,11 @@ class Apply extends BaseController
      * @param $datetimeArr
      * @return bool
      */
-    protected function checkAppointTimeByArr($datetimeArr){
+    protected function checkAppointTimeByArr($datetimeArr, $lab_id){
         $dateNum = count($datetimeArr);
 
         //查找不可预约时间
-        $unUse = Db::name('labSchedule')->select();
+        $unUse = Db::name('labSchedule')->where('lab_id', $lab_id)->select();
 
         for($i = 0; $i<$dateNum; $i++)
         {
@@ -928,7 +928,7 @@ class Apply extends BaseController
                 $datetimeArr = self::getDatetimeArr($sDate, $eDate, $sTime, $eTime);
 
                 //根据datetimeArr判断所选时间是否在开放时间之内
-                $isFair = self::checkAppointTimeByArr($datetimeArr);
+                $isFair = self::checkAppointTimeByArr($datetimeArr, $data['lab_id']);
                 if(!$isFair){
                     jsonReturn('002', null, '预约时间暂不开放！');
                     return;
@@ -1027,7 +1027,7 @@ class Apply extends BaseController
                 $datetimeArr = self::getDateTimeArrByWeek($dateArr, $sTime, $eTime);
 
                 //根据datetimeArr判断所选时间是否在开放时间之内
-                $isFair = self::checkAppointTimeByArr($datetimeArr);
+                $isFair = self::checkAppointTimeByArr($datetimeArr, $data['lab_id']);
                 if(!$isFair){
                     jsonReturn('002', null, '预约时间暂不开放！');
                     return;
